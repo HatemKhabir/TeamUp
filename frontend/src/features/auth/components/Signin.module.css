@@ -1,0 +1,50 @@
+.auth_login_form{
+    display: flex;
+    flex-direction: column;
+    width: 52%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    gap: 30px;
+    background-color: whitesmoke;
+}
+
+.auth_title{
+width: fit-content;
+font-family: "Roboto" !important;
+font-size: 64px !important;
+font-style: normal !important;
+font-weight: 700 !important;
+line-height: 110% !important; /* 70.4px */
+--Login-Color: radial-gradient(circle at center, #D4FC79 0%, #96E6A1 50%, #BEF487 100%);
+background: var(--Login-Color, radial-gradient(circle at center, #D4FC79 0%, #96E6A1 50%, #BEF487 100%));
+background-clip: text;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+.auth_inputs{
+width: 70%;
+}
+
+.auth_register{
+    color: #42A5F5 !important;
+    cursor: pointer;
+    font-weight: 800;
+    text-transform:uppercase;
+}
+
+.auth_buttons {
+    border-radius: var(--borderRadius, 4px);
+    background: linear-gradient(90deg, #92e987 30%, #a3be6f 77.26%, #179c41 100%, #d1dbd3 50%);
+    background-size: 300% auto;
+    color: white !important;
+    width: 180px;
+    transition: all 0.5s ease-in-out !important;
+  }
+  
+  .auth_buttons:hover {
+    background-position: 100% 100%;
+    transform: scale(1.05);
+  }

@@ -1,0 +1,37 @@
+.auth_container_signin{
+    height: 100vh;
+    display: flex;
+    
+    background-image: url('../../../assets/background.png'); /* Adjust the path if needed */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.auth_container_signup{
+    height: 100vh;
+    display: flex;
+    background-image: url('../../../assets/background.png'); /* Adjust the path if needed */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  justify-content: flex-end;
+}
+
+.auth_forms_wrapper {
+    display: flex;
+    transition: all 0.5s ease-in-out; 
+position: relative;
+} 
+/* Flex alignment and translation for Sign In form */
+.auth_container_signin .auth_forms_wrapper {
+    justify-content: flex-end; /* Align to the right for Sign In */
+    transform: translateX(-48%); /* Slide to the left */
+  }
+  
+  /* Flex alignment and translation for Sign Up form */
+  .auth_container_signup .auth_forms_wrapper {
+    justify-content: flex-end; /* Align to the left for Sign Up */
+  }
+  
+  

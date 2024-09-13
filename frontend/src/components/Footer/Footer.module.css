@@ -1,0 +1,69 @@
+/* src/components/Footer/Footer.module.css */
+.footer {
+    background-color: #151D20; /* Dark background for the footer */
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    min-height: 80px;
+  }
+  
+  .footerContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .footerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Ensures content wraps properly on smaller screens */
+    gap: 20px; /* Adds some space between items */
+  }
+  
+  .footerLogo {
+    background: linear-gradient(180deg, #D4FFEC 15.94%, #49FA7B 60.19%, #519BF7 84.06%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: "Roboto Condensed";
+font-size: 36px;
+font-style: normal;
+font-weight: 700;
+line-height: 110%;
+  }
+  
+  .footerNav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px; /* Space between navigation links */
+  }
+  
+  .footerNav a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .footerNav a:hover {
+    color: #49FA7B; /* Highlight color on hover */
+  }
+  
+  .socialMedia a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+  }
+  
+  .socialMedia a:hover {
+    color: #49FA7B; /* Highlight color on hover */
+  }
+  
+  .copyright {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  

@@ -1,0 +1,98 @@
+.navbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #151D20;
+    flex-shrink: 1;
+    width: 100%;
+    height: fit-content;
+    align-items: center;
+    align-content: center;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    padding: 0.5%;
+}
+.nav_buttons, .logged_in_elements {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    justify-content: flex-end;
+    width: fit-content;
+    gap: 10px; /* Adds space between elements */
+    font-family: "Roboto";
+    font-size: 20px;
+    font-weight: 500;
+    margin: 10px;
+    line-height: 160%; 
+    letter-spacing: 0.15px;
+    flex-shrink: 0; /* Prevents shrinking */
+  }
+  .logged_in_texts{
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    gap: 3px;
+  }
+.auth_divider{
+    display: flex;
+    color: white;
+    align-items: center;
+    justify-content: center;
+}
+.auth_button{
+    display: flex;
+    color: white !important;
+    cursor: pointer;
+    width: fit-content;
+    text-decoration: none !important;
+    align-items: center;
+    justify-content: center;    
+    padding: 0px 5px;
+    transition:all 0.3s ease-in;
+}
+
+.auth_button:hover{
+    color: #49FA7B !important;
+    scale: 1.1;
+}
+.logo{
+    width: fit-content;
+}
+.logo_text{
+    background: linear-gradient(180deg, #D4FFEC 15.94%, #49FA7B 60.19%, #519BF7 84.06%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: "Roboto Condensed";
+font-size: 36px;
+font-style: normal;
+font-weight: 700;
+line-height: 110%; /* 52.8px */
+}
+
+
+.logged_in_buttons{
+    display: flex;
+    align-items: center;
+    gap:10px;
+}
+.logged_in_text{
+    color: #FFF;
+    white-space: nowrap;
+    padding: 10px;
+    /* typography/h6 */
+font-family: "Roboto" !important;
+font-size: 15px !important;
+font-style: normal !important;
+font-weight: 500 !important;
+line-height: 160% !important; /* 32px */
+letter-spacing: 0.15px !important;
+transition: 0.3s all ease-in;
+}
+.logged_in_text:hover{
+color: #49FA7B;
+cursor: pointer;
+scale:1.1;
+}
+.navbar_search{
+ width: 500px;
+}

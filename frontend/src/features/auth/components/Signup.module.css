@@ -1,0 +1,53 @@
+
+
+.auth_inputs{
+width: 70%;
+}
+
+
+.auth_signin{
+    color: #96E6A1 !important;
+    font-weight: 800;
+    text-transform:uppercase;
+    cursor: cd ;
+}
+
+.auth_signup_form{
+        display: flex;
+        flex-direction: column;
+        width: 52%;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        gap: 30px;
+        background-color: whitesmoke;
+    
+}
+
+.signup_title{
+    width: fit-content;
+    font-family: "Roboto" !important;
+    font-size: 64px !important;
+    font-style: normal !important;
+    font-weight: 700 !important;
+    line-height: 110% !important; /* 70.4px */
+    --Login-Color: radial-gradient(circle at center,  #081057 0%, #B4DAF0 39%, #64B0F6 50%, #3C96FF 50%);
+    background: var(--Login-Color, radial-gradient(circle at center,  #081057 0%, #B4DAF0 39%, #64B0F6 50%, #3C96FF 50%));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.signup_button {
+    border-radius: var(--borderRadius, 4px);
+    background: linear-gradient(90deg, #081057 30%, #B4DAF0 77.26%, #64B0F6 100%, #3C96FF 50%);
+    background-size: 300% auto;
+    color: white !important;
+    width: 180px;
+    transition: all 0.5s ease-in-out !important;
+  }
+  
+  .signup_button:hover {
+    background-position: 100% 0;
+  }
