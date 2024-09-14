@@ -13,7 +13,7 @@ export default function Layout() {
       <main>
         <Outlet />
       </main>
-      <footer>
+      <footer className={styles.footer}>
         <Footer />
       </footer>
     </div>

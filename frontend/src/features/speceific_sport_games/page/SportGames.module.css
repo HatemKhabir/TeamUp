@@ -1,0 +1,67 @@
+.sports_games{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.game_cards_container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 2fr)); /* Responsive grid */
+    gap: 20px;
+    width: 100%;
+    padding: 20px;
+
+}
+
+.game_card {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+    text-align: center;
+}
+
+.games_list_main{
+display: flex;
+flex-direction: column;
+align-content: center;
+width: 90%;
+
+}
+
+.games_page_infos{
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+}
+
+.sorting_button{
+    white-space: nowrap;
+    width: 110px;
+    color: black !important;
+    margin-right: 15px !important;
+    border-radius: 30px !important;
+    font-size: 12px !important;
+background-color: #F5F5F5 !important;
+box-shadow: 0px 1px 18px 0px rgba(0, 0, 0, 0.12), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 3px 5px -1px rgba(0, 0, 0, 0.20) !important;
+}
+
+.load_button{
+align-self: flex-end;
+width: fit-content;
+font-size: smaller !important;
+color: #696969 !important;
+margin-right: 15px !important;
+border-radius: 14px !important;
+border: 2px solid #4CC47C !important;
+background-color:  rgba(0, 0, 0, 0.12) !important;
+transition: all 0.3s ease-in !important;
+}
+
+.load_button:hover{
+    transform: scale(1.1);
+}
