@@ -16,7 +16,7 @@ function formatDateTime(dateString, timeString) {
     }).format(date);
   }
 
-function GameCards({ gameDetails }) {
+function GameCards({ gameDetails,joined }) {
     const formattedDateTime = formatDateTime(gameDetails.date, gameDetails.time);
 
   return (
@@ -36,7 +36,11 @@ function GameCards({ gameDetails }) {
       </Typography>
       <Typography  variant='subtitle2' sx={{fontWeight:'300'}} >{gameDetails.gamePrivacy}</Typography>
       </Box>
-      <Button className={styles.card_button} variant="contained" color="success">Join</Button>
+      {joined ?  <Button className={styles.card_button} variant="contained" color="success">Join</Button>
+    :<Box sx={{display:'flex',justifyContent:'flex-end'}}>
+      <Button className={styles.card_button} variant="contained" color="error">Leave</Button>
+    <Button className={styles.card_button} variant="contained" color="info">Lobby</Button>
+    </Box> }
     </Box>
   );
 }

@@ -9,6 +9,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import LandingPage from './features/home/LandingPage.jsx';
 import Login from './features/auth/page/Login.jsx';
 import SportGames from './features/speceific_sport_games/page/SportGames.jsx';
+import PublicGames from './features/public_games/page/PublicGames.jsx';
 
 const queryClient=new QueryClient({
   defaultOptions:{
@@ -30,6 +31,10 @@ const router=createBrowserRouter([
     },{
       path:':sportName',
       element:<SportGames/>
+    },
+    {
+      path:'public-games',
+      element:<PublicGames/>
     }
   ]
   },{

@@ -1,0 +1,10 @@
+.header_text{
+    display: flex;
+    padding-left: 2%;
+    flex-direction: column;
+    gap: 5px;
+}
+.header_title{
+    text-transform:uppercase !important;
+    
+}
