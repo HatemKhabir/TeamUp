@@ -2,7 +2,6 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import Layout from './layout/Layout.jsx'
-import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
@@ -10,6 +9,7 @@ import LandingPage from './features/home/LandingPage.jsx';
 import Login from './features/auth/page/Login.jsx';
 import SportGames from './features/speceific_sport_games/page/SportGames.jsx';
 import PublicGames from './features/public_games/page/PublicGames.jsx';
+import GameLobby from './features/game_lobby/page/GameLobby.jsx';
 
 const queryClient=new QueryClient({
   defaultOptions:{
@@ -35,6 +35,9 @@ const router=createBrowserRouter([
     {
       path:'public-games',
       element:<PublicGames/>
+    },{
+      path:'game-chat',
+      element:<GameLobby/>
     }
   ]
   },{

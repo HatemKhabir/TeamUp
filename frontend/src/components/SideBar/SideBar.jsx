@@ -9,7 +9,7 @@ import styles from './SideBar.module.css'
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function SideBar() {
+function SideBar({sportName}) {
   const navigate=useNavigate()
   const sportsLogos = [
     { sport: "volleyball", logo: volleyLogo },
@@ -19,7 +19,7 @@ function SideBar() {
     { sport: "padel", logo: padelLogo },
     { sport: "basketball", logo: basketLogo },
   ];
-  const [selectedSport, setSelectedSport] = useState(null); 
+  const [selectedSport, setSelectedSport] = useState(sportName); 
 
   const handleSelect = (sport) => {
     setSelectedSport(sport);
