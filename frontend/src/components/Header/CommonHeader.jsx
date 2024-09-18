@@ -1,10 +1,12 @@
 import { Box, Typography } from '@mui/material';
 import explorePage from '../../assets/explorePage.jpg'
+import chatPage from '../../assets/chatPage.png'
 import styles from './CommonHeader.module.css'
 
-function CommonHeader() {
+function CommonHeader({pageName}) {
     const headerImages = {
         'explore': explorePage,
+        'game-chat':chatPage
     };
     const imgUrl = headerImages['explore'] || null;
 
@@ -35,7 +37,7 @@ function CommonHeader() {
                         className={styles.header_title}
 
                     >
-                        Public Games
+                        {pageName=='explore'?'Public Games':pageName=='game-chat'?'Game Lobby':''}
                     </Typography>
                     </Box>
                   

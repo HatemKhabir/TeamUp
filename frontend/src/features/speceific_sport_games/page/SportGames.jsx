@@ -1,12 +1,10 @@
-import React from 'react'
 import { useParams } from 'react-router-dom'
 import Header from '../components/Header/Header'
 import styles from './SportGames.module.css'
 import GameCards from '../../../components/Cards/GameCards';
-import { Box, Button, Menu, MenuItem, Typography } from '@mui/material';
+import { Box, Button,Typography } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { useState } from 'react';
-import SideBar from '../../../components/side_bar/SideBar';
+import SideBar from '../../../components/SideBar/SideBar';
 
 
 
@@ -84,7 +82,7 @@ function SportGames() {
               <Header sportName={sportName} />
           </header>
           <Box sx={{display:'flex'}}>
-          <aside className={styles.games_list_aside}><SideBar/></aside>
+          <aside className={styles.games_list_aside}><SideBar sportName={sportName}/></aside>
           <main className={styles.games_list_main}>
             <Box className={styles.games_page_infos}>
               <Typography variant='body2' sx={{marginLeft:'20px'}}>{gameDetailsList.length} Games 

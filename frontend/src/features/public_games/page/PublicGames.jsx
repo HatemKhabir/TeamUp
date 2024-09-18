@@ -1,16 +1,13 @@
-import React from 'react'
-import { useParams } from 'react-router-dom'
 import styles from './PublicGames.module.css'
 import GameCards from '../../../components/Cards/GameCards';
-import { Box, Button, Menu, MenuItem, Typography } from '@mui/material';
+import { Box, Button,Typography } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import SideBar from '../../../components/side_bar/SideBar';
+import SideBar from '../../../components/SideBar/SideBar';
 import CommonHeader from '../../../components/Header/CommonHeader';
 
 
 
 function SportGames() {
-  const { sportName } = useParams();
  
   const gameDetailsList = [
       {
@@ -81,7 +78,7 @@ function SportGames() {
   return (
       <div className={styles.sports_games}>
           <header>
-              <CommonHeader/>
+              <CommonHeader pageName='explore'/>
           </header>
           <Box sx={{display:'flex'}}>
           <aside className={styles.games_list_aside}><SideBar/></aside>

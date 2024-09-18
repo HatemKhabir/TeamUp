@@ -19,7 +19,7 @@ function SideBar({landingPage=false}) {
     { sport: "padel", logo: padelLogo },
     { sport: "basketball", logo: basketLogo },
   ];
-  const [selectedSport, setSelectedSport] = useState(null); 
+  const [selectedSport, setSelectedSport] = useState(sportName); 
 
   const handleSelect = (sport) => {
     setSelectedSport(sport);
