@@ -31,10 +31,16 @@ function HostGame() {
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [privacy, setPrivacy] = useState("public");
-  const [playerCount, setPlayerCount] = useState(0);
-  const [gameFee, setGameFee] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null); // State to store selected image
-
+  const [image, setImage] = useState(null);
+  const [playerCount,setPlayerCount]=useState(0)
+  const [gameFee,setGameFee]=useState(0)
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImage(URL.createObjectURL(file)); // For previewing the image
+    }
+  };
   const sports = [
     { id: 1, sportName: "Football", sportPicture: footballHost },
     { id: 2, sportName: "Volleyball", sportPicture: volleyballHost },
