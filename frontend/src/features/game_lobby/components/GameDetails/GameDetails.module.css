@@ -1,0 +1,82 @@
+.game_details_box {
+  display: flex;
+  flex-direction: column;
+  height: 550px;
+  justify-content: space-between;
+}
+
+.details_players_list {
+  display: flex;
+  flex-wrap: wrap;
+  width: 50%;
+}
+
+.game_details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.card_button {
+  width: fit-content;
+  align-self: flex-end;
+  margin-right: 10px !important;
+  box-shadow:
+    0px 1px 10px 0px rgba(0, 0, 0, 0.12),
+    0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+    0px 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+.card_button_container{
+  display: flex;
+  justify-content: flex-end;
+}
+.game_details_img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.game_details_datetime {
+  margin: 5px !important;
+  font-size: 0.65em !important;
+}
+
+.game_details_location {
+  color: grey;
+  font-size: 0.7em !important;
+  padding-right: 10px !important;
+}
+
+.game_details_title {
+  font-size: 1em !important;
+  margin: 5px !important ;
+  margin-bottom: 0px !important;
+}
+
+.game_details_players {
+  font-size: 0.7em !important;
+  margin: 5px !important ;
+
+}
+
+.players_list {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 10px 10px 20px -20px ;
+  max-height: 220px; /* Adjust the height to control rows displayed */
+  overflow-y: auto;
+}
+
+.player_box {
+  width: 50%; /* Two players per row */
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.player_img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+}

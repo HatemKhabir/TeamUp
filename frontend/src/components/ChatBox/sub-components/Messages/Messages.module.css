@@ -1,0 +1,38 @@
+.sender_message_box{
+    display: flex;
+    height: 50px;
+    gap:10px;
+    margin: 20px;
+}
+.receiver_message_box{
+    display: flex;
+    flex-direction: row-reverse;
+    height: 50px;
+    gap:10px;
+    margin-left: -5px !important;
+    margin: 20px 15px;
+align-items: flex-end;    
+}
+.messages_image{
+    border-radius: 50%;
+    width: 40px;
+}
+
+.message_content_box_sender{
+    align-content: center;
+    border-radius: 10%;
+    padding: 10px;
+    max-width: 30%;
+    width: fit-content;
+    height: fit-content;
+    background-color:rgba(230, 120, 100, 0.4);
+}
+.message_content_box_receiver{
+    align-content: center;
+    border-radius: 10%;
+    padding: 10px;
+    max-width: 30%;
+    width: fit-content;
+    height: fit-content;
+    background-color:rgba(100, 230, 154, 0.4);
+}
