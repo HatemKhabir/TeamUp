@@ -11,6 +11,7 @@ import SportGames from './features/speceific_sport_games/page/SportGames.jsx';
 import PublicGames from './features/public_games/page/PublicGames.jsx';
 import GameLobby from './features/game_lobby/page/GameLobby.jsx';
 import PrivateChats from './features/friends_chat/pages/PrivateChats.jsx';
+import HostGame from './features/host_game/pages/HostGame.jsx';
 
 const queryClient=new QueryClient({
   defaultOptions:{
@@ -42,6 +43,9 @@ const router=createBrowserRouter([
     },{
       path:'friends-chat',
       element:<PrivateChats/>
+    },{
+      path:'host-game',
+      element:<HostGame/>
     }
   ]
   },{
