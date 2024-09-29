@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 .host_game_sports {
   display: flex;
   justify-content: space-evenly;
@@ -92,7 +92,7 @@ transition: all 0.3s ease-in;
     flex-wrap: wrap;
   }
 }
-=======
+
 .host_game_sports{
     display: flex;
     justify-content: space-evenly;
@@ -165,5 +165,3 @@ text-transform: uppercase;
     .host_game_info{
        flex-wrap: wrap;
     }
-}
->>>>>>> 4928737 (Layout : added first half of hosting a game details)
