@@ -1,0 +1,34 @@
+.player_modal {
+    display: flex; 
+    flex-direction: column;
+    width: 200px;
+    position: absolute;
+    left: 3%;
+    top: 80%;
+    border-radius: 10px;
+    background-color: beige;
+    height: 200px;
+    overflow-y: scroll;
+    text-align: center;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 1;
+    z-index: 999;
+}
+
+.player_modal_hidden {
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    opacity: 0;
+}
+
+
+
+.player_modal_img{
+    height: 50px;
+    width: 50px;
+}
+.player_modal_info{
+    display: flex;
+    height: 50px;
+    align-items: center;
+    border-bottom: 1px black solid;
+}

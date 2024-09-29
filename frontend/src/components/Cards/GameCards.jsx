@@ -1,8 +1,9 @@
 import { Box, Button, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import styles from "./GameCards.module.css";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { fontSize } from "@mui/system";
+import JoinGameModal from "../PlayersListModal/PlayersListModal";
 
 function formatDateTime(dateString, timeString) {
     const date = new Date(dateString + ' ' + timeString); // Combine date and time
@@ -18,6 +19,8 @@ function formatDateTime(dateString, timeString) {
 
 function GameCards({ gameDetails,joined }) {
     const formattedDateTime = formatDateTime(gameDetails.date, gameDetails.time);
+    const [openModal,setOpenModal]=useState(false)
+
 
   return (
     <Box className={styles.game_card}>
@@ -31,16 +34,17 @@ function GameCards({ gameDetails,joined }) {
         {gameDetails.location}
       </Typography>
       <Typography  variant="h6" >{gameDetails.gameTitle}</Typography>
-      <Typography  variant="body1" >
+      <Typography  variant="body1" sx={{cursor:'pointer',textDecorationLine:'underline'}} onClick={()=>{setOpenModal(!openModal)}}>
         {gameDetails.playersNumber}/{gameDetails.totalPlayers} Players Joined
       </Typography>
       <Typography  variant='subtitle2' sx={{fontWeight:'300'}} >{gameDetails.gamePrivacy}</Typography>
       </Box>
-      {joined ?  <Button className={styles.card_button} variant="contained" color="success">Join</Button>
+      {joined ?  <Button  className={styles.card_button} variant="contained" color="success">Join</Button>
     :<Box sx={{display:'flex',justifyContent:'flex-end'}}>
       <Button className={styles.card_button} variant="contained" color="error">Leave</Button>
     <Button className={styles.card_button} variant="contained" color="info">Lobby</Button>
     </Box> }
+    {openModal&&<JoinGameModal openModal={openModal}/>}
     </Box>
   );
 }
