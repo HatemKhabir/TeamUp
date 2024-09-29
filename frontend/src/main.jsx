@@ -10,6 +10,7 @@ import LandingPage from './features/home/LandingPage.jsx';
 import Login from './features/auth/page/Login.jsx';
 import SportGames from './features/speceific_sport_games/page/SportGames.jsx';
 import PublicGames from './features/public_games/page/PublicGames.jsx';
+import HostGame from './features/host_game/pages/HostGame.jsx';
 
 const queryClient=new QueryClient({
   defaultOptions:{
@@ -35,6 +36,9 @@ const router=createBrowserRouter([
     {
       path:'public-games',
       element:<PublicGames/>
+    },{
+      path:'host-game',
+      element:<HostGame/>
     }
   ]
   },{
