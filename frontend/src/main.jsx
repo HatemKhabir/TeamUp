@@ -44,7 +44,6 @@ const router=createBrowserRouter([
       path:'friends-chat',
       element:<PrivateChats/>
     },{
-
       path:'host-game',
       element:<HostGame/>
     }
