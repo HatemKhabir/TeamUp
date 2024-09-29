@@ -1,2 +1,17 @@
 .game_lobby{
+    display: flex;
+}
+.game_details{
+    width: 30%;
+}
+
+@media screen and (max-width:420px) {
+    .game_lobby{
+        flex-direction: column;
+        gap: 40px;;
+    }
+    .game_details{
+        width: 100%;
+        
+    }
 }

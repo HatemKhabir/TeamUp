@@ -57,11 +57,11 @@ box-shadow: 0px 1px 18px 0px rgba(0, 0, 0, 0.12), 0px 6px 10px 0px rgba(0, 0, 0,
 }
 
 .load_button{
-align-self: flex-end;
+align-self: center;
 width: fit-content;
 font-size: smaller !important;
 color: #696969 !important;
-margin-right: 15px !important;
+margin-right: 50px !important;
 border-radius: 14px !important;
 border: 2px solid #4CC47C !important;
 background-color:  rgba(0, 0, 0, 0.12) !important;

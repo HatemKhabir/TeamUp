@@ -31,9 +31,11 @@ export default function MessageInput({}) {
       <div className={styles.buttonContainer}>
         <div className={styles.emoji}>
           <MoodIcon onClick={handleEmojiPickerhideShow} />
-          {showEmojiPicker &&   <div className={styles.emojiModal}>
-            <Picker onEmojiClick={(emoji, e) => handleEmojiClick(emoji, e)} />
-          </div>}
+          {showEmojiPicker &&    <div className={styles.emojiModal}>
+        <div className={styles.pickerWrapper}>
+          <Picker onEmojiClick={handleEmojiClick} />
+        </div>
+      </div>}
         </div>
       </div>
       <form className={styles.inputContainer} onSubmit={sendChat}>
