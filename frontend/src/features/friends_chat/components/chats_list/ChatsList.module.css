@@ -1,0 +1,29 @@
+.friend_box{
+     display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 100%;
+    margin: 15px 0px;
+    transition: all 0.3s ease-in-out;
+    
+}
+.friend_image{
+    width: 40px;
+    border-radius: 50%;
+    height: 40px;
+}
+.chats_list_title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px;
+}
+.new_message_logo{
+    width:60px;
+}
+
+.friend_box:hover{
+    cursor: pointer;
+    background-color:rgba(105, 187, 172, 0.301);
+    
+}

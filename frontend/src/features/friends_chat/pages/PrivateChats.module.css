@@ -1,0 +1,20 @@
+.private_chats{
+    display: flex;
+
+}
+
+.friends_list_aside{
+    width: 30%;
+    max-height: 550px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+@media screen and (max-width:420px) {
+    .private_chats{
+        flex-direction: column;
+    }
+    .friends_list_aside{
+        width: 100%;
+    }
+}
