@@ -192,26 +192,32 @@ function HostGame() {
               </Box>
               <Box
                 sx={{
-                    border: '2px dashed lightgrey',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100px', // Set a height for the upload box
-                    marginTop: '16px', // Space between the radio group and upload box
-                    cursor: 'pointer',
-                    '&:hover': {
-                        borderColor: 'blue', // Change border color on hover
-                    },
+                  border: "2px dashed lightgrey",
+                  borderRadius: "8px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100px", // Set a height for the upload box
+                  marginTop: "16px", // Space between the radio group and upload box
+                  cursor: "pointer",
+                  backgroundImage: selectedImage
+                    ? `url(${selectedImage})`
+                    : "none", // Display the uploaded image
+                  backgroundSize: "contain",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center",
+                  "&:hover": {
+                    borderColor: "blue", // Change border color on hover
+                  },
                 }}
-                onClick={() => document.getElementById('image-upload').click()} // Click to open file dialog
-            >
+                onClick={() => document.getElementById("image-upload").click()} // Click to open file dialog
+              >
                 <input
-                    id="image-upload"
-                    type="file"
-                    style={{ display: 'none' }}
-                    accept="image/*"
-                    onChange={(e) => console.log(e.target.files)} // Handle file change
+                  id="image-upload"
+                  type="file"
+                  style={{ display: "none" }}
+                  accept="image/*"
+                  onChange={handleImageChange} // Handle file change
                 />
                 {!selectedImage && ( // Display the upload icon and text only if no image is selected
                   <Typography
