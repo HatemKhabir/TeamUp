@@ -1,73 +1,93 @@
-.host_game_sports{
-    display: flex;
-    justify-content: space-evenly;
+.host_game_sports {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.host_game_sport_box {
+  border-radius: 38px;
+  cursor: pointer;
+  width: 120px;
+  height: 120px;
+  align-content: center;
+  text-align: center;
+  background: lightgray 1.5px -121.273px / 100% 160.531% no-repeat;
+  box-shadow: 9px 12px 7.4px 0px rgba(0, 0, 0, 0.24);
+  transition: all 0.2s ease-in;
+}
+
+.host_game_sport_box:hover {
+  transform: scale(1.06);
+}
+
+.host_game_sport_title {
+  color: #fff;
+  font-size: 1.2em !important;
+  font-weight: 700 !important;
+  line-height: 120% !important; /* 38.4px */
+  letter-spacing: -0.5px !important;
+  text-transform: uppercase;
+}
+
+.host_game_main {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  gap: 10px;
+}
+
+.host_game_info {
+  display: flex;
+  text-align: center;
+  margin-top: 10px;
+  flex-wrap: nowrap;
+  gap: 15px;
+}
+
+.host_game_info1 {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  flex-wrap: wrap;
+  padding: 1em;
+  gap: 1em;
+}
+
+.host_game_info_privacy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.inputLabel {
+  text-align: left;
+}
+
+.host_game_button {
+  border-radius: 4px !important;
+  width: fit-content;
+  color: var(--success-main, #2e7d32) !important;
+  align-self:center;
+  font-size: 14px !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  line-height: 24px !important; /* 171.429% */
+  letter-spacing: 0.4px !important;
+  text-transform: uppercase !important;
+  border: 1px solid rgba(46, 125, 50, 0.5) !important;
+  background: rgba(46, 125, 50, 0.04) !important;
+transition: all 0.3s ease-in; 
+}
+
+.host_game_button:hover{
+    background: rgba(46, 125, 50, 0.283) !important;
+
+}
+@media screen and (max-width: 540px) {
+  .host_game_info {
     flex-wrap: wrap;
-    gap:10px
-}
-
-.host_game_sport_box{
-    border-radius: 38px;
-    cursor: pointer;
-    width: 120px;
-    height: 120px;
-    align-content: center;
-    text-align: center;
-background:  lightgray 1.5px -121.273px / 100% 160.531% no-repeat;
-box-shadow: 9px 12px 7.4px 0px rgba(0, 0, 0, 0.24);
-transition: all 0.2s ease-in;
-}
-
-.host_game_sport_box:hover{
-    transform: scale(1.06);
-}
-
-.host_game_sport_title{
-    color: #FFF ;
-font-size: 1.2em !important;
-font-weight: 700 !important;
-line-height: 120% !important; /* 38.4px */
-letter-spacing: -0.5px !important;
-text-transform: uppercase;
-}
-
-.host_game_main{
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    gap: 10px;
-}
-
-.host_game_info{
-    display: flex;
-    text-align: center;
-    margin-top: 10px;
-    flex-wrap: nowrap;
-    gap: 15px;
-}
-
-.host_game_info1{
-    display: flex;
-    flex-direction: column;
-    border: 1px solid black;
-    flex-wrap: wrap;
-    padding: 1em;
-    gap: 1em
-}
-
-.host_game_info_privacy{
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    text-align: left;
-}
-
-.inputLabel{
-    text-align: left;
-}
-
-@media screen and (max-width:540px) {
-    .host_game_info{
-       flex-wrap: wrap;
-    }
+  }
 }
