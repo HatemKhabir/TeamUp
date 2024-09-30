@@ -1,4 +1,3 @@
-
 .host_game_sports {
   display: flex;
   justify-content: space-evenly;
@@ -97,8 +96,8 @@ transition: all 0.3s ease-in;
     display: flex;
     justify-content: space-evenly;
     flex-wrap: wrap;
-    gap:10px
-}
+  }
+
 
 .host_game_sport_box{
     border-radius: 38px;
@@ -165,3 +164,4 @@ text-transform: uppercase;
     .host_game_info{
        flex-wrap: wrap;
     }
+  }
