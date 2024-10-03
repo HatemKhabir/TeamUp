@@ -6,7 +6,6 @@ function CommonHeader() {
     const headerImages = {
         'explore': explorePage,
     };
-
     const imgUrl = headerImages['explore'] || null;
 
     return (

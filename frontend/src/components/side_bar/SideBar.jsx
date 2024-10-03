@@ -9,7 +9,7 @@ import styles from './SideBar.module.css'
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function SideBar() {
+function SideBar({landingPage=false}) {
   const navigate=useNavigate()
   const sportsLogos = [
     { sport: "volleyball", logo: volleyLogo },
@@ -27,7 +27,7 @@ function SideBar() {
   };
 
   return (
-    <Box className={styles.sidebar}>
+    <Box className={landingPage?styles.landingPage:styles.sidebar}>
       {sportsLogos.map((sports, index) => (
         <Box
           key={index}

@@ -7,8 +7,11 @@ import TextsmsIcon from '@mui/icons-material/Textsms';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { color } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 function Navbar() {
+  const nav=useNavigate()
   const [isAuth, setIsAuth] = useState(false);
+  
   return (
     <div className={styles.navbar}>
       <div className={styles.logo}>
@@ -31,25 +34,31 @@ function Navbar() {
       ) : (
         <div className={styles.logged_in_elements}>
           <div className={styles.logged_in_texts}>
-          <Typography className={styles.logged_in_text} variant="body1">
-            HOST GAME
-          </Typography>
-          <span className={styles.auth_divider}>|</span>
-          <Typography className={styles.logged_in_text} variant="body1">
-            MY GAMES
-          </Typography>
+            {/* Link for Host Game */}
+            <Typography className={styles.logged_in_text} variant="body1">
+              <Link to="/host-game" className={styles.link}>HOST GAME</Link>
+            </Typography>
+            <span className={styles.auth_divider}>|</span>
+            {/* Link for My Games */}
+            <Typography className={styles.logged_in_text} variant="body1">
+              <Link to="/" className={styles.link}>MY GAMES</Link>
+            </Typography>
           </div>
           <div className={styles.logged_in_buttons}>
-          <Badge badgeContent={4} color="error" sx={{width:"fit-content"}}>
-          <TextsmsIcon sx={{color:"white"}}/>
-          </Badge>
-            <Badge badgeContent={0} color="error" sx={{width:"fit-content"}} >
-            <NotificationsIcon sx={{color:"white"}}/>
+            {/* Icon with Badge for Messages */}
+            <Link to="/friends-chat">
+      <Badge badgeContent={4} color="error" sx={{ width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in' }} className={styles.navbar_logos}>
+        <TextsmsIcon sx={{ color: "white" }} />
+      </Badge>
+    </Link>
+
+            <Badge badgeContent={0} color="error" sx={{ width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in' }} className={styles.navbar_logos}>
+              <NotificationsIcon sx={{ color: "white" }} />
             </Badge>
-            <AccountCircleIcon sx={{color:"white"}}/>
-            
-            </div> 
+            <AccountCircleIcon sx={{ color:'white', width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in' }} className={styles.navbar_logos}/>
+          </div>
         </div>
+        
       )}
     </div>
   );

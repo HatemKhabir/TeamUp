@@ -96,3 +96,12 @@ scale:1.1;
 .navbar_search{
  width: 500px;
 }
+
+.link {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+
+  .navbar_logos:hover{
+    transform: scale(1.1);
+  }

@@ -6,11 +6,11 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
-import LandingPage from './features/home/LandingPage.jsx';
 import Login from './features/auth/page/Login.jsx';
 import SportGames from './features/speceific_sport_games/page/SportGames.jsx';
 import PublicGames from './features/public_games/page/PublicGames.jsx';
 import HostGame from './features/host_game/pages/HostGame.jsx';
+import LandingPage from './features/home/pages/LandingPage.jsx';
 
 const queryClient=new QueryClient({
   defaultOptions:{
