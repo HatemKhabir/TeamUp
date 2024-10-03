@@ -27,7 +27,7 @@ function SideBar({landingPage=false}) {
   };
 
   return (
-    <Box className={styles.sidebar}>
+    <Box className={landingPage?styles.landingPage:styles.sidebar}>
       {sportsLogos.map((sports, index) => (
         <Box
           key={index}
