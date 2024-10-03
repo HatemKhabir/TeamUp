@@ -9,6 +9,7 @@ import styles from './SideBar.module.css'
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 function SideBar({landingPage=false}) {
   const navigate=useNavigate()
   const sportsLogos = [

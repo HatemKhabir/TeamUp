@@ -8,7 +8,10 @@ function CommonHeader({pageName}) {
         'explore': explorePage,
         'game-chat':chatPage
     };
+
+
     const imgUrl = headerImages['explore'] || null;
+
 
     return (
         <div className={styles.header}>
