@@ -13,7 +13,6 @@ import PrivateChats from './features/friends_chat/pages/PrivateChats.jsx';
 import HostGame from './features/host_game/pages/HostGame.jsx';
 import LandingPage from './features/home/pages/LandingPage.jsx';
 
-
 const queryClient=new QueryClient({
   defaultOptions:{
     queries:{
