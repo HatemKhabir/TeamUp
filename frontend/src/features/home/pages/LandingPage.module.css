@@ -1,0 +1,17 @@
+.landing_page{
+    display: flex;
+    flex-direction: column;
+    gap:15px;
+}
+.landing_page_header{
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+.landing_page_horizontal_stack{
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    padding: 0px 15px;
+}
+

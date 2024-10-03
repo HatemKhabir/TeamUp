@@ -1,0 +1,25 @@
+.nextArrow, .prevArrow {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    transform: translateY(-50%);
+    font-size: 24px;
+  }
+  .nextArrow {
+    width: fit-content;
+left: 97%;  
+}
+  
+  .prevArrow {
+    width: fit-content;
+right: 97%;}
+  
+.carousel_styles{
+    width: 100%;
+    margin-bottom: 30px;
+    height: 350px;
+    overflow-y: visible; /* Ensure horizontal overflow is visible within the slider */
+    padding: 0 50px;
+    
+}

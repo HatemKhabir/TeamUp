@@ -5,12 +5,13 @@ import Layout from './layout/Layout.jsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
-import LandingPage from './features/home/LandingPage.jsx';
 import Login from './features/auth/page/Login.jsx';
 import SportGames from './features/speceific_sport_games/page/SportGames.jsx';
 import PublicGames from './features/public_games/page/PublicGames.jsx';
 import GameLobby from './features/game_lobby/page/GameLobby.jsx';
 import PrivateChats from './features/friends_chat/pages/PrivateChats.jsx';
+import HostGame from './features/host_game/pages/HostGame.jsx';
+import LandingPage from './features/home/pages/LandingPage.jsx';
 
 const queryClient=new QueryClient({
   defaultOptions:{
@@ -42,6 +43,9 @@ const router=createBrowserRouter([
     },{
       path:'friends-chat',
       element:<PrivateChats/>
+    },{
+      path:'host-game',
+      element:<HostGame/>
     }
   ]
   },{
