@@ -17,7 +17,7 @@ function formatDateTime(dateString, timeString) {
     }).format(date);
   }
 
-function GameCards({ gameDetails,joined }) {
+function GameCards({ gameDetails }) {
     const formattedDateTime = formatDateTime(gameDetails.date, gameDetails.time);
     const [openModal,setOpenModal]=useState(false)
 
@@ -39,7 +39,7 @@ function GameCards({ gameDetails,joined }) {
       </Typography>
       <Typography  variant='subtitle2' sx={{fontWeight:'300'}} >{gameDetails.gamePrivacy}</Typography>
       </Box>
-      {joined ?  <Button  className={styles.card_button} variant="contained" color="success">Join</Button>
+      {gameDetails.joined ?  <Button  className={styles.card_button} variant="contained" color="success">Join</Button>
     :<Box sx={{display:'flex',justifyContent:'flex-end'}}>
       <Button className={styles.card_button} variant="contained" color="error">Leave</Button>
     <Button className={styles.card_button} variant="contained" color="info">Lobby</Button>
