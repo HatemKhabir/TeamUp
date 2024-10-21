@@ -12,8 +12,6 @@ import GameLobby from './features/game_lobby/page/GameLobby.jsx';
 import PrivateChats from './features/friends_chat/pages/PrivateChats.jsx';
 import HostGame from './features/host_game/pages/HostGame.jsx';
 import LandingPage from './features/home/pages/LandingPage.jsx';
-import { AuthProvider } from './contexts/AuthProvider.jsx';
-import ProtectedRoute from './layout/protected-route/ProtectedRoute.jsx';
 
 const queryClient=new QueryClient({
   defaultOptions:{

@@ -1,0 +1,26 @@
+.player_profile_picture{
+    width: 70px;
+    height: 70px;
+    background-color: azure;
+    border-radius: 50%;
+}
+
+.player_profile_name{
+    position: absolute;
+    display: flex;
+    top: 40%;
+    left: 2%; 
+    align-items: center;
+    gap: 20px;
+}
+
+.player_profile_details{
+    background-color: rgba(0, 0, 0, 0.479);
+    width: 17%;
+    padding: 5px;
+}
+
+.player_profile_country{
+    margin-left: 10px;
+
+}

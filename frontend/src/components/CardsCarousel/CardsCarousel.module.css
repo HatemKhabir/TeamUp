@@ -8,18 +8,23 @@
   }
   .nextArrow {
     width: fit-content;
-left: 97%;  
+left: 96%;  
 }
   
   .prevArrow {
     width: fit-content;
-right: 97%;}
+right: 99%;}
   
 .carousel_styles{
     width: 100%;
     margin-bottom: 30px;
     height: 350px;
     overflow-y: visible; /* Ensure horizontal overflow is visible within the slider */
-    padding: 0 50px;
-    
+    margin-left: 30px;
+}
+
+.slickdots{
+  width: fit-content;
+  left: 46%;
+  margin-bottom: 10px;
 }

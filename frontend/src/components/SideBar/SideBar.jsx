@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 
-function SideBar({landingPage=false}) {
+function SideBar({landingPage=false,sportName}) {
   const navigate=useNavigate()
   const sportsLogos = [
     { sport: "volleyball", logo: volleyLogo },

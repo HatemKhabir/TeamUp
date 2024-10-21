@@ -5,23 +5,39 @@ import { Box } from "@mui/material";
 import styles from './CardsCarousel.module.css'
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';import GameCards from "../Cards/GameCards";
+import { breakpoints } from "@mui/system";
 const CardsCarousel = ({ gameDetailsList }) => {
   const settings = {
-    dots: false, // Pagination dots
+    dots: true, // Pagination dots
     infinite: false, // Carousel won't loop
     speed: 500, // Transition speed
     slidesToShow: 4, // Number of cards visible at once
     slidesToScroll: 1, // Number of cards to scroll at once
     nextArrow: <NextArrow />, // Custom next arrow
-    prevArrow: <PrevArrow />, // Custom previous arrow
+    prevArrow: <PrevArrow />,
+    dotsClass:`slick-dots ${styles.slickdots}`, // Custom previous arrow
     responsive: [
       {
-        breakpoint: 768, // For mobile
+        breakpoint: 920, // For mobile
         settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
+          slidesToShow: 2,
+          slidesToScroll: 2,
         }
-      }
+      },
+      {
+        breakpoint:1240,
+        settings:{
+          slidesToShow:3,
+          slidesToScroll:3
+        }
+      }, {
+        breakpoint:624,
+        settings:{
+          slidesToShow:1,
+          slidesToScroll:3
+        }
+      },
+     
     ]
   };
 
