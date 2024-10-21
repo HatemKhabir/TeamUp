@@ -12,6 +12,8 @@ import GameLobby from './features/game_lobby/page/GameLobby.jsx';
 import PrivateChats from './features/friends_chat/pages/PrivateChats.jsx';
 import HostGame from './features/host_game/pages/HostGame.jsx';
 import LandingPage from './features/home/pages/LandingPage.jsx';
+import { AuthProvider } from './contexts/AuthProvider.jsx';
+import ProtectedRoute from './layout/protected-route/ProtectedRoute.jsx';
 
 const queryClient=new QueryClient({
   defaultOptions:{
@@ -23,41 +25,59 @@ const queryClient=new QueryClient({
 })
 
 //loader to be added , it allows to run functions before the page finish rendering and you can access the loaded data with useLoaderData hook 
-const router=createBrowserRouter([
+const router = createBrowserRouter([
   {
-    path:'/',
-    element:<Layout/>,
-    children:[
+    path: '/',
+    element: <Layout />,
+    children: [
       {
-      index:true,element:<LandingPage/>
-    },{
-      path:':sportName',
-      element:<SportGames/>
-    },
-    {
-      path:'public-games',
-      element:<PublicGames/>
-    },{
-      path:'game-chat',
-      element:<GameLobby/>
-    },{
-      path:'friends-chat',
-      element:<PrivateChats/>
-    },{
-      path:'host-game',
-      element:<HostGame/>
-    }
-  ]
-  },{
-    path:'/auth',
-    element:<Login/>
+        index: true,
+        element: <LandingPage />,
+      },
+      {
+        path: ':sportName',
+        element: <SportGames />,
+      },
+      {
+        path: 'public-games',
+        element: <PublicGames />,
+      },
+      {
+        path: 'game-chat',
+        element: (
+          <ProtectedRoute>
+            <GameLobby />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'friends-chat',
+        element: (
+          <ProtectedRoute>
+            <PrivateChats />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'host-game',
+        element: <HostGame />,
+      },
+    ],
   },
-])
+  {
+    path: '/auth',
+    element: <Login />,
+  },
+]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-    <RouterProvider router={router}/>
-    </QueryClientProvider>
-  </StrictMode>,
+  <QueryClientProvider client={queryClient}>
+    <RouterProvider router={router}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </RouterProvider>
+  </QueryClientProvider>
+</StrictMode>
 )

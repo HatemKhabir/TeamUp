@@ -1,11 +1,9 @@
-import React from 'react'
-import SideBar from '../../../components/side_bar/SideBar'
 import styles from './LandingPage.module.css'
 import { Box, Button, InputAdornment, Typography } from '@mui/material'
 import Add from '@mui/icons-material/Add'
-import LocationOn from '@mui/icons-material/LocationOn'
-import GameCards from '../../../components/Cards/GameCards'
+
 import CardsCarousel from '../../../components/CardsCarousel/CardsCarousel'
+import SideBar from '../../../components/SideBar/SideBar'
 
 function LandingPage() {
   const gameDetailsList = [
