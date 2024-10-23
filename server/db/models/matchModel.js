@@ -10,15 +10,23 @@ const matchSchema = mongoose.Schema({
   hostUsername:{
     type:String,
     lowercase:true},
+  sportType:{
+    type:String,
+    required:true
+  },
   eventTitle: String,
-  playersList: [],
+  eventDescription:String,
+  playersList: [{type:Schema.Types.ObjectId,
+    ref:'Player'
+  }],
   status: Boolean,
   location:String,
   date: Date,
   playersNumber:Number,
+  price:Number,
   // considering using "timestamp" --not sure though
-  time: String,
-})
+},
+{ timestamps: true })
 const Match = mongoose.model("Match", matchSchema, "matches")
 
 

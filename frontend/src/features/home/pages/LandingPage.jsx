@@ -4,8 +4,11 @@ import Add from '@mui/icons-material/Add'
 
 import CardsCarousel from '../../../components/CardsCarousel/CardsCarousel'
 import SideBar from '../../../components/SideBar/SideBar'
+import { useContext } from 'react'
+import { AuthContext } from '../../../contexts/AuthProvider'
 
 function LandingPage() {
+  const {userAuth,isAuth}=useContext(AuthContext)
   const gameDetailsList = [
     {
         locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',

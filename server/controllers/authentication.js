@@ -7,17 +7,13 @@ import Player from "../db/models/playerModel.js"
 //registering doesn't need jwt , so it will be added in login
 export const register = async (req, res) => {
   try {
-    let { username, password } = req.body
+    let { username,email,password } = req.body
     username = username.toLowerCase();
 
     const newPlayer = new Player({
       username,
+      email,
       password,
-      reviews: {},
-      record: {
-        Wins: 0,
-        Losses: 0,
-      },
       availability: true,
     })
     const savedPlayer = await newPlayer.save()
@@ -35,10 +31,10 @@ export const register = async (req, res) => {
 //logging and assigning the jwt token
 export const login = async (req, res) => {
   try {
-    const { username, password } = req.body
-    const player = await Player.findOne({ username: username })
+    const { email, password } = req.body
+    const player = await Player.findOne({ email: email }).populate('matchJoined')
     if (!player) {
-      return res.status(400).json({ msg: "Username doesn't exist!" })
+      return res.status(400).json({ msg: "Email doesn't exist!" })
     }
 
     // Check if the password is incorrect

@@ -12,6 +12,8 @@ import GameLobby from './features/game_lobby/page/GameLobby.jsx';
 import PrivateChats from './features/friends_chat/pages/PrivateChats.jsx';
 import HostGame from './features/host_game/pages/HostGame.jsx';
 import LandingPage from './features/home/pages/LandingPage.jsx';
+import ProtectedRoute from './layout/protected-route/ProtectedRoute.jsx';
+import { AuthProvider } from './contexts/AuthProvider.jsx';
 
 const queryClient=new QueryClient({
   defaultOptions:{
@@ -58,7 +60,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'host-game',
-        element: <HostGame />,
+        element:  (
+          <ProtectedRoute>
+            <HostGame />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
@@ -71,7 +77,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
   <QueryClientProvider client={queryClient}>
-    <RouterProvider router={router}>
+      <RouterProvider router={router}>
       <AuthProvider>
         <RouterProvider router={router} />
       </AuthProvider>

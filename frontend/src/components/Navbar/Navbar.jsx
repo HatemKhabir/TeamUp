@@ -23,25 +23,27 @@ function Navbar() {
       {!isAuth ? (
         <div className={styles.nav_buttons}>
           <Link
+          href='/auth'
             className={styles.auth_button}
-            onClick={() => setIsAuth(!isAuth)}
           >
             Login
           </Link>
           <span className={styles.auth_divider}>|</span>
-          <Link className={styles.auth_button}>SignUp</Link>
+          <Link 
+          href='/auth'
+          className={styles.auth_button}>SignUp</Link>
         </div>
       ) : (
         <div className={styles.logged_in_elements}>
           <div className={styles.logged_in_texts}>
             {/* Link for Host Game */}
             <Typography className={styles.logged_in_text} variant="body1">
-              <Link to="/host-game" className={styles.link}>HOST GAME</Link>
+              <Link href="/host-game" className={styles.link}>HOST GAME</Link>
             </Typography>
             <span className={styles.auth_divider}>|</span>
             {/* Link for My Games */}
             <Typography className={styles.logged_in_text} variant="body1">
-              <Link to="/" className={styles.link}>MY GAMES</Link>
+              <Link href="/" className={styles.link}>MY GAMES</Link>
             </Typography>
           </div>
           <div className={styles.logged_in_buttons}>

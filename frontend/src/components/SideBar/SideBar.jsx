@@ -7,10 +7,10 @@ import tennisLogo from "../../assets/tennisLogo.png";
 import padelLogo from "../../assets/padelLogo.png";
 import styles from './SideBar.module.css'
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 
-function SideBar({landingPage=false,sportName}) {
+function SideBar({landingPage=false}) {
   const navigate=useNavigate()
   const sportsLogos = [
     { sport: "volleyball", logo: volleyLogo },
@@ -20,7 +20,8 @@ function SideBar({landingPage=false,sportName}) {
     { sport: "padel", logo: padelLogo },
     { sport: "basketball", logo: basketLogo },
   ];
-  const [selectedSport, setSelectedSport] = useState(); 
+  const {sportName}=useParams()
+  const [selectedSport, setSelectedSport] = useState(sportName?sportName:''); 
 
   const handleSelect = (sport) => {
     setSelectedSport(sport);
