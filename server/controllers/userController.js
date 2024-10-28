@@ -193,3 +193,19 @@ export const declineFriendship = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+
+export const getPlayerGamesById=async(req,res)=>{
+  const playerId=req.query.id
+  console.log(req.query)
+  try{
+  const player=await Player.findOne({_id:playerId}).populate('matchJoined')
+  if (player)
+    return res.status(201).json(player.matchJoined)
+  return res.status(201).json('player id not found');  
+  }catch(e){
+    console.log(e);
+    res.status(500).json({e});
+  }
+
+}

@@ -1,27 +1,44 @@
-import { useState } from 'react';
-import { TextField, Button, Typography } from '@mui/material';
-import styles from './Signin.module.css'; // Ensure your styles are correct
-import { signInApi } from '../services/authApis';
+import { useContext, useState } from "react";
+import { TextField, Button, Typography } from "@mui/material";
+import styles from "./Signin.module.css";
+import { signInApi } from "../services/authApis";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AuthContext } from "../../../contexts/AuthProvider";
+import { redirect, useNavigate } from "react-router-dom";
 
 export default function Signin({ setIsLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSignIn = async () => {
     setLoading(true);
-    setError('');
+    setError("");
     try {
-      const response = await signInApi(email, password);
-      console.log('Login successful:', response.data);
-      // Handle successful login (e.g., set auth token, redirect user)
+      const response = await auth.signIn(email, password); 
+      if (response?.error) {
+        setError(response.error);
+      } else toast.success("Login successful!", { 
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+        setTimeout(() => {
+        navigate('/'); 
+      }, 2000);
     } catch (err) {
-      setError('Invalid email or password');
+      setError("Invalid email or password");
     }
     setLoading(false);
   };
-
   return (
     <div className={styles.auth_login_form}>
       <Typography className={styles.auth_title} variant="h4">
@@ -42,10 +59,13 @@ export default function Signin({ setIsLogin }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      {error && <Typography color="error">{error}</Typography>}
-      <Typography variant="body1" sx={{ width: 'fit-content' }}>
-        Don't have an account?{' '}
-        <span className={styles.auth_register} onClick={() => setIsLogin(false)}>
+      {error && <Typography color="error" sx={{textAlign:'center'}}>{error}</Typography>}
+      <Typography variant="body1" sx={{ width: "fit-content" }}>
+        Don't have an account?{" "}
+        <span
+          className={styles.auth_register}
+          onClick={() => setIsLogin(false)}
+        >
           Sign-up
         </span>
       </Typography>
@@ -54,8 +74,20 @@ export default function Signin({ setIsLogin }) {
         onClick={handleSignIn}
         disabled={loading}
       >
-        {loading ? 'Signing In...' : 'SIGN IN'}
+        {loading ? "Signing In..." : "SIGN IN"}
       </Button>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

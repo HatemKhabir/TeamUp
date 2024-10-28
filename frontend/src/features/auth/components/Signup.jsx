@@ -1,30 +1,41 @@
-import { useState } from 'react';
-import { TextField, Button, Typography } from '@mui/material';
-import styles from './Signup.module.css'; // Ensure your styles are correct
-import { signUp } from '../services/authApis';
+import { useState } from "react";
+import { TextField, Button, Typography } from "@mui/material";
+import styles from "./Signup.module.css"; // Ensure your styles are correct
+import { signUp } from "../services/authApis";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Signup({ setIsLogin }) {
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSignUp = async () => {
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
     try {
       const response = await signUp(email, username, password);
-      console.log('Signup successful:', response.data);
-      // Handle successful signup (e.g., set auth token, redirect user)
+      toast.success("Signup Successful ! Please Login", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        onClose: () => setIsLogin(true),
+      });
     } catch (err) {
-      setError('Failed to sign up');
+      setError(err.response.data.msg);
     }
     setLoading(false);
   };
@@ -64,9 +75,13 @@ export default function Signup({ setIsLogin }) {
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
-      {error && <Typography color="error">{error}</Typography>}
-      <Typography variant="body1" sx={{ width: 'fit-content' }}>
-        Already have an account?{' '}
+      {error && (
+        <Typography color="error" sx={{ textAlign: "center" }}>
+          {error}
+        </Typography>
+      )}
+      <Typography variant="body1" sx={{ width: "fit-content" }}>
+        Already have an account?{" "}
         <span className={styles.auth_signin} onClick={() => setIsLogin(true)}>
           Sign-in
         </span>
@@ -76,8 +91,20 @@ export default function Signup({ setIsLogin }) {
         onClick={handleSignUp}
         disabled={loading}
       >
-        {loading ? 'Signing Up...' : 'SIGN UP'}
+        {loading ? "Signing Up..." : "SIGN UP"}
       </Button>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

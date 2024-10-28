@@ -4,20 +4,14 @@ import mongoose from "mongoose"
 import Player from "../db/models/playerModel.js"
 
 //generate matchID
-async function generateMatchID() {
-  let generatedID = ""
-  let exist = true
-  while (exist) {
-    for (let i = 0; i < 7; i++) generatedID += characters.charAt(Math.floor(Math.random() * 7))
-    exist = await mongoose.model("Match").findOne({ matchID: generatedID })
-  }
-  return generatedID
+function generateGameCode() {
+  return Math.random().toString(36).substring(2, 8).toUpperCase(); // Generates a 6-character random string
 }
 
 export const createEvent = async (req, res) => {
   try {
     let newEvent = new Match({
-      matchID: await generateMatchID(),
+      gameCode: generateGameCode(),
       eventTitle: req.body.eventTitle,
       hostUsername: req.body.hostUsername,
       playersList: [],

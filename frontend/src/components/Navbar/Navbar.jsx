@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styles from "./Navbar.module.css";
-import { Badge, Button, Link, Typography } from "@mui/material";
+import { Badge, Button, Link, Menu, MenuItem, Typography } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import NavbarSearch from "./Navbar-Search/NavbarSearch";
 import TextsmsIcon from '@mui/icons-material/Textsms';
@@ -8,14 +8,35 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { color } from "@mui/system";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthProvider";
 function Navbar() {
   const nav=useNavigate()
-  const [isAuth, setIsAuth] = useState(false);
-  
+  const [isAuth, setIsAuth] = useState(localStorage.getItem('userAuth')?true:false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const auth=useContext(AuthContext)
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+   
+  const handleLogout=async()=>{
+  try{
+   const response=await auth.signOut()
+   console.log(response)
+   nav('/auth')
+  }catch(e){
+    console.log(e.message)
+  }
+  }
+
+
   return (
     <div className={styles.navbar}>
       <div className={styles.logo}>
-        <h1 className={styles.logo_text}>TeamUp</h1>
+        <h1 onClick={()=>nav('/')} className={styles.logo_text}>TeamUp</h1>
       </div>
       <div className={styles.navbar_search}>
         <NavbarSearch />
@@ -57,7 +78,24 @@ function Navbar() {
             <Badge badgeContent={0} color="error" sx={{ width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in' }} className={styles.navbar_logos}>
               <NotificationsIcon sx={{ color: "white" }} />
             </Badge>
-            <AccountCircleIcon sx={{ color:'white', width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in' }} className={styles.navbar_logos}/>
+            <AccountCircleIcon    aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+         sx={{ color:'white', width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in' }} className={styles.navbar_logos}/>
+            <Menu
+        className={styles.profile_menu}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      </Menu>
           </div>
         </div>
         

@@ -1,19 +1,23 @@
 import mongoose, { Schema } from "mongoose";
+
 const chatSchema = mongoose.Schema(
   {
-    eventId:{
-      type:Schema.Types.ObjectId,
-      ref:"Match",
+    eventId: {
+      type: Schema.Types.ObjectId,
+      ref: "Match",
+      required: function() { return this.isGroupChat; } // Only required if it's a group chat
     },
     isGroupChat: {
       type: Boolean,
       default: false,
     },
-    //array of users
-    users: [{ type: Schema.Types.ObjectId, ref: "Player" }],
-    /* future plan of storing newer messages here for ease of acceess in fetching 
-    chat: [{ type: Schema.Types.ObjectId, ref: "Message" }],
-    */latestMsg: {
+    users: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Player",
+      }
+    ],
+    latestMsg: {
       type: Schema.Types.ObjectId,
       ref: "Message",
     },
@@ -21,5 +25,13 @@ const chatSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+chatSchema.pre("save", function (next) {
+  if (!this.isGroupChat && this.users.length > 2) {
+    return next(new Error("Private chats can only have two participants."));
+  }
+  next();
+});
+
 const Chat = mongoose.model("Chat", chatSchema, "Chats");
+
 export default Chat;

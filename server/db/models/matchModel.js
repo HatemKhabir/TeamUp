@@ -1,33 +1,51 @@
-import mongoose, { Schema } from "mongoose"
+import mongoose, { Schema } from "mongoose";
 
-const matchSchema = mongoose.Schema({
-  matchID: { 
-    type: String, 
-    unique: true },
-  chat:{type:Schema.Types.ObjectId,
-  ref:"Chat"},
-  //this will be fetched from the logged in user already not from database
-  hostUsername:{
-    type:String,
-    lowercase:true},
-  sportType:{
-    type:String,
-    required:true
+const matchSchema = new Schema({
+  // MongoDB automatically provides a unique _id for each document
+  chat: {
+    type: Schema.Types.ObjectId,
+    ref: "Chat"
+  },
+  hostUsername: {
+    type: String,
+    lowercase: true
+  },
+  sportType: {
+    type: String,
+    required: true
   },
   eventTitle: String,
-  eventDescription:String,
-  playersList: [{type:Schema.Types.ObjectId,
-    ref:'Player'
+  eventDescription: String,
+  playersList: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Player'
   }],
-  status: Boolean,
-  location:String,
-  date: Date,
-  playersNumber:Number,
-  price:Number,
-  // considering using "timestamp" --not sure though
-},
-{ timestamps: true })
-const Match = mongoose.model("Match", matchSchema, "matches")
+  status: {
+    type: Boolean,
+    default: true
+  },
+  location: String,
+  date: {
+    type: Date,
+    required: true // Ensure a date is always provided
+  },
+  playersNumber: {
+    type: Number,
+    required: true, // Ensure number of players is provided
+    min: 1, // At least one player required
+  },
+  price: {
+    type: Number,
+    default: 0 // Default price if not provided
+  },
+  gameCode: {
+    type: String,
+    unique: true,
+    required: true
+  },
+}, 
+{ timestamps: true });
 
+const Match = mongoose.model("Match", matchSchema, "matches");
 
-export default Match
+export default Match;

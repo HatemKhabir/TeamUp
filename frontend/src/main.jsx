@@ -15,33 +15,24 @@ import LandingPage from './features/home/pages/LandingPage.jsx';
 import ProtectedRoute from './layout/protected-route/ProtectedRoute.jsx';
 import { AuthProvider } from './contexts/AuthProvider.jsx';
 
-const queryClient=new QueryClient({
-  defaultOptions:{
-    queries:{
-      refetchOnWindowFocus:false,
-      retry:false
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false
     }
   }
-})
+});
 
-//loader to be added , it allows to run functions before the page finish rendering and you can access the loaded data with useLoaderData hook 
+// Define routes
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
     children: [
-      {
-        index: true,
-        element: <LandingPage />,
-      },
-      {
-        path: ':sportName',
-        element: <SportGames />,
-      },
-      {
-        path: 'public-games',
-        element: <PublicGames />,
-      },
+      { index: true, element: <LandingPage /> },
+      { path: ':sportName', element: <SportGames /> },
+      { path: 'public-games', element: <PublicGames /> },
       {
         path: 'game-chat',
         element: (
@@ -60,7 +51,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'host-game',
-        element:  (
+        element: (
           <ProtectedRoute>
             <HostGame />
           </ProtectedRoute>
@@ -68,20 +59,16 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: '/auth',
-    element: <Login />,
-  },
+  { path: '/auth', element: <Login /> },
 ]);
 
+// Render root
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-  <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router}>
+    <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <RouterProvider router={router} />
       </AuthProvider>
-    </RouterProvider>
-  </QueryClientProvider>
-</StrictMode>
-)
+    </QueryClientProvider>
+  </StrictMode>
+);

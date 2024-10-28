@@ -1,83 +1,94 @@
 import React, { createContext, useState, useEffect } from "react";
-import * as jwtDecode from "jwt-decode";
 import { useQueryClient } from "@tanstack/react-query";
 import { signInApi } from "../features/auth/services/authApis";
-
-export const AuthContext = createContext({
-  userAuth: null,
-  isAuth: false,
-  signIn: () => {},
-  signOut: () => {},
-});
+export const AuthContext = createContext();
 
 // Constants for local storage keys
-const ACCESS_TOKEN_LOCAL_STORAGE = "accessToken";
-const REFRESH_TOKEN_LOCAL_STORAGE = "refreshToken";
+const ACCESS_TOKEN_LOCAL_STORAGE = "token";
 
-export const AuthProvider = (props) => {
+
+export const AuthProvider = ({ children }) => {
   const queryClient = useQueryClient();
   const [userAuth, setUserAuth] = useState(null);
-  const [isAuth, setIsAuth] = useState(true);
-
+  const [isAuth, setIsAuth] = useState(false);
+  
+  // Sign in function
   const signIn = async (username, password) => {
     try {
       const { data: backendResponse } = await signInApi(username, password);
-
-      if (!backendResponse?.accessToken || !backendResponse?.refreshToken) {
-        return { error: 'Sign-in failed. Please check your credentials and try again.' };
+  
+      if (!backendResponse?.token) {
+        return { error: "Sign-in failed. Please check your credentials and try again." };
       }
-
-      const backendResponseDecoded = jwtDecode(backendResponse.accessToken);
-
+  
+      console.log(backendResponse.player);
+  
       // Save tokens to local storage
-      localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE, backendResponse.accessToken);
-      localStorage.setItem(REFRESH_TOKEN_LOCAL_STORAGE, backendResponse.refreshToken);
-
-      // Set auth state
-      setUserAuth({
-        id: backendResponse.id,
-        username: backendResponse.username,
-        email: backendResponseDecoded.email,
-        games: backendResponse.games,
-      });
+      localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE, backendResponse.token);
+  
+      const userData = {
+        id: backendResponse.player._id,
+        username: backendResponse.player.username,
+        email: backendResponse.player.email,
+        games: backendResponse.player.matchJoined,
+      };
+  
+      setUserAuth(userData);
+  
+      // Store the user data in local storage
+      localStorage.setItem("userAuth", JSON.stringify(userData));
+  
       setIsAuth(true);
+      return { success: true };
     } catch (error) {
       console.error("Sign-in error:", error);
-      return { error: 'Sign-in failed. Please check your credentials and try again.' };
+      return { error: "Sign-in failed. Please check your credentials and try again." };
     }
   };
-
- 
+  
+  // Sign out function
   const signOut = () => {
     queryClient.clear();
-
   
+    // Remove tokens from local storage
     localStorage.removeItem(ACCESS_TOKEN_LOCAL_STORAGE);
-    localStorage.removeItem(REFRESH_TOKEN_LOCAL_STORAGE);
-
-    setUserAuth(null);
+    localStorage.removeItem("userAuth");
+  
+    // Reset auth state
+    setUserAuth({
+      id: '',
+      username: '',
+      email: '',
+      games: [],
+    });
     setIsAuth(false);
   };
-
-  // Load the user authentication status from local storage on component mount
+  
+  // Load user authentication status from local storage on component mount
   useEffect(() => {
-    const accessToken = localStorage.getItem(ACCESS_TOKEN_LOCAL_STORAGE);
+    const user = localStorage.getItem("userAuth");
 
-    if (!accessToken) {
-      setIsAuth(false);
-      setUserAuth(null);
-      return;
+    if (user) {
+      try {
+        const parsedUser = JSON.parse(user);
+  
+        setUserAuth({
+          id: parsedUser.id,
+          username: parsedUser.username,
+          email: parsedUser.email,
+          games: parsedUser.games,
+        });
+  
+        setIsAuth(true);
+      } catch (error) {
+        console.error("Error parsing user from local storage:", error);
+        signOut(); // Clear invalid data if parsing fails
+      }
+    } else {
+      setUserAuth(null);  // Set explicitly to null if no user found
     }
-
-    setUserAuth({
-      id: backendResponse.id,
-      username: backendResponse.username,
-      email: backendResponseDecoded.email,
-      games: backendResponse.games,
-    });
-    setIsAuth(true);
   }, []);
-
+  
   // Define the context value to be provided
   const contextValue = {
     userAuth,
@@ -86,9 +97,5 @@ export const AuthProvider = (props) => {
     signOut,
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {props.children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };

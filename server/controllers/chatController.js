@@ -1,151 +1,212 @@
-import mongoose, { connect } from "mongoose";
+import mongoose from "mongoose";
 import Chat from "../db/models/chatModel.js";
-import Player from "../db/models/playerModel.js"
-import Match  from "../db/models/matchModel.js"
+import Player from "../db/models/playerModel.js";
+import Match from "../db/models/matchModel.js";
 import Message from "../db/models/messageModel.js";
 
+///////////////////////////////////////// Either initialize a new chat or access an old one between 2 users
+export const accessChat = async (req, res) => {
+  const { userId, loggedInUser, content } = req.body;
 
-
-/////////////////////////////////////////either initialize a new chat or access old one between 2 users 
-export const accessChat=async(req,res)=>{
-    const {userId,loggedInUser,content}=req.body
-    if (!userId)
-    return res.status(400).json({message:"UserId doesn't exist"})
-  try{
-    let chatFound=await Chat.find({
-        isGroupChat:false,
-        $and:[
-            {users:{$elemMatch:{$eq:loggedInUser}}},
-            {users:{$elemMatch:{$eq:userId}}} 
-        ],
-    }).populate("users","-password").populate("latestMsg")
-    //show the latest message sender username
-   chatFound=await Chat.populate(chatFound,{path:"latestMsg.sender",select:"username"})
-   if(chatFound.length>0){
-    return res.status(200).json(chatFound);
-   }else{
-    const newChatData={
-        isGroupChat:false,
-        users:[loggedInUser,userId],
-    }
-    const chatCreated=await Chat.create(newChatData)
-    
-    const messageDate={
-      senderID:loggedInUser,
-        content:content,
-        chat:chatCreated._id
-    }
-    const message=await Message.create(messageDate)
-    const findChat=await Chat.findOneAndUpdate({_id:chatCreated._id},{latestMsg:message})
-    await Chat.populate(findChat, [{ path: "users", select: "userame" },{path:"latestMsg"}]) ;
-    res.status(200).json(findChat)
-   }
-  }catch(err){
-    return res.status(503).json(err)
+  if (!userId) {
+    return res.status(400).json({ message: "UserId doesn't exist" });
   }
-}
-/////////////////////////////////////////return all chats for an user 
-export const fetchChats=async(req,res)=>{
+
+  try {
+    // Find an existing chat between the two users
+    let chatFound = await Chat.find({
+      isGroupChat: false,
+      $and: [
+        { users: { $elemMatch: { $eq: loggedInUser } } },
+        { users: { $elemMatch: { $eq: userId } } },
+      ],
+    })
+      .populate("users", "-password")
+      .populate("latestMsg");
+
+    // Populate latest message sender details
+    chatFound = await Chat.populate(chatFound, { path: "latestMsg.senderID", select: "username" });
+
+    // If a chat is found, return it
+    if (chatFound.length > 0) {
+      return res.status(200).json(chatFound);
+    } else {
+      // Create a new chat
+      const newChatData = {
+        isGroupChat: false,
+        users: [loggedInUser, userId],
+      };
+      const chatCreated = await Chat.create(newChatData);
+
+      // Create the first message in the chat if content is provided
+      if (content) {
+        const messageData = {
+          senderID: loggedInUser,
+          content: content,
+          chat: chatCreated._id,
+        };
+        const message = await Message.create(messageData);
+
+        // Update chat with the latest message
+        await Chat.findByIdAndUpdate(chatCreated._id, { latestMsg: message });
+      }
+
+      // Populate chat with users and latest message details
+      const populatedChat = await Chat.findById(chatCreated._id)
+        .populate("users", "username")
+        .populate("latestMsg");
+
+      return res.status(200).json(populatedChat);
+    }
+  } catch (err) {
+    return res.status(503).json({ message: err.message });
+  }
+};
+
+///////////////////////////////////////// Return all chats for a user
+export const fetchChats = async (req, res) => {
   const loggedInUser = req.query.loggedInUser;
-  try{
-const userChats=await Chat.find({
-  users:{$elemMatch:{$eq:loggedInUser}}
-})
-if (userChats){
-  var populatedChats=await Chat.populate(userChats,[
-    {path:"users",select:"username"},
-    {path:"latestMsg"},
-    {path:"eventId",select:"eventTitle"}
-  ])
-  populatedChats= await Chat.populate(populatedChats,[{path:"latestMsg.senderID",select:"username"}])
-  const sortedChats=populatedChats.sort((a, b) => b.updatedAt - a.updatedAt)
-  return res.status(201).json(sortedChats)
-}else return res.status(201).json({message:"No Chats Found"})
-}catch(err){
-return res.status(500).json({message:err.message})
-}
-}
-/////////////////////////////////////////initialize a new event chat after creation 
 
-export const createEventChat=async(req,res)=>{
-  const {eventId,loggedInUser}=req.body;
-  try{
-  const matchId=await Match.findOne({matchID:eventId});
-  const foundChat=await Chat.findOne({eventId:matchId._id});
-  if (!foundChat){    
-    let newChat=await Chat.create({eventId:matchId._id,isGroupChat:true,users:[loggedInUser]})
-    await Chat.populate(newChat,[{path:"users",select:"username"},
-    {path:"eventId"}])
-    if (newChat)
-    return res.status(200).json(newChat)
-  else  return res.status(200).json({message:"Match Not Found"}) 
-}else return res.status(200).json({message:"Match Convo Already Exists"})
-}catch(err){
-  console.log(err);
-    return res.status(503).json({message:err.message})
+  try {
+    const userChats = await Chat.find({
+      users: { $elemMatch: { $eq: loggedInUser } },
+    })
+      .populate("users", "username")
+      .populate("latestMsg")
+      .populate("eventId", "eventTitle");
+
+    // Populate the latest message sender details
+    const populatedChats = await Chat.populate(userChats, {
+      path: "latestMsg.senderID",
+      select: "username",
+    });
+
+    // Sort chats by updated timestamp
+    const sortedChats = populatedChats.sort((a, b) => b.updatedAt - a.updatedAt);
+
+    return res.status(200).json(sortedChats);
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
-}
-/////////////////////////////////////////Fetch an event chat after clicking the event infos
+};
 
-export const fetchEventChat=async(req,res)=>{
-const {eventId}=req.body;
-try{
-  let eventFound=await Match.findOne({matchID:eventId}).select("_id")
+///////////////////////////////////////// Initialize a new event chat after creation
+export const createEventChat = async (req, res) => {
+  const { eventId, loggedInUser } = req.body;
 
-  if (eventFound)
-  {let chatFound=await Chat.find({eventId:eventFound._id,isGroupChat:true}).populate("users","username").populate("eventId","eventTitle")
-  if (chatFound.length>0)
-  return res.status(200).json(chatFound)}
-}catch(e){
-  return res.status(503).json({message:e.message})
-}
-}
+  try {
+    const match = await Match.findOne({ _id: eventId });
 
-/////////////////////////////////////////Deleting a chat either group or personal
+    if (!match) {
+      return res.status(404).json({ message: "Match not found" });
+    }
 
-export const deleteChat=async(req,res)=>{
-  const chatId=req.query.chatId;
-  try{
-    const findChat=await Chat.findOne({_id:chatId})
-    if (findChat)
-  {const deletedChat=await Chat.findOneAndDelete({_id:chatId})
-  if (deletedChat)
-  return res.status(200).json({message:"Chat Deleted !"})
-  }else return res.status(404).json({message:"something went wrong"})
-  return res.status(200).json({message:"Event Chat not Found"})
-  }catch(e){
-    console.log(e);
-    return res.status(503).json({message:e.message})
+    const foundChat = await Chat.findOne({ eventId: match._id });
+
+    if (!foundChat) {
+      const newChat = await Chat.create({
+        eventId: match._id,
+        isGroupChat: true,
+        users: [loggedInUser],
+      });
+
+      const populatedChat = await Chat.populate(newChat, [
+        { path: "users", select: "username" },
+        { path: "eventId", select: "eventTitle" },
+      ]);
+
+      return res.status(200).json(populatedChat);
+    } else {
+      return res.status(200).json({ message: "Match chat already exists" });
+    }
+  } catch (err) {
+    return res.status(503).json({ message: err.message });
   }
-}
-/////////////////////////////////////////add user to an event chat (by him joining the event)
+};
 
-export const addUserEventChat=async(req,res)=>{
-const userId=req.params.userId
-const eventId=req.params.eventId
-try{
-  const modifiedEventChat=await Chat.findOneAndUpdate({eventId:eventId},{$addToSet:{users:userId}},{new:true}).populate("users","username").populate("eventId","eventTitle")
- if (!modifiedEventChat)
-return res.status(403).json({message:"Event Chat Not Found !"})
-else return res.status(200).json(modifiedEventChat) 
+///////////////////////////////////////// Fetch an event chat after clicking the event infos
+export const fetchEventChat = async (req, res) => {
+  const { eventId } = req.body;
 
-}catch(e){
-return res.status(503).json({message:e.message})
-}
-}
-/////////////////////////////////////////remove user from an event chat (by him leaving the event)
-export const removeFromEventChat=async(req,res)=>{
+  try {
+    const event = await Match.findOne({ _id: eventId }).select("_id");
 
-  const userId=req.params.userId
-  const eventId=req.params.eventId
-  try{
-    const modifiedEventChat=await Chat.findOneAndUpdate({eventId:eventId},{$pull:{users:userId}},{new:true}).populate("users","username")
-  
-  if (!modifiedEventChat)
-  return res.status(403).json({message:"Event Chat Not Found !"})
-  else return res.status(200).json(modifiedEventChat)
-  
-  }catch(e){
-  return res.status(503).json({message:e.message})
+    if (event) {
+      const chat = await Chat.findOne({ eventId: event._id, isGroupChat: true })
+        .populate("users", "username")
+        .populate("eventId", "eventTitle");
+
+      if (chat) {
+        return res.status(200).json(chat);
+      } else {
+        return res.status(404).json({ message: "Event chat not found" });
+      }
+    } else {
+      return res.status(404).json({ message: "Match not found" });
+    }
+  } catch (err) {
+    return res.status(503).json({ message: err.message });
   }
+};
+
+///////////////////////////////////////// Delete a chat (either group or personal)
+export const deleteChat = async (req, res) => {
+  const chatId = req.query.chatId;
+
+  try {
+    const deletedChat = await Chat.findByIdAndDelete(chatId);
+
+    if (deletedChat) {
+      return res.status(200).json({ message: "Chat deleted successfully" });
+    } else {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+  } catch (err) {
+    return res.status(503).json({ message: err.message });
   }
+};
+
+///////////////////////////////////////// Add user to an event chat (by joining the event)
+export const addUserEventChat = async (req, res) => {
+  const { userId, eventId } = req.params;
+
+  try {
+    const updatedChat = await Chat.findOneAndUpdate(
+      { eventId: eventId },
+      { $addToSet: { users: userId } },
+      { new: true }
+    )
+      .populate("users", "username")
+      .populate("eventId", "eventTitle");
+
+    if (updatedChat) {
+      return res.status(200).json(updatedChat);
+    } else {
+      return res.status(404).json({ message: "Event chat not found" });
+    }
+  } catch (err) {
+    return res.status(503).json({ message: err.message });
+  }
+};
+
+///////////////////////////////////////// Remove user from an event chat (by leaving the event)
+export const removeFromEventChat = async (req, res) => {
+  const { userId, eventId } = req.params;
+
+  try {
+    const updatedChat = await Chat.findOneAndUpdate(
+      { eventId: eventId },
+      { $pull: { users: userId } },
+      { new: true }
+    )
+      .populate("users", "username");
+
+    if (updatedChat) {
+      return res.status(200).json(updatedChat);
+    } else {
+      return res.status(404).json({ message: "Event chat not found" });
+    }
+  } catch (err) {
+    return res.status(503).json({ message: err.message });
+  }
+};

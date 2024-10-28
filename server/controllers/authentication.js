@@ -20,7 +20,7 @@ export const register = async (req, res) => {
     res.status(201).json({savedPlayer})
   } catch (err) {
     if (err.code === 11000) {
-      res.status(400).json({ msg: "Username is already taken." })
+      res.status(400).json({ msg: "Email is already used." })
     } else {
       res.status(500).json({ msg: "password too short (5 char minimum)" })
       console.log(err);
@@ -31,8 +31,12 @@ export const register = async (req, res) => {
 //logging and assigning the jwt token
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body
-    const player = await Player.findOne({ email: email }).populate('matchJoined')
+    const { email,username,password } = req.body
+    console.log(req)
+    const player = await Player.findOne({$or:[
+      {email:email},
+      {username:username}
+    ] }).populate('matchJoined')
     if (!player) {
       return res.status(400).json({ msg: "Email doesn't exist!" })
     }
@@ -41,7 +45,7 @@ export const login = async (req, res) => {
     if (!(await player.matchPassword(password))) {
       return res.status(400).json({ msg: "Password incorrect" })
     }
-
+    
     // If the password is correct, generate a token
     const token = jwt.sign({ id: player._id }, process.env.JWT_SECRET)
     res.status(200).json({ token, player })

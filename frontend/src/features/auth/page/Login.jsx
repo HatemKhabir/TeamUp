@@ -8,7 +8,7 @@ import Signup from "../components/Signup";
 
 function Login({ isSignup = false }) {
   const [isLogin, setIsLogin] = useState(!isSignup);
-
+  
   return (
 <div className={isLogin ? styles.auth_container_signin : styles.auth_container_signup}>
 <div className={styles.auth_forms_wrapper}>
