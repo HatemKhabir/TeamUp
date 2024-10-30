@@ -34,7 +34,7 @@ const CardsCarousel = ({ gameDetailsList }) => {
         breakpoint:624,
         settings:{
           slidesToShow:1,
-          slidesToScroll:3
+          slidesToScroll:1
         }
       },
      

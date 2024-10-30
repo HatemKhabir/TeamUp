@@ -30,6 +30,8 @@ width: 70%;
     font-family: "Roboto" !important;
     font-size: 64px !important;
     font-style: normal !important;
+    text-align: center !important;
+
     font-weight: 700 !important;
     line-height: 110% !important; /* 70.4px */
     --Login-Color: radial-gradient(circle at center,  #081057 0%, #B4DAF0 39%, #64B0F6 50%, #3C96FF 50%);

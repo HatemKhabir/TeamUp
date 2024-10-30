@@ -28,3 +28,11 @@ right: 99%;}
   left: 46%;
   margin-bottom: 10px;
 }
+
+@media only screen and (max-width:500px)  {
+  .slickdots{
+    width: fit-content;
+    left: 20%;
+    margin-bottom: 10px;
+  }
+}

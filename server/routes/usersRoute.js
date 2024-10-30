@@ -5,7 +5,7 @@ import { protect } from "../middleware/authMiddelware.js";
 const router=express.Router();
 
 router.get("/search-player",protect,getUsers)
-router.get("/games",getPlayerGamesById)
+router.get("/games",protect,getPlayerGamesById)
 router.get("/profile",protect,getProfile)
 router.post("/addFriend",protect,addFriend)
 router.delete("/removeFriend",protect,removeFriend)

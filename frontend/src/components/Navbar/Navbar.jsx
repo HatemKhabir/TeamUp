@@ -61,24 +61,15 @@ function Navbar() {
             <Typography className={styles.logged_in_text} variant="body1">
               <Link href="/host-game" className={styles.link}>HOST GAME</Link>
             </Typography>
-            <span className={styles.auth_divider}>|</span>
-            {/* Link for My Games */}
-            <Typography className={styles.logged_in_text} variant="body1">
-              <Link href="/" className={styles.link}>MY GAMES</Link>
-            </Typography>
           </div>
           <div className={styles.logged_in_buttons}>
             {/* Icon with Badge for Messages */}
             <Link to="/friends-chat">
-      <Badge badgeContent={4} color="error" sx={{ width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in' }} className={styles.navbar_logos}>
-        <TextsmsIcon sx={{ color: "white" }} />
+      <Badge badgeContent={4} color="error"  sx={{ width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in',marginRight:'10px' }} className={styles.navbar_logos}>
+        <TextsmsIcon onClick={()=>nav('/friends-chat')} sx={{ color: "white" }} />
       </Badge>
     </Link>
-
-            <Badge badgeContent={0} color="error" sx={{ width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in' }} className={styles.navbar_logos}>
-              <NotificationsIcon sx={{ color: "white" }} />
-            </Badge>
-            <AccountCircleIcon    aria-controls={open ? 'basic-menu' : undefined}
+        <AccountCircleIcon    aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}

@@ -15,9 +15,9 @@ width: 85px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 30px;
+  gap: 1vw;
   width: fit-content;
-  }
+}
 
 
 .sidebar_button{
@@ -36,4 +36,3 @@ transform: scale(1.054);
     background-color: rgba(106, 235, 138, 0.25);
     transform: scale(1.1);
   }
-

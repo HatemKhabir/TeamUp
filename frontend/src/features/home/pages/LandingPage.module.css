@@ -15,3 +15,17 @@
     padding: 0px 15px;
 }
 
+.login_inline{
+    border: 1px black solid;
+    cursor: pointer;
+    padding: 5px;
+    box-shadow: 2px 5px 5px rgba(128, 128, 128, 0.466);
+    transition: 0.3s all ease-in;
+    border-radius: 7px;
+}
+
+.login_inline:hover{
+    color: #24a047;
+    cursor: pointer;
+    scale:1.1;
+    }

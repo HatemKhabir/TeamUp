@@ -60,7 +60,7 @@ export default function Signin({ setIsLogin }) {
         onChange={(e) => setPassword(e.target.value)}
       />
       {error && <Typography color="error" sx={{textAlign:'center'}}>{error}</Typography>}
-      <Typography variant="body1" sx={{ width: "fit-content" }}>
+      <Typography variant="body1" sx={{ width: "fit-content",textAlign:'center' }}>
         Don't have an account?{" "}
         <span
           className={styles.auth_register}

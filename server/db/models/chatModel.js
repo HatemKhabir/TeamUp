@@ -5,7 +5,7 @@ const chatSchema = mongoose.Schema(
     eventId: {
       type: Schema.Types.ObjectId,
       ref: "Match",
-      required: function() { return this.isGroupChat; } // Only required if it's a group chat
+      required: function() { return this.isGroupChat; }
     },
     isGroupChat: {
       type: Boolean,

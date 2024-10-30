@@ -2,6 +2,7 @@ import Match from "../db/models/matchModel.js"
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" // Define characters
 import mongoose from "mongoose"
 import Player from "../db/models/playerModel.js"
+import Chat from "../db/models/chatModel.js";
 
 //generate matchID
 function generateGameCode() {
@@ -9,21 +10,45 @@ function generateGameCode() {
 }
 
 export const createEvent = async (req, res) => {
+  const newEventData = {
+    eventTitle: req.body.eventTitle,
+    sportType: req.body.sportType,
+    hostUsername: req.body.hostUsername,
+    eventDescription: req.body.eventDescription,
+    price: req.body.price,
+    status: 'upcoming',
+    playersList: [],
+    location: req.body.location,
+    playersNumber: req.body.playersNumber,
+    date: req.body.date,
+    skillLevel: req.body.level,
+    gender: req.body.gender,
+    privacy: req.body.privacy
+  };
+  
+  // Conditionally add gameCode for private events
+  if (req.body.privacy === 'private') {
+    newEventData.gameCode = generateGameCode();
+  }
+  
+  const newEvent = new Match(newEventData);
+  
   try {
-    let newEvent = new Match({
-      gameCode: generateGameCode(),
-      eventTitle: req.body.eventTitle,
-      hostUsername: req.body.hostUsername,
-      playersList: [],
-      location: req.body.location,
-      playersNumber:req.body.playersNumber,
-      date: req.body.date,
-      time: req.body.time,
-    })
-    const savedEvent = await newEvent.save()
-    res.status(201).json(savedEvent)
+    const savedEvent = await newEvent.save();
+  
+    const newChat = new Chat({
+      eventId: savedEvent._id,
+      isGroupChat: true,
+      users: []
+    });
+    const savedChat = await newChat.save();
+    
+    savedEvent.chat = savedChat._id;
+    await savedEvent.save();
+  
+    res.status(201).json(savedEvent);
   } catch (e) {
-    res.status(403).json({ error: e.message })
+    res.status(403).json({ error: e.message });
   }
 }
 

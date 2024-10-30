@@ -80,7 +80,7 @@ export default function Signup({ setIsLogin }) {
           {error}
         </Typography>
       )}
-      <Typography variant="body1" sx={{ width: "fit-content" }}>
+      <Typography variant="body1" sx={{ width: "fit-content",textAlign:'center' }}>
         Already have an account?{" "}
         <span className={styles.auth_signin} onClick={() => setIsLogin(true)}>
           Sign-in

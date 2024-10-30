@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
 const matchSchema = new Schema({
-  // MongoDB automatically provides a unique _id for each document
   chat: {
     type: Schema.Types.ObjectId,
     ref: "Chat"
@@ -12,37 +11,61 @@ const matchSchema = new Schema({
   },
   sportType: {
     type: String,
+    enum:['football','volleyball','tabletennis','padel','tennis','basketball'],
     required: true
   },
-  eventTitle: String,
-  eventDescription: String,
+  eventTitle:{
+   type:String,
+   required:true
+  },
+  eventDescription:{
+    type:String,
+    required:true
+  },
   playersList: [{
     type: Schema.Types.ObjectId,
     ref: 'Player'
   }],
   status: {
-    type: Boolean,
+    type: String,
+    enum:['upcoming','finished'],
     default: true
   },
-  location: String,
+  location: {
+    type:String,
+  required:true
+},
   date: {
     type: Date,
-    required: true // Ensure a date is always provided
+    required: true
   },
   playersNumber: {
     type: Number,
-    required: true, // Ensure number of players is provided
-    min: 1, // At least one player required
+    required: true,
+    min: 1, 
   },
   price: {
     type: Number,
-    default: 0 // Default price if not provided
+    default: 0
   },
   gameCode: {
     type: String,
-    unique: true,
+  },
+  skillLevel: {
+    type: [String],
+    enum: ['Beginners', 'Average', 'Semi-Pro', 'Professional'], // Allowed values
     required: true
   },
+  gender:{
+    type:String,
+    enum:['male','female','mixed'],
+    required:true
+  },
+  privacy:{
+    type:String,
+    enum:['private','public'],
+    required:true
+  }
 }, 
 { timestamps: true });
 

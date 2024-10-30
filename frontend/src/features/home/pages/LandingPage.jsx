@@ -100,7 +100,7 @@ useEffect(() => {
       <SideBar landingPage={true}/>
       </header>
     <main>
-      <Box sx={{display:'flex',flexDirection:'column',gap:'20px'}}>
+      {auth.isAuth?<Box sx={{display:'flex',flexDirection:'column',gap:'20px'}}>
         <Box className={styles.landing_page_horizontal_stack}>
           <Typography variant='h6'>Your Upcoming Games</Typography>
           <Button variant='outlined' startIcon={<Add/>} color='success' onClick={()=>{nav('/public-games',replace)}} sx={{width:'fit-content',textWrap:'nowrap'}}>
@@ -108,13 +108,17 @@ useEffect(() => {
           </Button>
         </Box>
         <Box className={styles.landing_page_cards}>
-        {userGames.length>0 ? <CardsCarousel gameDetailsList={userGames} />:<>
+        {userGames.length>0? <CardsCarousel gameDetailsList={userGames} />:<>
         <Box sx={{border:'2px solid black',marginBottom:'30px',padding:'30px'}}>
-          <Typography variant='h4' sx={{textAlign:'center'}}>No Personal Games Yet ! </Typography>
+        <Typography variant='h4' sx={{textAlign:'center',marginTop:'10px',marginBottom:'10px'}}>You don't have any upcoming games ! </Typography>
+
         </Box>
         </>}
         </Box>
+      </Box>:<Box>
+      <Typography variant='h4' sx={{textAlign:'center',marginTop:'10px',marginBottom:'10px'}}>Please <span onClick={()=>nav('/auth')} className={styles.login_inline}>Login</span> to view your upcoming games ! </Typography>
       </Box>
+      }
       <Box sx={{display:'flex',flexDirection:'column',gap:'30px'}}>
         <Box className={styles.landing_page_horizontal_stack}>
           <Typography variant='h6'>Checkout these public games :</Typography>

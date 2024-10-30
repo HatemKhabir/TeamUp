@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CommonHeader from "../../../components/Header/CommonHeader";
 import styles from "./HostGame.module.css";
 import footballHost from "../../../assets/footballHost.png";
@@ -7,7 +7,6 @@ import tennistHost from "../../../assets/tennistHost.png";
 import BasketballHost from "../../../assets/BasketballHost.png";
 import tableTennishost from "../../../assets/tableTennishost.png";
 import padelHost from "../../../assets/padelHost.png";
-import AddIcon from "@mui/icons-material/Add"; // Import the Plus Icon
 
 import {
   Box,
@@ -24,41 +23,141 @@ import {
   Checkbox,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { AuthContext } from "../../../contexts/AuthProvider";
+import { hostGame } from "../services/hostGame";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 function HostGame() {
   const [selectedSportId, setSelectedSportId] = useState(null);
-  const [gameTitle, setGameTitle] = useState("");
+  const [eventTitle, setEventTitle] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [privacy, setPrivacy] = useState("public");
-  const [selectedImage, setSelectedImage] = useState(null); // State to store selected image
-  const [image, setImage] = useState(null);
-  const [playerCount,setPlayerCount]=useState(0)
-  const [gameFee,setGameFee]=useState(0)
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImage(URL.createObjectURL(file)); // For previewing the image
-    }
-  };
+  const [playerCount, setPlayerCount] = useState(0);
+  const [gameFee, setGameFee] = useState(0);
+  const navigate = useNavigate();
+  const [gameDate, setGameDate] = useState('');
+  const [gender,setGender]=useState(null)
+  const [skillLevels,setSkillLevels]=useState([]);
+  const [errors, setErrors] = useState({}); // Object to track errors for each field
+  const [submission,setSumbission]=useState('')
+  const auth = useContext(AuthContext);
+
   const sports = [
-    { id: 1, sportName: "Football", sportPicture: footballHost },
-    { id: 2, sportName: "Volleyball", sportPicture: volleyballHost },
-    { id: 3, sportName: "Table Tennis", sportPicture: tableTennishost },
-    { id: 4, sportName: "Tennis", sportPicture: tennistHost },
-    { id: 5, sportName: "Basketball", sportPicture: BasketballHost },
-    { id: 6, sportName: "Padel", sportPicture: padelHost },
+    {
+      id: 1,
+      sportName: "Football",
+      sportPicture: footballHost,
+      databaseName: "football",
+    },
+    {
+      id: 2,
+      sportName: "Volleyball",
+      sportPicture: volleyballHost,
+      databaseName: "volleyball",
+    },
+    {
+      id: 3,
+      sportName: "Table Tennis",
+      sportPicture: tableTennishost,
+      databaseName: "tabletennis",
+    },
+    {
+      id: 4,
+      sportName: "Tennis",
+      sportPicture: tennistHost,
+      databaseName: "tennis",
+    },
+    {
+      id: 5,
+      sportName: "Basketball",
+      sportPicture: BasketballHost,
+      databaseName: "basketball",
+    },
+    {
+      id: 6,
+      sportName: "Padel",
+      sportPicture: padelHost,
+      databaseName: "padel",
+    },
   ];
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedImage(URL.createObjectURL(file)); // Create a local URL to preview the image
+  const handleBoxClick = (databaseName) => {
+    setSelectedSportId(databaseName);
+  };
+  
+  const handleSkillLevelChange=(event)=>{
+const skill=event.target.name;
+setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=>level!=skill))
+}
+
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (selectedSportId==null) newErrors.sportType="Please Specifiy which sport ! "
+    
+    if (!eventTitle.trim()) newErrors.eventTitle = "Game title is required.";
+    if (!location.trim()) newErrors.location = "Location is required.";
+    if (!gameDate) newErrors.gameDate = "Date and time are required.";
+    if (!description.trim()) newErrors.description = "Game description is required.";
+    if (!playerCount || isNaN(playerCount) || playerCount <= 0) newErrors.playerCount = "Please enter a valid number of players.";
+    if (gameFee && (isNaN(gameFee) || gameFee < 0)) newErrors.gameFee = "Please enter a valid fee.";
+    if (!gender) newErrors.gender = "Please select a gender.";
+    if (skillLevels.length === 0) newErrors.skillLevels = "Please select at least one skill level.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async() => {
+    if (validateForm()) {
+      const gameDetails = {
+        eventTitle: eventTitle,
+        sportType: selectedSportId,
+        hostUsername: auth.userAuth.username,
+        eventDescription: description,
+        price: gameFee,
+        location: location,
+        playersNumber: playerCount,
+        date:gameDate,
+        skillLevel:skillLevels,
+        gender:gender,
+        privacy:privacy
+      };
+      try{
+        const response=await hostGame(gameDetails)
+        console.log(response);
+        toast.success(`Match Created ! `, { 
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "light",
+        });
+        setTimeout(() => {
+          navigate('/'); 
+        }, 2000);
+      }catch(error){
+        console.log(error)
+        toast.error(`Submission Failed ${error.message}`, { 
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "light",
+        });
+      }
+    } else {
+      console.log("Form is invalid, not submitting.");
     }
   };
-  const handleBoxClick = (id) => {
-    setSelectedSportId(id);
-  };
+
+
   return (
     <Box className={styles.host_game_page}>
       <header>
@@ -66,12 +165,14 @@ function HostGame() {
       </header>
       <main className={styles.host_game_main}>
         <Box className={styles.host_game_sports}>
+        {errors.sportType && <Typography color="error" sx={{textAlign:'center'}}>{errors.sportType}</Typography>}
+
           {sports &&
             sports.map((sport, index) => (
               <Box
-                key={sport.id}
+                key={sport.sportName}
                 onClick={() => {
-                  handleBoxClick(sport.id);
+                  handleBoxClick(sport.databaseName);
                 }}
                 className={styles.host_game_sport_box}
                 sx={{
@@ -80,7 +181,9 @@ function HostGame() {
                   backgroundSize: "auto",
                   backgroundPosition: "40%",
                   border:
-                    selectedSportId === sport.id ? "3px solid #4CAF50" : "none",
+                    selectedSportId === sport.databaseName
+                      ? "4px solid #4CAF50"
+                      : "none",
                 }}
               >
                 <Typography className={styles.host_game_sport_title}>
@@ -89,7 +192,7 @@ function HostGame() {
               </Box>
             ))}
         </Box>
-
+        {/*First Half Box*/}
         <Box className={styles.host_game_info}>
           <Box className={styles.host_game_info1}>
             <Typography className={styles.host_game_info_title}>
@@ -98,10 +201,13 @@ function HostGame() {
             <Box sx={{ display: "flex", gap: "10px" }}>
               <TextField
                 label="Game Title"
-                value={gameTitle}
-                onChange={(e) => setGameTitle(e.target.value)}
+                error={errors.eventTitle}
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
                 variant="outlined"
+                required
                 placeholder="Game Title"
+                helperText={errors.eventTitle}
                 InputLabelProps={{
                   shrink: true,
                   color: "success", // Keep the label fixed in the shrunk position
@@ -120,6 +226,8 @@ function HostGame() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 variant="outlined"
+                error={!!errors.location}
+                helperText={errors.location}
                 sx={{
                   textAlign: "left",
                   "& .MuiOutlinedInput-root": {
@@ -129,6 +237,7 @@ function HostGame() {
                   },
                 }}
                 placeholder="Game Location"
+                required
                 InputProps={{
                   startAdornment: (
                     <InputAdornment
@@ -151,6 +260,9 @@ function HostGame() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 multiline
+                required
+                error={!!errors.description}
+                helperText={errors.description}
                 placeholder="You can specify any personal game rules , arrival time , what to wear etc..."
                 rows={4}
                 InputLabelProps={{
@@ -177,67 +289,38 @@ function HostGame() {
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
+                  onChange={(e)=>setPrivacy(e.target.value)}
                 >
                   <FormControlLabel
                     value="public"
-                    sx={{ width: "fit-content","& .MuiFormControlLabel-label": { fontSize: "14px" }, }}
-                    control={
-                      <Radio  color="success" />
-                    }
+                    sx={{
+                      width: "fit-content",
+                      "& .MuiFormControlLabel-label": { fontSize: "14px" },
+                    }}
+                    control={<Radio color="success" />}
                     label="Public"
                   />
                   <FormControlLabel
                     value="private"
-                    sx={{ width: "fit-content","& .MuiFormControlLabel-label": { fontSize: "14px" }, }}
-                    control={
-                      <Radio  color="success" />
-                    }
+                    sx={{
+                      width: "fit-content",
+                      "& .MuiFormControlLabel-label": { fontSize: "14px" },
+                    }}
+                    control={<Radio color="success" />}
                     label="Private"
                   />
                 </RadioGroup>
+                {errors.privacy && <Typography color="error">{errors.privacy}</Typography>}
+
               </Box>
-              <Box
-                sx={{
-                  border: "2px dashed lightgrey",
-                  borderRadius: "8px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100px", // Set a height for the upload box
-                  marginTop: "16px", // Space between the radio group and upload box
-                  cursor: "pointer",
-                  backgroundImage: selectedImage
-                    ? `url(${selectedImage})`
-                    : "none", // Display the uploaded image
-                  backgroundSize: "contain",
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "center",
-                  "&:hover": {
-                    borderColor: "blue", // Change border color on hover
-                  },
-                }}
-                onClick={() => document.getElementById("image-upload").click()} // Click to open file dialog
-              >
-                <input
-                  id="image-upload"
-                  type="file"
-                  style={{ display: "none" }}
-                  accept="image/*"
-                  onChange={handleImageChange} // Handle file change
-                />
-                {!selectedImage && ( // Display the upload icon and text only if no image is selected
-                  <Typography
-                    variant="body1"
-                    sx={{ display: "flex", alignItems: "center" }}
-                  >
-                    <AddIcon sx={{ marginRight: "8px" }} /> Upload Game
-                    Thumbnail
-                  </Typography>
-                )}
-              </Box>
+              <Box>
+            <input type='datetime-local' id="date_picker" value={gameDate} onChange={(newValue)=>setGameDate(newValue.target.value)}/>
+            {errors.gameDate && <Typography color="error">{errors.gameDate}</Typography>}
+
+            </Box>
             </Box>
           </Box>
-
+          {/*Second Half Box*/}
           <Box className={styles.host_game_info1}>
             <Typography className={styles.host_game_info_title}>
               Players Details
@@ -251,11 +334,14 @@ function HostGame() {
             >
               <TextField
                 label="Players Limit"
+                required
                 value={playerCount}
                 onChange={(e) => setPlayerCount(e.target.value)}
                 variant="outlined"
                 placeholder="Number of Players"
                 type="number"
+                error={!!errors.playerCount}
+                helperText={errors.playerCount}
                 InputLabelProps={{
                   shrink: true,
                   color: "success", // Keep the label fixed in the shrunk position
@@ -272,9 +358,12 @@ function HostGame() {
               />
               <TextField
                 label="Game Fee"
+                required
                 value={gameFee}
                 onChange={(e) => setGameFee(e.target.value)}
                 variant="outlined"
+                error={!!errors.gameFee}
+                helperText={errors.gameFee}
                 sx={{
                   textAlign: "left",
                   width: "fit-content",
@@ -310,51 +399,29 @@ function HostGame() {
                 Skill Level
               </FormLabel>
               <Box className={styles.host_game_skill_checkbox}>
-                <FormGroup row>
-                  <FormControlLabel
-                    sx={{
-                      width: "fit-content",
-                      "& .MuiFormControlLabel-label": { fontSize: "14px" },
-                    }}
-                    control={
-                      <Checkbox defaultChecked size="small" color="success" />
-                    }
-                    label="Beginners"
-                  />
-                  <FormControlLabel
-                    sx={{
-                      width: "fit-content",
-                      "& .MuiFormControlLabel-label": { fontSize: "14px" },
-                    }}
-                    control={<Checkbox defaultChecked size="small" color="success" />}
-                    label="Average"
-                  />
-                  <FormControlLabel
-                    sx={{
-                      width: "fit-content",
-                      "& .MuiFormControlLabel-label": {
-                        fontSize: "14px",
-                        textWrap: "nowrap",
-                      },
-                    }}
-                    control={<Checkbox defaultChecked size="small" color="success" />}
-                    label="Semi-Pro"
-                  />
-                  <FormControlLabel
-                    sx={{
-                      width: "fit-content",
-                      "& .MuiFormControlLabel-label": { fontSize: "14px" },
-                    }}
-                    control={<Checkbox defaultChecked size="small" color="success" />}
-                    label="Professional"
-                  />
+                <FormGroup row >
+                  {['Beginners','Average','Semi-Pro','Professional'].map((level,index)=>(
+   <FormControlLabel
+   key={level}
+   sx={{
+     width: "fit-content",
+     "& .MuiFormControlLabel-label": { fontSize: "14px" },
+   }}
+   control={
+     <Checkbox checked={skillLevels.includes(level)} onChange={(e)=>handleSkillLevelChange(e)} size="small" color="success" name={level} />
+   }
+   label={level}
+ />
+                  ))}          
                 </FormGroup>
+                {errors.skillLevels && <Typography color="error">{errors.skillLevels}</Typography>}
+
               </Box>
             </Box>
             <Box sx={{ textAlign: "left" }}>
               <FormLabel id="gender-radio-group-label">Gender</FormLabel>
               <Box className={styles.host_game_gender_radio}>
-                <RadioGroup row>
+                <RadioGroup row onChange={(e)=>setGender(e.target.value)}>
                   {" "}
                   {/* Radio buttons aligned horizontally */}
                   <FormControlLabel
@@ -388,9 +455,12 @@ function HostGame() {
                     value="mixed"
                   />
                 </RadioGroup>
+                {errors.gender && <Typography color="error">{errors.gender}</Typography>}
               </Box>
             </Box>
-            <Button className={styles.host_game_button}>Host Game</Button>
+            <Button className={styles.host_game_button} onClick={handleSubmit}>
+              Host Game
+            </Button>
           </Box>
         </Box>
       </main>
