@@ -1,0 +1,40 @@
+.profile_stats{
+display: flex;
+flex-direction: column;
+text-align: center;
+gap: 20px;
+}
+.profile_main_stats{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: 15px;
+    flex: 1 1 70%;
+
+
+}
+.select_menu{
+    width: 160px;
+
+}
+.profile_stats_numbers{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+.profile_side_informations{
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+     flex-grow: 0;
+}
+.stats_boxs{
+    display: flex;
+    flex-direction: row;
+}
+
+@media only screen and (max-width:440px){
+    .stats_boxs{
+        flex-direction: column;
+    }
+}

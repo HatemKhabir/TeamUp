@@ -14,6 +14,7 @@ import HostGame from './features/host_game/pages/HostGame.jsx';
 import LandingPage from './features/home/pages/LandingPage.jsx';
 import ProtectedRoute from './layout/protected-route/ProtectedRoute.jsx';
 import { AuthProvider } from './contexts/AuthProvider.jsx';
+import PlayerProfile from './features/profile/pages/PlayerProfile.jsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
             <PrivateChats />
           </ProtectedRoute>
         ),
+      },
+      {
+        path:'profile',
+        element:<PlayerProfile/>
       },
       {
         path: 'host-game',

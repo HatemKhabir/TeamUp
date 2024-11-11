@@ -1,0 +1,6 @@
+.player_profile{
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    justify-content: space-between;
+}

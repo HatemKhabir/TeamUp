@@ -1,11 +1,16 @@
-import PlayerProfileImages from '../components/PlayerProfileImages'
+import { Box } from "@mui/material";
+import ProfileDetails from "../components/profile_details/ProfileDetails";
+import ProfileStats from "../components/profile_stats/ProfileStats";
 import styles from './PlayerProfile.module.css'
+
 function PlayerProfile() {
+  
   return (
-  <div className={styles.player_profile_page}>
-      <PlayerProfileImages/>
-  </div>
-  )
+    <Box className={styles.player_profile}>
+      <ProfileDetails/>
+      <ProfileStats/>
+    </Box>
+  );
 }
 
-export default PlayerProfile
+export default PlayerProfile;
