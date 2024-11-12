@@ -11,7 +11,8 @@ export const AuthProvider = ({ children }) => {
   const queryClient = useQueryClient();
   const [userAuth, setUserAuth] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
-  
+  const [userGames,setUserGames]=useState([])
+  const [publicGames,setPublicGames]=useState([])
   // Sign in function
   const signIn = async (username, password) => {
     try {
@@ -21,16 +22,15 @@ export const AuthProvider = ({ children }) => {
         return { error: "Sign-in failed. Please check your credentials and try again." };
       }
   
-      console.log(backendResponse.player);
+      setUserGames(backendResponse.player.matchJoined)
   
       // Save tokens to local storage
       localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE, backendResponse.token);
-  
+      
       const userData = {
         id: backendResponse.player._id,
         username: backendResponse.player.username,
         email: backendResponse.player.email,
-        games: backendResponse.player.matchJoined,
       };
   
       setUserAuth(userData);
@@ -88,6 +88,15 @@ export const AuthProvider = ({ children }) => {
       setUserAuth(null);  // Set explicitly to null if no user found
     }
   }, []);
+
+  const updateGameDetails = (updatedGame) => {
+    setUserGames((prevUserGames) =>
+      prevUserGames.map((game) => (game._id === updatedGame._id ? updatedGame : game))
+    );
+    setPublicGames((prevPublicGames) =>
+      prevPublicGames.map((game) => (game._id === updatedGame._id ? updatedGame : game))
+    );
+  };
   
   // Define the context value to be provided
   const contextValue = {
@@ -95,6 +104,11 @@ export const AuthProvider = ({ children }) => {
     isAuth,
     signIn,
     signOut,
+    userGames,
+    setUserGames,
+    publicGames,
+    updateGameDetails,
+    setPublicGames
   };
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

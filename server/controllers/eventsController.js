@@ -26,7 +26,6 @@ export const createEvent = async (req, res) => {
     privacy: req.body.privacy
   };
   
-  // Conditionally add gameCode for private events
   if (req.body.privacy === 'private') {
     newEventData.gameCode = generateGameCode();
   }
@@ -53,31 +52,63 @@ export const createEvent = async (req, res) => {
 }
 
 export const joinEvent = async (req, res) => {
-  const matchID = req.body.matchID
-  const username=req.body.loggedInUsername
+  const matchID = req.body.gameId
+  const userId=req.body.userId
   try {
     const match = await Match.findOne({ matchID })
-    const user=await Player.findOne({username:username})
+    const user=await Player.findOne({_id:userId})
     if (!match) {
       return res.status(200).json("Match Not Found !")
     }
-    if (user.matchJoined!="")
-    return res.status(200).json("You already have an ongoing game ! ")
-    if (match.playersList.length==match.playersNumber)
-    return res.status(200).json("Match is already full ! ")
-    if (match.hostUsername==username){
-      return res.status(200).json("You can't join your own match ? ")
+    if (user.matchJoined.includes(matchID)){
+  
+    return res.status(200).json("You already Joined this Game ! ")
     }
-    match.playersList.push(username)
-    user.matchJoined=matchID;
+    if (match.playersList.length==match.playersNumber){
+    return res.status(200).json("Match is already full ! ")}
+    match.playersList.push(userId)
+    user.matchJoined.push(matchID);
     await user.save();
     await match.save();
-    res.status(200).json("Match Joined !")
+    
+    res.status(200).json({message:"Match Joined !",match,user})
   } catch (error) {
     console.error(error)
     res.status(403).json("An error occurred")
   }
 }
+
+export const leaveEvent = async (req, res) => {
+  const matchID = req.body.gameId;
+  const userId = req.body.userId;
+  console.log(userId);
+
+  try {
+    const match = await Match.findOne({ matchID });
+    const user = await Player.findOne({ _id: userId });
+    console.log(match)
+    if (!match) {
+      return res.status(200).json("Match Not Found!");
+    }
+
+    // Check if the user is not in the match
+    if (!user.matchJoined.includes(matchID)) {
+      return res.status(200).json("You haven't joined this Game!");
+    }
+
+    match.playersList = match.playersList.filter(id => id.toString() != user._id);
+    user.matchJoined = user.matchJoined.filter(id => id.toString() != match._id);
+ 
+    await user.save();
+    await match.save();
+
+    res.status(200).json({message:"Left the Match successfully!",match,user});
+  } catch (error) {
+    console.error(error);
+    res.status(403).json("An error occurred");
+  }
+};
+
 
 export const deleteEvent=async(req,res)=>{
   const matchID = req.query.matchID;
@@ -119,10 +150,11 @@ try{
 export const getAllEvents=async(req,res)=>{
 
   try{
-    const match = await Match.find();
+    const match = await Match.find({privacy:'public',status:'upcoming'});
     if (!match){
       return res.json("")
     }
+    console.log(match)
     res.status(201).json(match);
   }catch(error){
     res.status(401).json({error:"Internal Server Error!"});

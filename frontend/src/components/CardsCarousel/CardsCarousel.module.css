@@ -6,15 +6,8 @@
     transform: translateY(-50%);
     font-size: 24px;
   }
-  .nextArrow {
-    width: fit-content;
-left: 96%;  
-}
   
-  .prevArrow {
-    width: fit-content;
-right: 99%;}
-  
+
 .carousel_styles{
     width: 100%;
     margin-bottom: 30px;

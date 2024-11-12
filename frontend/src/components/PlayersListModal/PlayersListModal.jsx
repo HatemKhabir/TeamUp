@@ -3,25 +3,8 @@ import styles from './PlayersListModal.module.css'
 import { useState } from 'react';
 import avatar from '../../assets/avatar.png'
 
-function PlayersListModal({openModal}) {
-  const [playersList,setPlayersList] = useState([
-    {
-      name: "John Doe",
-      imgUrl: avatar
-    },
-    {
-      name: "Jane Smith",
-      imgUrl: avatar    },
-    {
-      name: "Mike Johnson",
-      imgUrl: avatar    },
-    {
-      name: "Alice Brown",
-      imgUrl: avatar    },
-    {
-      name: "Chris Lee",
-      imgUrl: avatar    }
-  ]);
+function PlayersListModal({openModal,playersList}) {
+
   
   
   return (

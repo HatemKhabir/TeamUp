@@ -18,3 +18,13 @@ export const getPlayerGamesById=async (userId)=>{
     throw error;
   }
 }
+
+export const getPublicGames=async()=>{
+  try{
+    const response=await axiosInstance.get('/api/events')
+    return response;
+  }catch(e){
+    console.error('Error Fetching Public Games :',e);
+    throw e;
+  }
+}

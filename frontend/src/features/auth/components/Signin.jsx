@@ -22,7 +22,7 @@ export default function Signin({ setIsLogin }) {
       const response = await auth.signIn(email, password); 
       if (response?.error) {
         setError(response.error);
-      } else toast.success("Login successful!", { 
+      } else{ toast.success("Login successful!", { 
         position: "bottom-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -33,7 +33,7 @@ export default function Signin({ setIsLogin }) {
       });
         setTimeout(() => {
         navigate('/'); 
-      }, 2000);
+      }, 2000)};
     } catch (err) {
       setError("Invalid email or password");
     }

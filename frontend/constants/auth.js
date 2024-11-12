@@ -36,3 +36,6 @@ export const USER_ROLE_ADMIN = 'ADMIN';
  * @type {string}
  */
 export const USER_ROLE_USER = 'USER';
+
+
+export const GOOGLE_API_KEY='AIzaSyDerTqNp_r_xIyaY1eQfxRB1FFC8vv7b1k'

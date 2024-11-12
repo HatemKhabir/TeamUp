@@ -49,6 +49,10 @@ const userSchema = new Schema({
     ref: "Match",
     default: null
   }],
+  isPremium:{
+    type:Boolean,
+    default:false,
+  },
   availability: {
     type: Boolean,
     default: true,

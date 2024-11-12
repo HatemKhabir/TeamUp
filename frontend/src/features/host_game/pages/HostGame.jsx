@@ -463,6 +463,18 @@ setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=
             </Button>
           </Box>
         </Box>
+        <ToastContainer
+        position="bottom-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       </main>
     </Box>
   );

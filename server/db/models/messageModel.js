@@ -21,7 +21,6 @@ const messagesSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-// Add indexes for efficient querying
 messagesSchema.index({ senderID: 1 });
 messagesSchema.index({ chat: 1 });
 
