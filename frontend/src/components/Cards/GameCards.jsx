@@ -31,13 +31,13 @@ function GameCards({ gameDetails }) {
   const auth = useContext(AuthContext);
 
   useEffect(() => {
-    if (!gameDetails) {
+    if (!gameDetails || !gameDetails.playersList || !auth.userAuth || !auth.userAuth.id) {
       return null;
-  }
+    }
       if (gameDetails.playersList && gameDetails.playersList.includes(auth.userAuth.id)) {
           setPlayerJoined(true);
       }
-  }, [auth.userAuth.id, gameDetails, gameDetails.playersList]);
+  }, [auth.userAuth, auth.userAuth.id, gameDetails, gameDetails.playersList]);
 
   async function handleGameJoin() {
       try {

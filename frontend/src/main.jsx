@@ -14,6 +14,8 @@ import HostGame from './features/host_game/pages/HostGame.jsx';
 import LandingPage from './features/home/pages/LandingPage.jsx';
 import ProtectedRoute from './layout/protected-route/ProtectedRoute.jsx';
 import { AuthProvider } from './contexts/AuthProvider.jsx';
+import PlayerProfile from './features/profile/pages/PlayerProfile.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,9 +32,12 @@ const router = createBrowserRouter([
     path: '/',
     element: <Layout />,
     children: [
-      { index: true, element: <LandingPage /> },
-      { path: ':sportName', element: <SportGames /> },
-      { path: 'public-games', element: <PublicGames /> },
+      { index: true, element: <LandingPage />,
+        errorElement:<ErrorBoundary/> },
+      { path: ':sportName', element: <SportGames />,
+        errorElement:<ErrorBoundary/> },
+      { path: 'public-games', element: <PublicGames />,
+        errorElement:<ErrorBoundary/> },
       {
         path: 'game-chat',
         element: (
@@ -40,6 +45,7 @@ const router = createBrowserRouter([
             <GameLobby />
           </ProtectedRoute>
         ),
+        errorElement:<ErrorBoundary/>
       },
       {
         path: 'friends-chat',
@@ -57,6 +63,11 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path:'profile/:playerId',
+        element:<PlayerProfile/>,
+        errorElement:<ErrorBoundary/>
+      }
     ],
   },
   { path: '/auth', element: <Login /> },
@@ -67,7 +78,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RouterProvider router={router} />
+          <RouterProvider router={router} />
       </AuthProvider>
     </QueryClientProvider>
   </StrictMode>

@@ -27,19 +27,20 @@ async function getUserId(username) {
 export const getProfile = async (req, res) => {
   try {
     const username = req.query.id;
-    console.log("received query:",username)
-    const user = await Player.findOne({ username: username });
-    const friendShips = await friendShip.find({
-      $or: [{ sender: user._id }, { recipient: user._id }],
-    });
+    const user = await Player.findOne({ username: username }).populate('friendList');
     const responseData = {
       profileData: {
         _id: user._id,
-        reviews: user.reviews,
+        trustFactor: user.trustFactor,
+        country:user.country,
+        profilePic:user.profilePicture,
+        coverPic:user.coverPicture,
+        username:user.username,
         availability: user.availability,
+        friendsList:user.friendList,
         record: user.record,
+        
       },
-      friendShips: friendShips,
     };
 
     return res.status(201).json(responseData);
@@ -80,7 +81,8 @@ export const removeFriend = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error " }, error);
   }
 };
-export const addFriend = async (req, res) => {
+
+export const sendInviteFriend = async (req, res) => {
   try {
     const { loggedinUsername, friendToAdd } = req.body;
     const [user, friend] = await Promise.all([
@@ -116,70 +118,43 @@ export const addFriend = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+  }  
+};  
 
-export const getFriendsList = async (req, res) => {
+export const acceptInvite = async (req, res) => {
   try {
-    const loggedInUsername = req.query.username;
-    const user = await Player.findOne({ username: loggedInUsername });
-    const friends = await friendShip.find({
-      $or: [{ sender: user._id }, { recipient: user._id }],
-      pendingStatus: false,
-    });
-    if (friends.length > 0) {
-      // Populate sender or recipient details for each friendship
-      const friendsList = await Promise.all(
-        friends.map(async (friendship) => {
-          if (friendship.sender.equals(user._id)) {
-            return await friendship.populate('recipient');
-          } else {
-            return await friendship.populate('sender');
-          }
-        })
-      );
-
-      return res.status(200).json(friendsList);
-    } else {
-      return res.status(200).json([]);
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Something Went Wrong!" });
-  }
-};
-export const acceptFriendship = async (req, res) => {
-  try {
-    const friendA = await getUserId(req.body.friend1);
-    const friendB = await getUserId(req.body.friend2);
+    const friendAId = await getUserId(req.body.friend1);
+    const friendBId = await getUserId(req.body.friend2);
 
     const updatedFriendship = await friendShip.findOneAndUpdate(
-      { recipient: friendB, sender: friendA },
-      { $set: { pendingStatus: false } },
-      { new: true } // This option ensures that the updated document is returned
+      { recipient: friendBId, sender: friendAId, status: 'pending' },
+      { $set: { status: 'accepted' } },
+      { new: true }
     );
-    if (updatedFriendship) {
-      await updatedFriendship.save();
-      return res
-        .status(201)
-        .json({ message: "friendShipAccepted", updatedFriendship });
-    } else {
-      return res.status(500).json({ message: "Friendship not found" });
+
+    if (!updatedFriendship) {
+      return res.status(404).json({ message: "Friendship not found or already accepted." });
     }
+
+    await Player.findByIdAndUpdate(friendAId, { $addToSet: { friendsList: friendBId } });
+    await Player.findByIdAndUpdate(friendBId, { $addToSet: { friendsList: friendAId } });
+
+    return res.status(200).json({ message: "Friendship accepted and updated successfully." });
+
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Something Went Wrong!" });
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong!" });
   }
 };
 
-export const declineFriendship = async (req, res) => {
+export const declineInvite = async (req, res) => {
   try {
     const friendA = await getUserId(req.query.friend1);
     const friendB = await getUserId(req.query.friend2);
 
     const updatedFriendship = await friendShip.findOneAndDelete(
-      { recipient: friendB, sender: friendA },
-      { new: true } // This option ensures that the updated document is returned
+      { recipient: friendB, sender: friendA ,status:'pending'},
+      { new: true } 
     );
     if (updatedFriendship) {
       return res
@@ -194,6 +169,24 @@ export const declineFriendship = async (req, res) => {
   }
 };
 
+
+export const getFriendsList = async (req, res) => {
+  try {
+    const loggedInUsername = req.query.username;
+
+    // Find the user and populate their friendsList
+    const user = await Player.findOne({ username: loggedInUsername }).populate('friendList', 'username'); // Customize fields as needed
+
+    if (user && user.friendList.length > 0) {
+      return res.status(200).json(user.friendList); 
+    } else {
+      return res.status(200).json([]);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Something Went Wrong!" });
+  }
+};
 
 export const getPlayerGamesById=async(req,res)=>{
   const playerId=req.query.id

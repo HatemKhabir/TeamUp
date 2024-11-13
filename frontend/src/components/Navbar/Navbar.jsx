@@ -83,7 +83,7 @@ function Navbar() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={()=>{nav(`/profile/${auth.userAuth.username}`);console.log(auth)}}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My Matches</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
