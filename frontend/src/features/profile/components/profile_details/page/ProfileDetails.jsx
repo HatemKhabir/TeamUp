@@ -10,6 +10,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../../contexts/AuthProvider";
 import { countryCodeMap } from "../../../../../../constants/countryCode";
+import { sendFriendInviteApi } from "../services/profileDetails";
 
 function ProfileDetails({profileId,playerData }) {
     const backgroundImage =
@@ -19,7 +20,14 @@ function ProfileDetails({profileId,playerData }) {
   const navigate = useNavigate();
   const [isPersonal, setIsPersonal] = useState(false);
   
-  // Check if this profile belongs to the logged-in user
+  async function handleAddFriend(friendId) {
+      const addFriendResponse=await sendFriendInviteApi(friendId);
+      if (addFriendResponse)
+        setIsFriend(true)
+      else 
+      console.log(addFriendResponse);
+  }
+  
   useEffect(() => {
     if (auth.userAuth && auth.userAuth.username === profileId) {
       setIsPersonal(true);
@@ -61,9 +69,7 @@ function ProfileDetails({profileId,playerData }) {
                 variant="outlined"
                 startIcon={<PersonAddIcon />}
                 color="success"
-                onClick={() => {
-                  setIsFriend(true);
-                }}
+                onClick={()=>handleAddFriend(playerData?.profileData?.username)}
                 sx={{ width: "fit-content", textWrap: "nowrap" }}
               >
                 Add Friend
