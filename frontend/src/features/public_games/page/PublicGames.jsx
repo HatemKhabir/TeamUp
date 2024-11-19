@@ -9,71 +9,7 @@ import CommonHeader from '../../../components/Header/CommonHeader';
 
 function SportGames() {
  
-  const gameDetailsList = [
-      {
-          locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-          date: '2024-09-20',
-          time: '18:00',
-          location: 'Local Park',
-          gameTitle: 'Soccer Friendly Match',
-          playersNumber: 8,
-          totalPlayers: 10,
-          joined:true,
-          gamePrivacy: 'Public'
-      },
-      {
-          locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-          date: '2024-09-21',
-          time: '15:00',
-          location: 'Community Center',
-          gameTitle: 'Basketball Tournament',
-          playersNumber: 5,
-          totalPlayers: 5,
-          joined:true,
-          gamePrivacy: 'Private'
-      }, {
-        locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-        date: '2024-09-21',
-        time: '15:00',
-        location: 'Community Center',
-        gameTitle: 'Basketball Tournament',
-        playersNumber: 5,
-        totalPlayers: 5,
-        joined:false,
-        gamePrivacy: 'Private'
-    }, {
-      locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-      date: '2024-09-21',
-      time: '15:00',
-      location: 'Community Center',
-      gameTitle: 'Basketball Tournament',
-      playersNumber: 5,
-      totalPlayers: 5,
-      joined:true,
-      gamePrivacy: 'Private'
-  }, {
-    locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-    date: '2024-09-21',
-    time: '15:00',
-    location: 'Community Center',
-    gameTitle: 'Basketball Tournament',
-    playersNumber: 5,
-    totalPlayers: 5,
-    joined:true,
-    gamePrivacy: 'Private'
-}, {
-  locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-  date: '2024-09-21',
-  time: '15:00',
-  location: 'Community Center',
-  gameTitle: 'Basketball Tournament',
-  playersNumber: 5,
-  joined:false,
-  totalPlayers: 5,
-  gamePrivacy: 'Private'
-},
-      // Add more games as needed
-  ];
+  
   
   return (
       <div className={styles.sports_games}>

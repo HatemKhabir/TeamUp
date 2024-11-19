@@ -55,7 +55,7 @@ export const joinEvent = async (req, res) => {
   const matchID = req.body.gameId
   const userId=req.body.userId
   try {
-    const match = await Match.findOne({ matchID })
+    const match = await Match.findOne({ _id:matchID })
     const user=await Player.findOne({_id:userId})
     if (!match) {
       return res.status(200).json("Match Not Found !")
@@ -84,7 +84,7 @@ export const leaveEvent = async (req, res) => {
   console.log(userId);
 
   try {
-    const match = await Match.findOne({ matchID });
+    const match = await Match.findOne({ _id:matchID });
     const user = await Player.findOne({ _id: userId });
     console.log(match)
     if (!match) {
@@ -148,9 +148,10 @@ try{
 }
 
 export const getAllEvents=async(req,res)=>{
+ const sportName=req.body?req.body.sportName:'';
 
   try{
-    const match = await Match.find({privacy:'public',status:'upcoming'});
+    const match = await Match.find({privacy:'public',status:'upcoming',sportType:sportName});
     if (!match){
       return res.json("")
     }

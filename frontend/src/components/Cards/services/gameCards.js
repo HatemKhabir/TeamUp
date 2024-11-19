@@ -2,7 +2,7 @@ import axiosInstance from "../../../../libs/axios"
 
 export const joinGameApi=async(userId,gameId)=>{
     const token = localStorage.getItem('token');
-
+    console.log(gameId)
     try{
      const response = await axiosInstance.post('/api/events/join-event',{userId,gameId},{
         headers: {

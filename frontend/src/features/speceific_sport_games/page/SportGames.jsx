@@ -5,76 +5,29 @@ import GameCards from '../../../components/Cards/GameCards';
 import { Box, Button,Typography } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import SideBar from '../../../components/SideBar/SideBar';
+import { useEffect, useState } from 'react';
+import { fetchSportSpecificAPI } from '../services/sportGames';
 
 
 
 function SportGames() {
   const { sportName } = useParams();
- 
-  const gameDetailsList = [
-      {
-          locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-          date: '2024-09-20',
-          time: '18:00',
-          location: 'Local Park',
-          gameTitle: 'Soccer Friendly Match',
-          playersNumber: 8,
-          totalPlayers: 10,
-          joined:true,
-          gamePrivacy: 'Public'
-      },
-      {
-          locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-          date: '2024-09-21',
-          time: '15:00',
-          location: 'Community Center',
-          gameTitle: 'Basketball Tournament',
-          playersNumber: 5,
-          totalPlayers: 5,
-          joined:true,
-          gamePrivacy: 'Private'
-      }, {
-        locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-        date: '2024-09-21',
-        time: '15:00',
-        location: 'Community Center',
-        gameTitle: 'Basketball Tournament',
-        playersNumber: 5,
-        totalPlayers: 5,
-        joined:false,
-        gamePrivacy: 'Private'
-    }, {
-      locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-      date: '2024-09-21',
-      time: '15:00',
-      location: 'Community Center',
-      gameTitle: 'Basketball Tournament',
-      playersNumber: 5,
-      totalPlayers: 5,
-      joined:true,
-      gamePrivacy: 'Private'
-  }, {
-    locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-    date: '2024-09-21',
-    time: '15:00',
-    location: 'Community Center',
-    gameTitle: 'Basketball Tournament',
-    playersNumber: 5,
-    totalPlayers: 5,
-    joined:true,
-    gamePrivacy: 'Private'
-}, {
-  locationImg: 'https://lh3.googleusercontent.com/p/AF1QipN3smfJ3sZoW31B8bqYpGpBeKhI2_f59JT3qUl5=s680-w680-h510-rw',
-  date: '2024-09-21',
-  time: '15:00',
-  location: 'Community Center',
-  gameTitle: 'Basketball Tournament',
-  playersNumber: 5,
-  joined:false,
-  totalPlayers: 5,
-  gamePrivacy: 'Private'
-},
-  ];
+  const [gameDetailsList,setGameDetailsList]=useState([]);
+
+  useEffect(()=>{
+  const fetchGames=async()=>{
+ try{
+    const response=await fetchSportSpecificAPI(sportName);
+    if (response.status===200){
+      setGameDetailsList(response.data);
+    }
+  }catch(e){
+  throw e
+ }
+  }
+  fetchGames();
+  })
+  
   
   return (
       <div className={styles.sports_games}>
@@ -91,9 +44,28 @@ function SportGames() {
             <Button className={styles.sorting_button} endIcon={<KeyboardArrowDownIcon />}>Sort By</Button>
             </Box>
             <Box className={styles.game_cards_container}>
-              {gameDetailsList.map((game, index) => (
+              {gameDetailsList ? gameDetailsList.map((game, index) => (
                   <GameCards key={index} gameDetails={game} joined={game.joined} />
-              ))}
+              )):
+              <Box
+                    sx={{
+                      border: "2px solid black",
+                      marginBottom: "30px",
+                      padding: "30px",
+                    }}
+                  >
+                    <Typography
+                      variant="h4"
+                      sx={{
+                        textAlign: "center",
+                        marginTop: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      No Available Public Games yet !{" "}
+                    </Typography>
+                  </Box>
+              }
               </Box>
             <Button className={styles.load_button}>Load More</Button>  
           </main>
