@@ -7,7 +7,7 @@
 }
 
 .game_cards_container {
-    display: grid;
+    display: flex;
     grid-template-columns: repeat(auto-fill, minmax(250px, 2fr)); /* Responsive grid */
     gap: 20px;
     width: 100%;

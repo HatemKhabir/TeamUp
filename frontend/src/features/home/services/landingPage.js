@@ -2,7 +2,6 @@ import axiosInstance from "../../../../libs/axios";
 
 export const getPlayerGamesById=async (userId)=>{
   const token = localStorage.getItem('token');
-
   try {
     const response = await axiosInstance.get('/api/users/games', {
       params: { id: userId },

@@ -7,7 +7,7 @@ import TextsmsIcon from '@mui/icons-material/Textsms';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { color } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthProvider";
 function Navbar() {
   const nav=useNavigate()
@@ -83,8 +83,8 @@ function Navbar() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={()=>{nav(`/profile/${auth.userAuth.username}`);console.log(auth)}}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My Matches</MenuItem>
+        <MenuItem onClick={()=>{nav(`/profile/${auth.userAuth.username}`,replace);console.log(auth)}}>Profile</MenuItem>
+        <MenuItem onClick={()=>{nav('/personal-games'),replace}}>My Matches</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
           </div>

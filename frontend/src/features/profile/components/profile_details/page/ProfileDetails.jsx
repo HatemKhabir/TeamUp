@@ -13,8 +13,7 @@ import { countryCodeMap } from "../../../../../../constants/countryCode";
 import { sendFriendInviteApi } from "../services/profileDetails";
 
 function ProfileDetails({profileId,playerData }) {
-    const backgroundImage =
-    "https://craftsnippets.com/articles_images/placeholder/placeholder.jpg";
+
   const [isFriend, setIsFriend] = useState(false);
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
@@ -38,13 +37,13 @@ function ProfileDetails({profileId,playerData }) {
     <Box className={styles.profile_details}>
       <Box
         component="img"
-        src={playerData?.profileData?.profilePic}
+        src={playerData?.profileData?.coverPic}
         className={styles.player_profile_cover}
       />
       <Box className={styles.player_profile_image}>
         <Box
           component="img"
-          src={playerData?.profileData?.coverPic}
+          src={playerData?.profileData?.profilePic}
           className={styles.player_profile_pic}
         />
         <Box className={styles.player_profile_buttons}>
@@ -100,6 +99,7 @@ function ProfileDetails({profileId,playerData }) {
             variant="outlined"
             startIcon={<EditIcon />}
             color="primary"
+            onClick={navigate(`/edit-profile/${auth.userAuth.username}`)}
             sx={{ width: "fit-content", textWrap: "nowrap" }}
           >
             Edit Profile

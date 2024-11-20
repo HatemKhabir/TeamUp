@@ -54,3 +54,42 @@ export const login = async (req, res) => {
     res.status(501).json({ error: err.message })
   }
 }
+
+export const updateProfile=async(req,res)=>{
+  try {
+    const { username, password, profilePic, coverPic } = req.body;
+    const { id } = req.user; 
+
+    // Find the user by their ID
+    const player = await Player.findById(id);
+    if (!player) {
+      return res.status(404).json({ msg: 'User not found!' });
+    }
+
+    if (username && player.username !== username) {
+      player.username = username;
+    }
+
+    if (password && player.password!==password) {
+      player.password = password;
+    }
+
+    if (profilePic) {
+      player.profilePicture = profilePic;
+    }
+
+    if (coverPic) {
+      player.coverPicture = coverPic;
+    }
+
+    await player.save();
+
+    return res.status(200).json({
+      msg: 'Profile updated successfully!',
+      player,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+}

@@ -28,6 +28,7 @@ export const getProfile = async (req, res) => {
   try {
     const username = req.query.id;
     const user = await Player.findOne({ username: username }).populate('friendList');
+    console.log(user)
     const responseData = {
       profileData: {
         _id: user._id,

@@ -16,17 +16,13 @@ function SportGames() {
 
   useEffect(()=>{
   const fetchGames=async()=>{
- try{
     const response=await fetchSportSpecificAPI(sportName);
-    if (response.status===200){
-      setGameDetailsList(response.data);
+    if (response){
+      setGameDetailsList(response);
     }
-  }catch(e){
-  throw e
- }
   }
   fetchGames();
-  })
+  },[sportName])
   
   
   return (
@@ -43,14 +39,19 @@ function SportGames() {
 
             <Button className={styles.sorting_button} endIcon={<KeyboardArrowDownIcon />}>Sort By</Button>
             </Box>
-            <Box className={styles.game_cards_container}>
-              {gameDetailsList ? gameDetailsList.map((game, index) => (
+            {gameDetailsList.length>0 ? 
+                <Box className={styles.game_cards_container}>
+              {gameDetailsList.map((game, index) => (
                   <GameCards key={index} gameDetails={game} joined={game.joined} />
-              )):
+              ))
+              }</Box>:
               <Box
                     sx={{
                       border: "2px solid black",
                       marginBottom: "30px",
+                      marginTop:'30px',
+                      textAlign:'center',
+                      alignSelf:'center',
                       padding: "30px",
                     }}
                   >
@@ -64,10 +65,8 @@ function SportGames() {
                     >
                       No Available Public Games yet !{" "}
                     </Typography>
-                  </Box>
-              }
-              </Box>
-            <Button className={styles.load_button}>Load More</Button>  
+                  </Box>}
+            <Button disabled={gameDetailsList.length==0} className={styles.load_button}>Load More</Button>  
           </main>
           </Box>
       </div>

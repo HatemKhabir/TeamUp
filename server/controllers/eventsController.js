@@ -133,25 +133,41 @@ export const deleteEvent=async(req,res)=>{
   }
 }
 
-export const getEvents=async(req,res)=>{
-console.log(req.query)
-const username=req.query.user;
-try{
-  const match = await Match.find({hostUsername:username});
-  if (!match){
-    return res.json("")
+export const getEvents = async (req, res) => {
+  console.log(req.query);
+  const username = req.query.user;
+
+  try {
+    const player = await Player.findOne({ username }); 
+    if (!player) {
+      return res.status(404).json({ error: "Player not found!" });
+    }
+
+    const joinedMatches = await Match.find({ _id: { $in: player.matchJoined } });
+
+    const hostedMatches = await Match.find({ hostUsername: username });
+
+    const allMatches = [...joinedMatches, ...hostedMatches];
+    const uniqueMatches = Array.from(new Set(allMatches.map(match => match._id))).map(
+      id => allMatches.find(match => match._id.toString() === id.toString())
+    );
+
+    res.status(200).json({ matches: uniqueMatches });
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    res.status(500).json({ error: "Internal Server Error!" });
   }
-  res.status(201).json(match);
-}catch(error){
-  res.status(401).json({error:"Internal Server Error!"});
-}
-}
+};
+
 
 export const getAllEvents=async(req,res)=>{
- const sportName=req.body?req.body.sportName:'';
-
+ const sportName=req.query?req.query.sportName:'';
+ console.log(sportName)
+ const query={
+  privacy:'public',status:'upcoming',...(sportName&&{sportType:sportName})
+ }
   try{
-    const match = await Match.find({privacy:'public',status:'upcoming',sportType:sportName});
+    const match = await Match.find(query);
     if (!match){
       return res.json("")
     }

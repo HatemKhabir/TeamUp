@@ -7,7 +7,7 @@ import { RouterProvider } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
 import Login from './features/auth/page/Login.jsx';
 import SportGames from './features/speceific_sport_games/page/SportGames.jsx';
-import PublicGames from './features/public_games/page/PublicGames.jsx';
+import PublicGames from './features/public_games/page/PersonalGames.jsx';
 import GameLobby from './features/game_lobby/page/GameLobby.jsx';
 import PrivateChats from './features/friends_chat/pages/PrivateChats.jsx';
 import HostGame from './features/host_game/pages/HostGame.jsx';
@@ -16,6 +16,7 @@ import ProtectedRoute from './layout/protected-route/ProtectedRoute.jsx';
 import { AuthProvider } from './contexts/AuthProvider.jsx';
 import PlayerProfile from './features/profile/pages/PlayerProfile.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
+import EditProfilePage from './features/edit_profile/page/EditProfile.jsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,8 +37,10 @@ const router = createBrowserRouter([
         errorElement:<ErrorBoundary/> },
       { path: ':sportName', element: <SportGames />,
         errorElement:<ErrorBoundary/> },
-      { path: 'public-games', element: <PublicGames />,
-        errorElement:<ErrorBoundary/> },
+      { path: 'personal-games', element: (<ProtectedRoute>
+      <PublicGames />
+      </ProtectedRoute>),
+        errorElement:<ErrorBoundary/>},
       {
         path: 'game-chat',
         element: (
@@ -46,6 +49,14 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
         errorElement:<ErrorBoundary/>
+      },
+      {
+        path:'edit-profile/:playerId',
+        element:(
+          <ProtectedRoute>
+            <EditProfilePage/>
+          </ProtectedRoute>
+        )
       },
       {
         path: 'friends-chat',

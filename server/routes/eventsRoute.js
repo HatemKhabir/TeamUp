@@ -9,7 +9,7 @@ const router=express.Router();
   router.post("/join-event",protect,joinEvent);
   router.post("/leave-event",protect,leaveEvent);
   router.delete("/create-event",protect,deleteEvent);
-  router.get("/create-event",protect,getEvents);
+  router.get("/personal-event",protect,getEvents);
   router.get("/",getAllEvents);
 
   export default router;
