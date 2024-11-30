@@ -65,7 +65,7 @@ function Navbar() {
           <div className={styles.logged_in_buttons}>
             {/* Icon with Badge for Messages */}
             <Link to="/friends-chat">
-      <Badge badgeContent={4} color="error"  sx={{ width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in',marginRight:'10px' }} className={styles.navbar_logos}>
+      <Badge badgeContent={0} color="error"  sx={{ width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in',marginRight:'10px' }} className={styles.navbar_logos}>
         <TextsmsIcon onClick={()=>nav('/friends-chat')} sx={{ color: "white" }} />
       </Badge>
     </Link>
@@ -83,7 +83,7 @@ function Navbar() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={()=>{nav(`/profile/${auth.userAuth.username}`,replace);console.log(auth)}}>Profile</MenuItem>
+        <MenuItem onClick={()=>{nav(`/profile/${auth.userAuth.username}`);}}>Profile</MenuItem>
         <MenuItem onClick={()=>{nav('/personal-games'),replace}}>My Matches</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>

@@ -10,11 +10,14 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../../contexts/AuthProvider";
 import { countryCodeMap } from "../../../../../../constants/countryCode";
-import { sendFriendInviteApi } from "../services/profileDetails";
+import { acceptInvite, checkFriendStatus, declineInvite, removeFriendApi, sendFriendInviteApi } from "../services/profileDetails";
 
 function ProfileDetails({profileId,playerData }) {
 
   const [isFriend, setIsFriend] = useState(false);
+  const [invitePending,setInvitePending]=useState(false);
+  const [recipient,setIsRecipient]=useState(false)
+  const [inviteId,setInviteId]=useState('')
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const [isPersonal, setIsPersonal] = useState(false);
@@ -22,16 +25,61 @@ function ProfileDetails({profileId,playerData }) {
   async function handleAddFriend(friendId) {
       const addFriendResponse=await sendFriendInviteApi(friendId);
       if (addFriendResponse)
-        setIsFriend(true)
+        setInvitePending(true)
       else 
       console.log(addFriendResponse);
   }
-  
+  async function handleAcceptInvite(friendId) {
+    try{
+       const response=await acceptInvite(friendId)
+       console.log(response)
+       window.location.reload()
+    }catch(e){
+      console.error(e)
+    }
+  }
+  async function handleRejectInvite(friendId) {
+    try{
+      const response=await declineInvite(friendId)
+      console.log(response)
+      window.location.reload()
+   }catch(e){
+     console.error(e)
+   }
+  }
+  async function removeFriend(friendUsername) {
+    try{
+       const response=await removeFriendApi(friendUsername)
+       window.location.reload()
+
+       console.log(response) 
+    }catch(e){
+      console.error(e)
+    }
+    
+  }
   useEffect(() => {
     if (auth.userAuth && auth.userAuth.username === profileId) {
       setIsPersonal(true);
     }
-    console.log('dip',playerData.profileData)
+    const checkFriend=async()=>{
+     try{
+      const friendStatus=await checkFriendStatus(profileId)
+      if (friendStatus.status=='pending'){
+        if(auth.userAuth.id==friendStatus.recipient)
+          setIsRecipient(true)
+        setInviteId(friendStatus._id)
+      setInvitePending(true)
+      
+    }
+      if (friendStatus.status=='accepted')
+        setIsFriend(true)
+      
+     }catch(e){
+      console.error(e)
+     }
+    }
+    checkFriend()
   }, [auth.userAuth, playerData, profileId]);
   return (
     <Box className={styles.profile_details}>
@@ -63,24 +111,54 @@ function ProfileDetails({profileId,playerData }) {
             </Typography>
           </Box>
           <Box sx={{ width: "fit-content", display: "flex" }}>
-            {!isPersonal? !isFriend ? (
+            {!isPersonal? !isFriend ? (invitePending ? recipient ? (
+                 <Box sx={{ width: "fit-content", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                 <Button
+                   variant="outlined"
+                   color="success"
+                   onClick={() => handleAcceptInvite(inviteId)}
+                   sx={{ width: "fit-content", textWrap: "nowrap" }}
+                 >
+                   Accept Invite
+                 </Button>
+                 <Button
+                   variant="outlined"
+                   color="error"
+                   onClick={() => handleRejectInvite(inviteId)}
+                   sx={{ width: "fit-content", textWrap: "nowrap" }}
+                 >
+                   Reject Invite
+                 </Button>
+               </Box>
+            ) :
+            (
+              <Box sx={{ width: "fit-content", display: "flex", gap: "10px", flexWrap: "wrap" }}>
               <Button
                 variant="outlined"
-                startIcon={<PersonAddIcon />}
                 color="success"
-                onClick={()=>handleAddFriend(playerData?.profileData?.username)}
                 sx={{ width: "fit-content", textWrap: "nowrap" }}
               >
-                Add Friend
-              </Button>
-            ) : (
+                Invite Pending
+              </Button>  
+            </Box>
+         ): 
+            <Button
+            variant="outlined"
+            startIcon={<PersonAddIcon />}
+            color="success"
+            onClick={() => handleAddFriend(playerData?.profileData?.username)}
+            sx={{ width: "fit-content", textWrap: "nowrap" }}
+          >
+            Add Friend
+          </Button>):
+          (
               <Box sx={{ width: "fit-content", display: "flex", gap: "10px",flexWrap:'wrap' }}>
                 <Button
                   variant="outlined"
                   startIcon={<PersonRemoveIcon />}
                   color="error"
                   onClick={() => {
-                    setIsFriend(false);
+                    removeFriend(playerData?.profileData?.username);
                   }}
                   sx={{ width: "fit-content", textWrap: "nowrap" }}
                 >
@@ -99,7 +177,7 @@ function ProfileDetails({profileId,playerData }) {
             variant="outlined"
             startIcon={<EditIcon />}
             color="primary"
-            onClick={navigate(`/edit-profile/${auth.userAuth.username}`)}
+            onClick={()=>navigate(`/edit-profile/${auth.userAuth.username}`)}
             sx={{ width: "fit-content", textWrap: "nowrap" }}
           >
             Edit Profile

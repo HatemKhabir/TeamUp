@@ -28,6 +28,8 @@ import { hostGame } from "../services/hostGame";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { Cloudinary } from "@cloudinary/url-gen/index";
+import axiosInstance from "../../../../libs/axios";
 
 function HostGame() {
   const [selectedSportId, setSelectedSportId] = useState(null);
@@ -38,12 +40,16 @@ function HostGame() {
   const [playerCount, setPlayerCount] = useState(0);
   const [gameFee, setGameFee] = useState(0);
   const navigate = useNavigate();
-  const [gameDate, setGameDate] = useState('');
-  const [gender,setGender]=useState(null)
-  const [skillLevels,setSkillLevels]=useState([]);
+  const [gameDate, setGameDate] = useState("");
+  const [gender, setGender] = useState(null);
+  const [skillLevels, setSkillLevels] = useState([]);
   const [errors, setErrors] = useState({}); // Object to track errors for each field
-  const [submission,setSumbission]=useState('')
+  const [submission, setSumbission] = useState("");
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const auth = useContext(AuthContext);
+  const cld = new Cloudinary({ cloud: { cloudName: 'de26qjxpf' } });
 
   const sports = [
     {
@@ -87,30 +93,67 @@ function HostGame() {
   const handleBoxClick = (databaseName) => {
     setSelectedSportId(databaseName);
   };
-  
-  const handleSkillLevelChange=(event)=>{
-const skill=event.target.name;
-setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=>level!=skill))
-}
 
+  const handleSkillLevelChange = (event) => {
+    const skill = event.target.name;
+    setSkillLevels((prev) =>
+      event.target.checked
+        ? [...prev, skill]
+        : prev.filter((level) => level != skill)
+    );
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
   const validateForm = () => {
     const newErrors = {};
-    if (selectedSportId==null) newErrors.sportType="Please Specifiy which sport ! "
-    
+    if (selectedSportId == null)
+      newErrors.sportType = "Please Specifiy which sport ! ";
+
     if (!eventTitle.trim()) newErrors.eventTitle = "Game title is required.";
     if (!location.trim()) newErrors.location = "Location is required.";
     if (!gameDate) newErrors.gameDate = "Date and time are required.";
-    if (!description.trim()) newErrors.description = "Game description is required.";
-    if (!playerCount || isNaN(playerCount) || playerCount <= 0) newErrors.playerCount = "Please enter a valid number of players.";
-    if (gameFee && (isNaN(gameFee) || gameFee < 0)) newErrors.gameFee = "Please enter a valid fee.";
+    if (!description.trim())
+      newErrors.description = "Game description is required.";
+    if (!playerCount || isNaN(playerCount) || playerCount <= 0)
+      newErrors.playerCount = "Please enter a valid number of players.";
+    if (gameFee && (isNaN(gameFee) || gameFee < 0))
+      newErrors.gameFee = "Please enter a valid fee.";
     if (!gender) newErrors.gender = "Please select a gender.";
-    if (skillLevels.length === 0) newErrors.skillLevels = "Please select at least one skill level.";
+    if (skillLevels.length === 0)
+      newErrors.skillLevels = "Please select at least one skill level.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
+    let uploadedImageUrl = null;
+      if (image) {
+        const formData = new FormData();
+      formData.append('file', image);
+      formData.append('upload_preset', 'TeamUp');
+  try{
+    const response = await axiosInstance.post(
+      'https://api.cloudinary.com/v1_1/de26qjxpf/image/upload',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    const data = response.data;
+        uploadedImageUrl = data.secure_url; // Retrieve the uploaded image URL
+      }catch(e){
+        console.log(e)
+      }
     if (validateForm()) {
       const gameDetails = {
         eventTitle: eventTitle,
@@ -120,15 +163,16 @@ setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=
         price: gameFee,
         location: location,
         playersNumber: playerCount,
-        date:gameDate,
-        skillLevel:skillLevels,
-        gender:gender,
-        privacy:privacy
+        date: gameDate,
+        skillLevel: skillLevels,
+        gender: gender,
+        privacy: privacy,
+        gamePicCover:uploadedImageUrl || null 
       };
-      try{
-        const response=await hostGame(gameDetails)
+      try {
+        const response = await hostGame(gameDetails);
         console.log(response);
-        toast.success(`Match Created ! `, { 
+        toast.success(`Match Created ! `, {
           position: "bottom-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -138,11 +182,11 @@ setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=
           theme: "light",
         });
         setTimeout(() => {
-          navigate('/'); 
+          navigate("/");
         }, 2000);
-      }catch(error){
-        console.log(error)
-        toast.error(`Submission Failed ${error.message}`, { 
+      } catch (error) {
+        console.log(error);
+        toast.error(`Submission Failed ${error.message}`, {
           position: "bottom-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -155,8 +199,8 @@ setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=
     } else {
       console.log("Form is invalid, not submitting.");
     }
+  }
   };
-
 
   return (
     <Box className={styles.host_game_page}>
@@ -165,7 +209,11 @@ setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=
       </header>
       <main className={styles.host_game_main}>
         <Box className={styles.host_game_sports}>
-        {errors.sportType && <Typography color="error" sx={{textAlign:'center'}}>{errors.sportType}</Typography>}
+          {errors.sportType && (
+            <Typography color="error" sx={{ textAlign: "center" }}>
+              {errors.sportType}
+            </Typography>
+          )}
 
           {sports &&
             sports.map((sport, index) => (
@@ -289,7 +337,7 @@ setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
-                  onChange={(e)=>setPrivacy(e.target.value)}
+                  onChange={(e) => setPrivacy(e.target.value)}
                 >
                   <FormControlLabel
                     value="public"
@@ -310,14 +358,21 @@ setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=
                     label="Private"
                   />
                 </RadioGroup>
-                {errors.privacy && <Typography color="error">{errors.privacy}</Typography>}
-
+                {errors.privacy && (
+                  <Typography color="error">{errors.privacy}</Typography>
+                )}
               </Box>
               <Box>
-            <input type='datetime-local' id="date_picker" value={gameDate} onChange={(newValue)=>setGameDate(newValue.target.value)}/>
-            {errors.gameDate && <Typography color="error">{errors.gameDate}</Typography>}
-
-            </Box>
+                <input
+                  type="datetime-local"
+                  id="date_picker"
+                  value={gameDate}
+                  onChange={(newValue) => setGameDate(newValue.target.value)}
+                />
+                {errors.gameDate && (
+                  <Typography color="error">{errors.gameDate}</Typography>
+                )}
+              </Box>
             </Box>
           </Box>
           {/*Second Half Box*/}
@@ -399,29 +454,38 @@ setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=
                 Skill Level
               </FormLabel>
               <Box className={styles.host_game_skill_checkbox}>
-                <FormGroup row >
-                  {['Beginners','Average','Semi-Pro','Professional'].map((level,index)=>(
-   <FormControlLabel
-   key={level}
-   sx={{
-     width: "fit-content",
-     "& .MuiFormControlLabel-label": { fontSize: "14px" },
-   }}
-   control={
-     <Checkbox checked={skillLevels.includes(level)} onChange={(e)=>handleSkillLevelChange(e)} size="small" color="success" name={level} />
-   }
-   label={level}
- />
-                  ))}          
+                <FormGroup row>
+                  {["Beginners", "Average", "Semi-Pro", "Professional"].map(
+                    (level, index) => (
+                      <FormControlLabel
+                        key={level}
+                        sx={{
+                          width: "fit-content",
+                          "& .MuiFormControlLabel-label": { fontSize: "14px" },
+                        }}
+                        control={
+                          <Checkbox
+                            checked={skillLevels.includes(level)}
+                            onChange={(e) => handleSkillLevelChange(e)}
+                            size="small"
+                            color="success"
+                            name={level}
+                          />
+                        }
+                        label={level}
+                      />
+                    )
+                  )}
                 </FormGroup>
-                {errors.skillLevels && <Typography color="error">{errors.skillLevels}</Typography>}
-
+                {errors.skillLevels && (
+                  <Typography color="error">{errors.skillLevels}</Typography>
+                )}
               </Box>
             </Box>
             <Box sx={{ textAlign: "left" }}>
               <FormLabel id="gender-radio-group-label">Gender</FormLabel>
               <Box className={styles.host_game_gender_radio}>
-                <RadioGroup row onChange={(e)=>setGender(e.target.value)}>
+                <RadioGroup row onChange={(e) => setGender(e.target.value)}>
                   {" "}
                   {/* Radio buttons aligned horizontally */}
                   <FormControlLabel
@@ -455,26 +519,71 @@ setSkillLevels((prev)=>event.target.checked?[...prev,skill]:prev.filter((level)=
                     value="mixed"
                   />
                 </RadioGroup>
-                {errors.gender && <Typography color="error">{errors.gender}</Typography>}
+                {errors.gender && (
+                  <Typography color="error">{errors.gender}</Typography>
+                )}
               </Box>
             </Box>
-            <Button className={styles.host_game_button} onClick={handleSubmit}>
-              Host Game
-            </Button>
+            <Box className={styles.cover_box} sx={{ display: "flex", gap: "20px", alignItems: "center",flexWrap:'nowrap'}}>
+      <Box sx={{display:'flex',flexDirection:'column',alignItems:'center',gap:'10px'}}>
+      <FormLabel sx={{textAlign:'left'}}>Upload a Cover</FormLabel>
+        <Box sx={{display:'flex',alignItems:'center',width:'fit-content'}}>
+        <input
+          accept="image/*"
+          type="file"
+          onChange={handleImageChange}
+          style={{ display: "none" }}
+          id="upload-image"
+        />
+        <label htmlFor="upload-image" style={{width:'fit-content'}}>
+          <Button variant="contained" sx={{width:'80%'}} component="span" disabled={uploading}>
+            {uploading ? "Uploading..." : "Choose Image"}
+          </Button>
+        </label>
+      {preview && (
+        <Box
+          sx={{
+            mt: 2,
+            width: "100px",
+            height: "100px",
+            borderRadius: "8px",
+            overflow: "hidden",
+          }}
+        >
+          <img
+            src={preview}
+            alt="Preview"
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+          
+        </Box>
+      )}
+      </Box>
+      </Box>
+      <Button
+        className={styles.host_game_button}
+        onClick={handleSubmit}
+        variant="contained"
+        color="primary"
+        disabled={uploading}
+      >
+        Host Game
+      </Button>
+    </Box>
           </Box>
         </Box>
         <ToastContainer
-        position="bottom-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+          position="bottom-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </main>
     </Box>
   );

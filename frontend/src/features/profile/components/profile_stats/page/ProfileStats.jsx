@@ -10,6 +10,9 @@ import {
 } from "@mui/material";
 import styles from "./ProfileStats.module.css";
 import PlayersListModal from "../../../../../components/PlayersListModal/PlayersListModal";
+import { Button, Tooltip } from "@mui/material";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 
 function ProfileStats({profileId,playerData}) {
   const [selectedSport, setSelectedSport] = useState("");
@@ -58,22 +61,52 @@ function ProfileStats({profileId,playerData}) {
       }</Typography>
           </Box>
           <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <Typography variant="body2">Trust Factor</Typography>
-            <LinearProgress
-              variant="determinate"
-              value= {
-                playerData?.profileData
-                  ? playerData.profileData.trustFactor
-                  : 0}
-              color="success"
-              sx={{
-                "& .MuiLinearProgress-root": {
-                  backgroundColor: "rgb(255, 255, 177) !important",
-                  height: "50px",
-                },
-              }}
-            />
-          </Box>
+  <Typography variant="body2">Trust Factor</Typography>
+  <LinearProgress
+    variant="determinate"
+    value={playerData?.profileData ? playerData.profileData.trustFactor : 0}
+    color="success"
+    sx={{
+      "& .MuiLinearProgress-root": {
+        backgroundColor: "rgb(255, 255, 177) !important",
+        height: "50px",
+      },
+    }}
+  />
+  <Box sx={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+      <Button
+        variant="contained"
+        color="success"
+        startIcon={<ThumbUpIcon />}
+        sx={{
+          minWidth: "fit-content",
+          padding: "5px 10px",
+        }}
+        onClick={() => {
+          // Handle commend logic here
+          console.log("Commend button clicked");
+        }}
+      >
+ 
+        Commend
+      </Button>
+      <Button
+        variant="outlined"
+        color="error"
+        startIcon={<ThumbDownIcon />}
+        sx={{
+          minWidth: "fit-content",
+          padding: "5px 10px",
+        }}
+        onClick={() => {
+          // Handle report logic here
+          console.log("Report button clicked");
+        }}
+      >
+        Report
+      </Button>
+  </Box>
+</Box>
         </Box>
       </Box>
       <Box  className={styles.profile_side_informations}>
@@ -82,8 +115,8 @@ function ProfileStats({profileId,playerData}) {
         </Typography>
         {playerData?.profileData?.friendsList && playerData?.profileData?.friendsList.map((player,index)=>(
           <Box key={index} className={styles.player_modal_info}>
-            <Box component='img' src={player.imgUrl} className={styles.player_modal_img}/>
-            <Typography variant='subtitle1' className={styles.player_modal_name}>{player.username}</Typography>
+            <Box component='img' src={player.profilePicture} className={styles.player_modal_img}/>
+            <Typography variant='subtitle1' sx={{padding:'5px'}} className={styles.player_modal_name}>{player.username}</Typography>
         </Box>))}
       </Box>
       </Box>

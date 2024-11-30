@@ -69,7 +69,7 @@
 
 .host_game_button {
   border-radius: 4px !important;
-  width: fit-content;
+  flex-basis: 50%;
   color: var(--success-main, #2e7d32) !important;
   align-self:center;
   font-size: 14px !important;
@@ -164,5 +164,8 @@ text-transform: uppercase;
 @media screen and (max-width:540px) {
     .host_game_info{
        flex-wrap: wrap;
+    }
+    .cover_box{
+      flex-wrap: wrap;
     }
   }

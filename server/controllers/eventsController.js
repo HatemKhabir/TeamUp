@@ -23,7 +23,8 @@ export const createEvent = async (req, res) => {
     date: req.body.date,
     skillLevel: req.body.level,
     gender: req.body.gender,
-    privacy: req.body.privacy
+    privacy: req.body.privacy,
+    gamePicCover:req.body.gamePicCover!=null?req.body.gamePicCover:'https://img.freepik.com/premium-photo/sports-background-advertising-sport-life-concept-generative-ai_1002555-984.jpg'
   };
   
   if (req.body.privacy === 'private') {
@@ -58,14 +59,14 @@ export const joinEvent = async (req, res) => {
     const match = await Match.findOne({ _id:matchID })
     const user=await Player.findOne({_id:userId})
     if (!match) {
-      return res.status(200).json("Match Not Found !")
+      return res.status(202).json("Match Not Found !")
     }
     if (user.matchJoined.includes(matchID)){
   
-    return res.status(200).json("You already Joined this Game ! ")
+    return res.status(201).json("You already Joined this Game ! ")
     }
     if (match.playersList.length==match.playersNumber){
-    return res.status(200).json("Match is already full ! ")}
+    return res.status(201).json("Match is already full ! ")}
     match.playersList.push(userId)
     user.matchJoined.push(matchID);
     await user.save();

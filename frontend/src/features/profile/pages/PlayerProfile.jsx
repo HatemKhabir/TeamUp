@@ -32,6 +32,7 @@ function PlayerProfile() {
     if (playerId) {
       getPlayerData();
     }
+    console.log(playerData)
   }, [playerId, navigate]);
   return (
     <Box className={styles.player_profile}>

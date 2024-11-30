@@ -47,6 +47,9 @@ function GameCards({ gameDetails }) {
               auth.setUserGames(joinGameRequest.data.user.matchJoined);
               window.location.reload()
             }
+            else if (joinGameRequest.status===201){
+              console.log('game is full')
+            }
       } catch (e) {
           setError(e.message);
       }
@@ -67,7 +70,7 @@ function GameCards({ gameDetails }) {
 
   return (
     <Box className={styles.game_card}>
-      <Box component="img" src={gameDetails.locationImg} className={styles.game_image} sx={{boxShadow:3,borderRadius:'5px'}}/>
+      <Box component="img" src={gameDetails.gamePicCover} className={styles.game_image} sx={{boxShadow:3,borderRadius:'5px'}}/>
       <Box className={styles.game_details}>
       <Typography variant="body2" sx={{marginBottom:'5px'}} >
         {formattedDateTime}
@@ -77,7 +80,7 @@ function GameCards({ gameDetails }) {
         {gameDetails.location}
       </Typography>
       <Typography  variant="h6" >{gameDetails.gameTitle}</Typography>
-      <Typography  variant="body1" sx={{cursor:'pointer',textDecorationLine:'underline'}} onClick={()=>{setOpenModal(!openModal)}}>
+      <Typography  variant="body1">
         {gameDetails.playersList.length}/{gameDetails.playersNumber} Players Joined
       </Typography>
       <Typography  variant="body2" sx={{color:'grey'}}>
@@ -93,7 +96,6 @@ function GameCards({ gameDetails }) {
       <Button className={styles.card_button} variant="contained" color="error" onClick={handleLeaveGame}>Leave</Button>
     <Button className={styles.card_button} variant="contained" color="info">Lobby</Button>
     </Box> }
-    {openModal&&<JoinGameModal openModal={openModal} playersList={gameDetails.playersList}/>}
 
     </Box>
   );

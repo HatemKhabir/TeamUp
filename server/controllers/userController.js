@@ -65,6 +65,8 @@ export const removeFriend = async (req, res) => {
       getUserId(req.query.friendToRemove),
       getUserId(req.query.loggedInUsername),
     ]);
+
+    // Find and delete the friendship
     const friendship = await friendShip.findOneAndDelete({
       $or: [
         { sender: friendToRemove, recipient: loggedInUsername },
@@ -73,15 +75,25 @@ export const removeFriend = async (req, res) => {
     });
 
     if (friendship) {
+      await Promise.all([
+        Player.findByIdAndUpdate(loggedInUsername, {
+          $pull: { friendList: friendToRemove },
+        }),
+        Player.findByIdAndUpdate(friendToRemove, {
+          $pull: { friendList: loggedInUsername },
+        }),
+      ]);
+
       return res.status(200).json("Success");
     } else {
       return res.status(501).json("Failed");
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Internal Server Error " }, error);
+    res.status(500).json({ message: "Internal Server Error" }, error);
   }
 };
+
 
 export const sendInviteFriend = async (req, res) => {
   try {
@@ -91,15 +103,12 @@ export const sendInviteFriend = async (req, res) => {
       Player.findOne({ username: friendToAdd })
     ]
     );
-
     const friendRelation = await friendShip.find({
       $or: [{ sender: user._id,recipient: user._id },
        { sender: friend._id,recipient: friend._id }],
     });
     const friends = await friendShip.find();
-    console.log("friends ", friends);
-    console.log();
-    console.log(friendRelation);
+  
     if (friendRelation.length !== 0) {
       return res.status(201).json("Already Friends");
     }
@@ -124,11 +133,10 @@ export const sendInviteFriend = async (req, res) => {
 
 export const acceptInvite = async (req, res) => {
   try {
-    const friendAId = await getUserId(req.body.friend1);
-    const friendBId = await getUserId(req.body.friend2);
+    const { inviteId } = req.body;
 
     const updatedFriendship = await friendShip.findOneAndUpdate(
-      { recipient: friendBId, sender: friendAId, status: 'pending' },
+      { _id: inviteId, status: 'pending' },
       { $set: { status: 'accepted' } },
       { new: true }
     );
@@ -137,24 +145,42 @@ export const acceptInvite = async (req, res) => {
       return res.status(404).json({ message: "Friendship not found or already accepted." });
     }
 
-    await Player.findByIdAndUpdate(friendAId, { $addToSet: { friendsList: friendBId } });
-    await Player.findByIdAndUpdate(friendBId, { $addToSet: { friendsList: friendAId } });
+    const friendAId = updatedFriendship.recipient;
+    const friendBId = updatedFriendship.sender;
+
+    console.log('Friend A ID (Recipient):', friendAId);
+    console.log('Friend B ID (Sender):', friendBId);
+
+    // No need to use `new ObjectId()`, as they are already ObjectId instances
+    const updatedA = await Player.findByIdAndUpdate(
+      friendAId,
+      { $addToSet: { friendList: friendBId } },
+      { new: true } // Return updated document for debugging
+    );
+
+    const updatedB = await Player.findByIdAndUpdate(
+      friendBId,
+      { $addToSet: { friendList: friendAId } },
+      { new: true }
+    );
+
+    console.log('Updated Friend A Record:', updatedA);
+    console.log('Updated Friend B Record:', updatedB);
 
     return res.status(200).json({ message: "Friendship accepted and updated successfully." });
-
   } catch (error) {
-    console.error(error);
+    console.error('Error in acceptInvite:', error);
     return res.status(500).json({ message: "Something went wrong!" });
   }
 };
 
+
 export const declineInvite = async (req, res) => {
   try {
-    const friendA = await getUserId(req.query.friend1);
-    const friendB = await getUserId(req.query.friend2);
+    const { inviteId } = req.query;
 
     const updatedFriendship = await friendShip.findOneAndDelete(
-      { recipient: friendB, sender: friendA ,status:'pending'},
+      { _id:inviteId, status: 'pending' },
       { new: true } 
     );
     if (updatedFriendship) {
@@ -203,3 +229,32 @@ export const getPlayerGamesById=async(req,res)=>{
   }
 
 }
+
+export const checkFriendStatus = async (req, res) => {
+  try {
+    const { loggedinUsername, friendToAdd } = req.query;
+
+    const sender = await Player.findOne({ username: loggedinUsername });
+    const recipient = await Player.findOne({ username: friendToAdd });
+
+    if (!sender || !recipient) {
+      return res.status(404).json({ message: 'One or both users not found.' });
+    }
+
+    const friendships = await friendShip.findOne({
+      $or: [
+        { sender: sender._id, recipient: recipient._id },
+        { sender: recipient._id, recipient: sender._id },
+      ],
+    });
+
+    if (!friendships) {
+      return res.status(200).json({ status: 'none' }); // No friendship exists
+    }
+
+    return res.status(200).json(friendships);
+  } catch (error) {
+    console.error('Error checking friendship status:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
