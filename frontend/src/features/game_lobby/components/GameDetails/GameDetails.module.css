@@ -1,7 +1,7 @@
 .game_details_box {
   display: flex;
   flex-direction: column;
-  height: 550px;
+  height: 100%;
   justify-content: space-between;
 }
 
@@ -30,21 +30,22 @@
 .card_button_container{
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 50px;
 }
 .game_details_img {
   width: 100%;
-  height: auto;
+  height: fit-content;
   margin-bottom: 10px;
 }
 
 .game_details_datetime {
   margin: 5px !important;
-  font-size: 0.65em !important;
+  font-size: 0.9em !important;
 }
 
 .game_details_location {
   color: grey;
-  font-size: 0.7em !important;
+  font-size: 1.1em !important;
   padding-right: 10px !important;
 }
 
@@ -55,7 +56,7 @@
 }
 
 .game_details_players {
-  font-size: 0.7em !important;
+  font-size: 0.9em !important;
   margin: 5px !important ;
 
 }

@@ -1,8 +1,11 @@
 .game_lobby{
     display: flex;
+    position: relative;
+    margin-right: 10px;
 }
 .game_details{
-    width: 30%;
+   
+    width: 40%;
 }
 
 @media screen and (max-width:420px) {
@@ -12,6 +15,5 @@
     }
     .game_details{
         width: 100%;
-        
     }
 }

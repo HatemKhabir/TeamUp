@@ -1,89 +1,130 @@
 import { Box, Button, Typography } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import styles from './GameDetails.module.css';
+import { useContext, useEffect, useState } from "react";
+import { replace, useNavigate, useParams } from "react-router-dom";
+import { getGameDetailsbyId, postWinnersAndLosersApi } from "../../services/gameLobby";
+import { AuthContext } from "../../../../contexts/AuthProvider";
+import { leaveGameApi } from "../../../../components/Cards/services/gameCards";
+import PostResultsModal from "../PostResultsModal/PostResultModal";
 
-function formatDateTime(dateString, timeString) {
-  const date = new Date(dateString + ' ' + timeString); // Combine date and time
+function formatDateTime(isoDateString) {
+  const date = new Date(isoDateString); // Create a Date object from ISO string
   return new Intl.DateTimeFormat('en-GB', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
-    hour12: true, // This ensures AM/PM format
+    hour12: true, // AM/PM format
   }).format(date);
 }
 
-function GameDetails({ gameDetails }) {
-  const playersList = [
-    {
-      img: "https://th.bing.com/th/id/OIP.2gQ-vmi3bh0WLoAzY27o4gAAAA?pid=ImgDet&w=360&h=360&rs=1",
-      name: "Hatem",
-    },
-    {
-      img: "https://th.bing.com/th/id/OIP.2gQ-vmi3bh0WLoAzY27o4gAAAA?pid=ImgDet&w=360&h=360&rs=1",
-      name: "Majid",
-    },
-    {
-      img: "https://th.bing.com/th/id/OIP.2gQ-vmi3bh0WLoAzY27o4gAAAA?pid=ImgDet&w=360&h=360&rs=1",
-      name: "Ali",
-    },
-    {
-      img: "https://th.bing.com/th/id/OIP.2gQ-vmi3bh0WLoAzY27o4gAAAA?pid=ImgDet&w=360&h=360&rs=1",
-      name: "Jason",
-    },
-    {
-      img: "https://th.bing.com/th/id/OIP.2gQ-vmi3bh0WLoAzY27o4gAAAA?pid=ImgDet&w=360&h=360&rs=1",
-      name: "Hatem",
-    },
-    {
-      img: "https://th.bing.com/th/id/OIP.2gQ-vmi3bh0WLoAzY27o4gAAAA?pid=ImgDet&w=360&h=360&rs=1",
-      name: "Abdullah",
-    },
-    {
-      img: "https://th.bing.com/th/id/OIP.2gQ-vmi3bh0WLoAzY27o4gAAAA?pid=ImgDet&w=360&h=360&rs=1",
-      name: "Hamid",
-    },
-  ];
+function GameDetails() {
+  const { gameId } = useParams();
+  const [gameObject, setGameObject] = useState(null);
+  const [isHost,setIsHost]=useState(false);
+  const auth=useContext(AuthContext)
+  const [error,setError]=useState('')
+  const nav=useNavigate()
+  const [modalOpen, setModalOpen] = useState(false); // State to handle modal visibility
 
-  const imgUrl = "https://th.bing.com/th/id/OIP.86i94hoTxqjQF97o6Cj8vQHaE_?rs=1&pid=ImgDetMain";
-  const formattedDateTime = formatDateTime(gameDetails.date, gameDetails.time);
+
+  useEffect(() => {
+    async function fetchGameDetails() {
+      try {
+        const response = await getGameDetailsbyId(gameId);
+        setGameObject(response);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    fetchGameDetails();
+  }, [gameId]);
+  
+  useEffect(() => {
+    if (gameObject && auth.userAuth.username === gameObject.hostUsername) {
+      setIsHost(true);
+    }
+  }, [gameObject, auth.userAuth.username]);
+  
+
+
+  if (!gameObject) {
+    // Render a loading spinner or placeholder while data is being fetched
+    return <Typography>Loading...</Typography>;
+  }
+  async function handleLeaveGame() {
+    try {
+        const leaveGameRequest = await leaveGameApi(auth.userAuth.id, gameObject._id);
+        if (leaveGameRequest.status === 200) {
+            auth.updateGameDetails(leaveGameRequest.data.match);
+            auth.setUserGames(leaveGameRequest.data.user.matchJoined);
+            nav('/',replace)         
+          }
+    } catch (e) {
+        setError(e.message);
+    }
+}
+const handlePostResults = async ({ winners, losers }) => {
+ 
+  try {
+    const response = await postWinnersAndLosersApi(gameObject._id, winners, losers);
+    if (response.status!=200)
+      console.log(response)
+  
+
+  } catch (e) {
+    console.error("Error posting results:", e.message);
+    setError(e.message);
+  }
+};
 
   return (
     <Box className={styles.game_details_box}>
-      <Box component="img" src={imgUrl} className={styles.game_details_img} />
+      {error&& <Typography>{error}</Typography>}
       <Box>
+      <Box component="img" src={gameObject.gamePicCover} className={styles.game_details_img} />
         <Box className={styles.game_details}>
           <Typography variant="body2" className={styles.game_details_datetime}>
-            {formattedDateTime}
+            {formatDateTime(gameObject.date)}
           </Typography>
           <Typography variant="body2" className={styles.game_details_location}>
             <LocationOnIcon style={{ fontSize: "13px", marginRight: "5px", marginBottom: "-2px" }} />
-            {gameDetails.location}
+            {gameObject.location}
           </Typography>
           <Typography variant="h6" className={styles.game_details_title}>
-            {gameDetails.gameTitle}
+            {gameObject.eventTitle}
           </Typography>
           <Typography variant="body1" className={styles.game_details_players}>
-            {gameDetails.playersNumber}/{gameDetails.totalPlayers} Players Joined
+            {gameObject.playersList.length}/{gameObject.playersNumber} Players Joined
           </Typography>
-          {playersList && (
+          {gameObject.playersList && (
             <Box className={styles.players_list}>
-              {playersList.map((player, index) => (
+              {gameObject.playersList.map((player, index) => (
                 <Box key={index} className={styles.player_box}>
-                  <Box component="img" src={player.img} className={styles.player_img} />
-                  <Typography variant="body2">{player.name}</Typography>
+                  <Box component="img" src={player.profilePicture} className={styles.player_img} />
+                  <Typography variant="body2">{player.username}</Typography>
                 </Box>
               ))}
             </Box>
           )}
         </Box>
       </Box>
-        <Box className={styles.card_button_container}>
-          <Button className={styles.card_button} variant="contained" color="error">
-            Leave
-          </Button>
-        </Box>
+      <Box className={styles.card_button_container}>
+        {isHost&&<Button className={styles.card_button} variant='outlined' color='primary'  onClick={() => setModalOpen(true)} >
+         Post Results
+        </Button>}
+        <Button className={styles.card_button} variant="contained" color="error" onClick={handleLeaveGame}> 
+          Leave
+        </Button>
+      </Box>
+      <PostResultsModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        players={gameObject.playersList}
+        onSubmit={handlePostResults}
+      />
     </Box>
   );
 }

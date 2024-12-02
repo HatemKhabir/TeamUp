@@ -7,6 +7,7 @@ import JoinGameModal from "../PlayersListModal/PlayersListModal";
 import { AuthContext } from "../../contexts/AuthProvider";
 import { joinGameApi, leaveGameApi } from "./services/gameCards";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { useNavigate } from "react-router-dom";
 function formatDateTime(dateString) {
   if (!dateString) return ""; // Return empty string if dateString is undefined or null
   const date = new Date(dateString);
@@ -29,7 +30,7 @@ function GameCards({ gameDetails }) {
   const [playerJoined, setPlayerJoined] = useState(false);
   const [error, setError] = useState('');
   const auth = useContext(AuthContext);
-
+  const nav=useNavigate()
   useEffect(() => {
     if (!gameDetails || !gameDetails.playersList || !auth.userAuth || !auth.userAuth.id) {
       return null;
@@ -70,6 +71,7 @@ function GameCards({ gameDetails }) {
 
   return (
     <Box className={styles.game_card}>
+      {error && <Typography>{error}</Typography>}
       <Box component="img" src={gameDetails.gamePicCover} className={styles.game_image} sx={{boxShadow:3,borderRadius:'5px'}}/>
       <Box className={styles.game_details}>
       <Typography variant="body2" sx={{marginBottom:'5px'}} >
@@ -94,7 +96,7 @@ function GameCards({ gameDetails }) {
       {!playerJoined?  <Button  className={styles.card_button} variant="contained" color="success" onClick={handleGameJoin}>Join</Button>
     :<Box sx={{display:'flex',justifyContent:'flex-end'}}>
       <Button className={styles.card_button} variant="contained" color="error" onClick={handleLeaveGame}>Leave</Button>
-    <Button className={styles.card_button} variant="contained" color="info">Lobby</Button>
+    <Button className={styles.card_button} variant="contained" onClick={()=>{nav(`/game-chat/${gameDetails._id}`)}} color="info">Lobby</Button>
     </Box> }
 
     </Box>

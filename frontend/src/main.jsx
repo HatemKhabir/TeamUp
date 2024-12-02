@@ -42,7 +42,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>),
         errorElement:<ErrorBoundary/>},
       {
-        path: 'game-chat',
+        path: 'game-chat/:gameId',
         element: (
           <ProtectedRoute>
             <GameLobby />
