@@ -179,3 +179,85 @@ export const getAllEvents=async(req,res)=>{
   }
   }
 
+  export const getEventDetailById=async(req,res)=>{
+    const gameId=req.query.gameId;
+    console.log(gameId)
+    console.log('-----------------------------------------------------------')
+    try{
+const match=await Match.findById(gameId).populate('playersList')
+if(!match){
+  return res.json("")
+}
+return res.status(201).json(match)
+    }catch(error){
+      res.status(401).json({error})
+    }
+  }
+
+  export const updateGameDetails = async (req, res) => {
+    try {
+      const { gameId, selectedWinners, losers, loggedinUsername } = req.body;
+  
+      // Validate input data
+      if (!gameId || !selectedWinners || !losers || !loggedinUsername) {
+        return res.status(400).json("Incomplete or incorrect data provided.");
+      }
+  
+      // Find the match
+      const match = await Match.findById(gameId);
+      if (!match) {
+        return res.status(404).json("Match not found.");
+      }
+      
+      // Check if the logged-in user is the host of the match
+      if (match.hostUsername !== loggedinUsername) {
+        return res.status(403).json("You are not authorized to update this match.");
+      }
+  
+      const sportType = match.sportType.toLowerCase(); 
+      const validSports = ["volleyball", "football", "basketball", "tabletennis", "tennis", "padel"];
+      if (!validSports.includes(sportType)) {
+        return res.status(400).json("Invalid sport type specified in the match.");
+      }
+      if(match.status=='finished'){
+        return res.status(400).json("Match Finished Already ! ")
+      }
+      
+      let updatedWinners = [];
+      if (selectedWinners.length > 0) {
+        const winnerPromises = selectedWinners.map((winnerId) =>
+          Player.findByIdAndUpdate(
+            winnerId,
+            { $inc: { [`record.${sportType}.wins`]: 1 } },
+            { new: true } 
+          )
+        );
+        updatedWinners = await Promise.all(winnerPromises);
+      }
+  
+      let updatedLosers = [];
+      if (losers.length > 0) {
+        const loserPromises = losers.map((loserId) =>
+          Player.findByIdAndUpdate(
+            loserId,
+            { $inc: { [`record.${sportType}.losses`]: 1 } },
+            { new: true } 
+          )
+        );
+        updatedLosers = await Promise.all(loserPromises);
+      }
+      match.status='finished'
+      const updatedMatch=await match.save()
+
+      return res.status(200).json({
+        message: "Match results updated successfully.",
+        match,
+        updatedWinners,
+        updatedLosers,
+      });
+    } catch (error) {
+      console.error("Error updating game details:", error);
+      return res.status(500).json("An error occurred while updating game details.");
+    }
+  };
+  

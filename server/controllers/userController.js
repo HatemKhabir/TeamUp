@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Player from "../db/models/playerModel.js";
 import friendShip from "../db/models/friendRelationModel.js";
+import Chat from "../db/models/chatModel.js";
 
 export const getUsers = async (req, res) => {
   try {
@@ -148,24 +149,28 @@ export const acceptInvite = async (req, res) => {
     const friendAId = updatedFriendship.recipient;
     const friendBId = updatedFriendship.sender;
 
-    console.log('Friend A ID (Recipient):', friendAId);
-    console.log('Friend B ID (Sender):', friendBId);
+ 
 
     // No need to use `new ObjectId()`, as they are already ObjectId instances
-    const updatedA = await Player.findByIdAndUpdate(
+    await Player.findByIdAndUpdate(
       friendAId,
       { $addToSet: { friendList: friendBId } },
       { new: true } // Return updated document for debugging
     );
 
-    const updatedB = await Player.findByIdAndUpdate(
+    await Player.findByIdAndUpdate(
       friendBId,
       { $addToSet: { friendList: friendAId } },
       { new: true }
     );
 
-    console.log('Updated Friend A Record:', updatedA);
-    console.log('Updated Friend B Record:', updatedB);
+    const newChat=new Chat({
+      isGroupChat:false,
+      users:[friendAId,friendBId],
+    })
+    await newChat.save()
+    updatedFriendship.chat=newChat._id;
+    await updatedFriendship.save()
 
     return res.status(200).json({ message: "Friendship accepted and updated successfully." });
   } catch (error) {
@@ -202,7 +207,7 @@ export const getFriendsList = async (req, res) => {
     const loggedInUsername = req.query.username;
 
     // Find the user and populate their friendsList
-    const user = await Player.findOne({ username: loggedInUsername }).populate('friendList', 'username'); // Customize fields as needed
+    const user = await Player.findOne({ username: loggedInUsername }).populate('friendList', 'username profilePicture'); // Customize fields as needed
 
     if (user && user.friendList.length > 0) {
       return res.status(200).json(user.friendList); 
@@ -258,3 +263,4 @@ export const checkFriendStatus = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+

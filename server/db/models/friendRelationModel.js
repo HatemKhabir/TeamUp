@@ -15,6 +15,10 @@ const friendShipSchema = mongoose.Schema({
     type: String,
     enum: ['pending', 'accepted', 'rejected'],
     default: 'pending'
+  },
+  chat:{
+    type:Schema.Types.ObjectId,
+    ref:'Chat'
   }
 }, { timestamps: true });
 

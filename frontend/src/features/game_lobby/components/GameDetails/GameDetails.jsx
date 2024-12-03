@@ -7,9 +7,10 @@ import { getGameDetailsbyId, postWinnersAndLosersApi } from "../../services/game
 import { AuthContext } from "../../../../contexts/AuthProvider";
 import { leaveGameApi } from "../../../../components/Cards/services/gameCards";
 import PostResultsModal from "../PostResultsModal/PostResultModal";
+import { ToastContainer, toast } from "react-toastify";
 
 function formatDateTime(isoDateString) {
-  const date = new Date(isoDateString); // Create a Date object from ISO string
+  const date = new Date(isoDateString); 
   return new Intl.DateTimeFormat('en-GB', {
     day: 'numeric',
     month: 'short',
@@ -20,40 +21,20 @@ function formatDateTime(isoDateString) {
   }).format(date);
 }
 
-function GameDetails() {
-  const { gameId } = useParams();
-  const [gameObject, setGameObject] = useState(null);
+function GameDetails({gameObject}) {
   const [isHost,setIsHost]=useState(false);
   const auth=useContext(AuthContext)
   const [error,setError]=useState('')
   const nav=useNavigate()
-  const [modalOpen, setModalOpen] = useState(false); // State to handle modal visibility
-
-
-  useEffect(() => {
-    async function fetchGameDetails() {
-      try {
-        const response = await getGameDetailsbyId(gameId);
-        setGameObject(response);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    fetchGameDetails();
-  }, [gameId]);
+  const [modalOpen, setModalOpen] = useState(false); 
   
   useEffect(() => {
     if (gameObject && auth.userAuth.username === gameObject.hostUsername) {
       setIsHost(true);
     }
+ 
   }, [gameObject, auth.userAuth.username]);
   
-
-
-  if (!gameObject) {
-    // Render a loading spinner or placeholder while data is being fetched
-    return <Typography>Loading...</Typography>;
-  }
   async function handleLeaveGame() {
     try {
         const leaveGameRequest = await leaveGameApi(auth.userAuth.id, gameObject._id);
@@ -66,17 +47,51 @@ function GameDetails() {
         setError(e.message);
     }
 }
+
 const handlePostResults = async ({ winners, losers }) => {
- 
   try {
     const response = await postWinnersAndLosersApi(gameObject._id, winners, losers);
-    if (response.status!=200)
-      console.log(response)
-  
 
+    if (response.status != 200) {
+      toast.error(response, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+      setTimeout(()=>{
+        nav('/',replace)
+      },3000)
+    } else if (response.status === 200) {
+      toast.success("Match results updated successfully!", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+      setTimeout(()=>{
+        nav('/',replace)
+      },3000)
+      console.log("Updated match details:", response.data);
+    }
   } catch (e) {
     console.error("Error posting results:", e.message);
     setError(e.message);
+    toast.error(`An error occurred: ${e.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "light",
+    });
   }
 };
 
@@ -124,6 +139,18 @@ const handlePostResults = async ({ winners, losers }) => {
         onClose={() => setModalOpen(false)}
         players={gameObject.playersList}
         onSubmit={handlePostResults}
+      />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
       />
     </Box>
   );
