@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   FormControl,
@@ -13,12 +13,23 @@ import PlayersListModal from "../../../../../components/PlayersListModal/Players
 import { Button, Tooltip } from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import { AuthContext } from "../../../../../contexts/AuthProvider";
 
 function ProfileStats({profileId,playerData}) {
-  const [selectedSport, setSelectedSport] = useState("");
+  const [selectedSport, setSelectedSport] = useState('volleyball');
   const handleChange = (event) => {
     setSelectedSport(event.target.value);
   };
+  const [isPersonal, setIsPersonal] = useState(false);
+  const auth = useContext(AuthContext);
+
+
+  useEffect(() => {
+    if (auth.userAuth && auth.userAuth.username === profileId) {
+      setIsPersonal(true);
+    }
+    
+  }, [auth.userAuth, playerData, profileId]);
 
   return (
     <Box className={styles.profile_stats}>
@@ -73,6 +84,7 @@ function ProfileStats({profileId,playerData}) {
       },
     }}
   />
+  {!isPersonal &&
   <Box sx={{ display: "flex", gap: "10px", marginTop: "10px" }}>
       <Button
         variant="contained"
@@ -106,6 +118,7 @@ function ProfileStats({profileId,playerData}) {
         Report
       </Button>
   </Box>
+}
 </Box>
         </Box>
       </Box>

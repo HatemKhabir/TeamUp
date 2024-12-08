@@ -35,6 +35,7 @@
     .stats_boxs{
         display: flex;
         flex-direction: row;
+        gap: 30px;
     }
     
     @media only screen and (max-width:440px){

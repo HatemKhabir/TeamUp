@@ -6,11 +6,12 @@ import styles from './CommonHeader.module.css'
 function CommonHeader({pageName}) {
     const headerImages = {
         'explore': explorePage,
-        'game-chat':chatPage
+        'private-chat':chatPage,
+        'personal-games':explorePage
     };
 
 
-    const imgUrl = headerImages['explore'] || null;
+    const imgUrl = headerImages[pageName] || null;
 
 
     return (
@@ -40,7 +41,7 @@ function CommonHeader({pageName}) {
                         className={styles.header_title}
 
                     >
-                        {pageName=='explore'?'Public Games':pageName=='game-chat'?'Game Lobby':''}
+                        {pageName=='explore'?'Public Games':pageName=='private-chat'?'Friends Chats':pageName=='personal-games'?'Personal Games':''}
                     </Typography>
                     </Box>
                   

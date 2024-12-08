@@ -8,7 +8,7 @@ export const getPlayerStats=async(playerUsername)=>{
     const response=await axiosInstance.get('/api/users/profile',{
         params:{id:playerUsername}
     })
-    console.log(response.data)
+    console.log("this is the call ",response.data)
     return response.data;
     }catch(e){
         throw(e)

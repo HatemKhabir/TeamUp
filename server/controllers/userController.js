@@ -29,7 +29,6 @@ export const getProfile = async (req, res) => {
   try {
     const username = req.query.id;
     const user = await Player.findOne({ username: username }).populate('friendList');
-    console.log(user)
     const responseData = {
       profileData: {
         _id: user._id,
@@ -40,12 +39,15 @@ export const getProfile = async (req, res) => {
         username:user.username,
         availability: user.availability,
         friendsList:user.friendList,
-        record: user.record,
-        
+        record: user.record,        
       },
     };
-
-    return res.status(201).json(responseData);
+    const friendships = await friendShip.find({
+      $or: [
+        { sender: user._id},{recipient: user._id }
+      ],
+    });
+    return res.status(201).json({responseData,friendships});
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });

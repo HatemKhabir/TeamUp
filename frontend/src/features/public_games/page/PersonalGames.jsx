@@ -40,7 +40,7 @@ function PersonalGames() {
   return (
       <div className={styles.sports_games}>
           <header>
-              <CommonHeader pageName='explore'/>
+              <CommonHeader pageName='personal-games'/>
           </header>
           <Box sx={{display:'flex'}}>
           <main className={styles.games_list_main}>

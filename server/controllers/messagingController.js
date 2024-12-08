@@ -4,12 +4,13 @@ import Message from "../db/models/messageModel.js"
 import friendShip from "../db/models/friendRelationModel.js";
 
 export const sendMessage=async(req,res)=>{
-    const {chatId,messageContent,senderID}=req.body.messageData
+    const {chatId,messageContent,senderID}=req.body
+    console.log(req.body)
     if (!chatId || !messageContent){
         return res.status(403).json({message:"Invalid Data Sent"})
     }
     try{
-    
+    console.log(messageContent)
     let newMessage={
         senderID:senderID,
         content:messageContent,

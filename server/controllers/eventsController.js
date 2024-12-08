@@ -247,8 +247,10 @@ return res.status(201).json(match)
         updatedLosers = await Promise.all(loserPromises);
       }
       match.status='finished'
-      const updatedMatch=await match.save()
-
+      match.winners=updatedWinners;
+      match.losers=updatedLosers;
+      await match.save();
+      
       return res.status(200).json({
         message: "Match results updated successfully.",
         match,

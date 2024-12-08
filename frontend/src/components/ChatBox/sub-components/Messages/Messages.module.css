@@ -1,38 +1,35 @@
-.sender_message_box{
+.sender_message_box {
     display: flex;
-    height: 50px;
-    gap:10px;
+    gap: 10px;
     margin: 20px;
-}
-.receiver_message_box{
-    display: flex;
-    flex-direction: row-reverse;
-    height: 50px;
-    gap:10px;
-    margin-left: -5px !important;
-    margin: 20px 15px;
-align-items: flex-end;    
-}
-.messages_image{
-    border-radius: 50%;
-    width: 40px;
+    align-items: flex-start; /* Align items at the top for dynamic height */
 }
 
-.message_content_box_sender{
-    align-content: center;
-    border-radius: 10%;
-    padding: 10px;
-    max-width: 30%;
-    width: fit-content;
-    height: fit-content;
-    background-color:rgba(230, 120, 100, 0.4);
+.receiver_message_box {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 10px;
+    margin-left: -5px !important;
+    margin: 20px 15px;
+    align-items: flex-start; /* Align items at the top for dynamic height */
 }
-.message_content_box_receiver{
-    align-content: center;
+
+.messages_image {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px; /* Keep the image size consistent */
+}
+
+.message_content_box_sender,
+.message_content_box_receiver {
     border-radius: 10%;
     padding: 10px;
-    max-width: 30%;
-    width: fit-content;
-    height: fit-content;
-    background-color:rgba(100, 230, 154, 0.4);
+    max-width: 30%; /* Control the width for long messages */
+    word-wrap: break-word; /* Handle long unbroken text */
+    overflow-wrap: break-word; /* Alternative property for wrapping */
+    background-color: rgba(230, 120, 100, 0.4);
+}
+
+.message_content_box_receiver {
+    background-color: rgba(100, 230, 154, 0.4);
 }

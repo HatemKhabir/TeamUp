@@ -3,7 +3,6 @@ import axiosInstance from "../../../../libs/axios";
 export const fetchLobbyMessagesApi = async (chatId) => {
     
   const token = localStorage.getItem("token");
-  const loggedInUserId = JSON.parse(localStorage.getItem("userAuth")).id;
   try {
     const response = await axiosInstance.get("/api/message", {
       params: { chatId },
@@ -17,3 +16,19 @@ export const fetchLobbyMessagesApi = async (chatId) => {
     console.error(e)
     throw e
 }};
+
+export const sendMessageApi=async(chatId,messageContent)=>{
+  const token=localStorage.getItem("token");
+  const senderID=JSON.parse(localStorage.getItem('userAuth')).id;
+  console.log(chatId,messageContent)
+  try{
+    const response=await axiosInstance.post('/api/message',{chatId,messageContent,senderID},{headers:{
+      Authorization:`Bearer ${token}`
+    }})
+    console.log(response)
+    return response;
+  }catch(e){
+    console.error(e);
+    throw e;
+  }
+}

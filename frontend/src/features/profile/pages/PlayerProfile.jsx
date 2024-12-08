@@ -21,8 +21,11 @@ function PlayerProfile() {
     async function getPlayerData() {
       try {
         const playerDataResponse = await getPlayerStats(playerId);
+        console.log(playerDataResponse)
+
         if (playerDataResponse) {
-          setPlayerData(playerDataResponse);
+          setPlayerData(playerDataResponse.responseData.profileData);
+          console.log(playerDataResponse)
         }
       } catch (e) {
         console.error(e);

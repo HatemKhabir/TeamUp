@@ -72,35 +72,89 @@ function GameCards({ gameDetails }) {
   return (
     <Box className={styles.game_card}>
       {error && <Typography>{error}</Typography>}
-      <Box component="img" src={gameDetails.gamePicCover} className={styles.game_image} sx={{boxShadow:3,borderRadius:'5px'}}/>
+      <Box
+        component="img"
+        src={gameDetails.gamePicCover}
+        className={styles.game_image}
+        sx={{ boxShadow: 3, borderRadius: '5px' }}
+      />
       <Box className={styles.game_details}>
-      <Typography variant="body2" sx={{marginBottom:'5px'}} >
-        {formattedDateTime}
-      </Typography>
-      <Typography  variant="body2" sx={{color:'grey'}}>
-        <LocationOnIcon style={{fontSize:'13px',marginRight:'5px',marginBottom:'-1px'}} />
-        {gameDetails.location}
-      </Typography>
-      <Typography  variant="h6" >{gameDetails.gameTitle}</Typography>
-      <Typography  variant="body1">
-        {gameDetails.playersList.length}/{gameDetails.playersNumber} Players Joined
-      </Typography>
-      <Typography  variant="body2" sx={{color:'grey'}}>
-        <AttachMoneyIcon style={{fontSize:'18px',marginRight:'5px',marginBottom:'-3px'}} />
-        {`${gameDetails.price} HUF`}
-      </Typography>
-      <Typography  variant='subtitle2' sx={{fontWeight:'300'}} >{gameDetails.privacy.charAt(0).toUpperCase()+gameDetails.privacy.slice(1)}</Typography>
-      <Typography  variant='subtitle2' sx={{fontWeight:'300'}} >{gameDetails.sportType.charAt(0).toUpperCase()+gameDetails.sportType.slice(1)}</Typography>
-
+        <Typography variant="body2" sx={{ marginBottom: '5px' }}>
+          {formattedDateTime}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'grey' }}>
+          <LocationOnIcon
+            style={{ fontSize: '13px', marginRight: '5px', marginBottom: '-1px' }}
+          />
+          {gameDetails.location}
+        </Typography>
+        <Typography variant="h6">{gameDetails.gameTitle}</Typography>
+        <Typography variant="body1">
+          {gameDetails.playersList.length}/{gameDetails.playersNumber} Players
+          Joined
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'grey' }}>
+          <AttachMoneyIcon
+            style={{ fontSize: '18px', marginRight: '5px', marginBottom: '-3px' }}
+          />
+          {`${gameDetails.price} HUF`}
+        </Typography>
+        <Typography variant="subtitle2" sx={{ fontWeight: '300' }}>
+          {gameDetails.privacy.charAt(0).toUpperCase() +
+            gameDetails.privacy.slice(1)}
+        </Typography>
+        <Typography variant="subtitle2" sx={{ fontWeight: '300' }}>
+          {gameDetails.sportType.charAt(0).toUpperCase() +
+            gameDetails.sportType.slice(1)}
+        </Typography>
       </Box>
-      {!playerJoined?  <Button  className={styles.card_button} variant="contained" color="success" onClick={handleGameJoin}>Join</Button>
-    :<Box sx={{display:'flex',justifyContent:'flex-end'}}>
-      <Button className={styles.card_button} variant="contained" color="error" onClick={handleLeaveGame}>Leave</Button>
-    <Button className={styles.card_button} variant="contained" onClick={()=>{nav(`/game-chat/${gameDetails._id}`)}} color="info">Lobby</Button>
-    </Box> }
-
+      {gameDetails.status !== "finished" ? (
+        !playerJoined ? (
+          <Button
+            className={styles.card_button}
+            variant="contained"
+            color="success"
+            onClick={handleGameJoin}
+          >
+            Join
+          </Button>
+        ) : (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              className={styles.card_button}
+              variant="contained"
+              color="error"
+              onClick={handleLeaveGame}
+            >
+              Leave
+            </Button>
+            <Button
+              className={styles.card_button}
+              variant="contained"
+              onClick={() => {
+                nav(`/game-chat/${gameDetails._id}`);
+              }}
+              color="info"
+            >
+              Lobby
+            </Button>
+          </Box>
+        )
+      ) : (
+        <Typography
+          variant="body1"
+          sx={{
+            color: gameDetails.winners.includes(auth.userAuth.id)?'green':'red',
+            fontWeight: "bold",
+            textAlign: "center",
+            marginTop: "10px",
+          }}
+        >
+          {gameDetails.winners.includes(auth.userAuth.id)?'WIN':'LOSS'}
+        </Typography>
+      )}
     </Box>
   );
-}
+}  
 
 export default GameCards;

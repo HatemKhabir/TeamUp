@@ -5,10 +5,7 @@ import styles from './MessagesContainer.module.css'
 import { AuthContext } from '../../../../contexts/AuthProvider'
 function MessagesContainer({ messages }) {
   const auth=useContext(AuthContext)
-  useEffect(()=>{
-    console.log(auth.userAuth)
-    console.log(messages)
-  })
+
   return (
     <Box className={styles.messages_container}>
       {messages.map((msg) => (

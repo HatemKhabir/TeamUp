@@ -1,15 +1,15 @@
 .profile_details{
-    height:260px;
+    height:390px;
     }
     .player_profile_cover {
         position: absolute;
-        height: 140px;
-        
+        height: 270px;
+        object-fit: cover;
       }
       
       .player_profile_image {
         position: relative;
-        top: 120px;
+        top: 250px;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -22,6 +22,7 @@
         height: 80px;
         margin-left: 10px;
         padding: 2px;
+        object-fit: cover;
         border: 1px solid rgba(0, 0, 0, 0.13);
         border-radius: 50%;
       }
@@ -50,13 +51,13 @@
           align-items: flex-start;
         }
         .profile_details{
-          height:410px;
+          height:500px;
           }
       }
       @media only screen and (max-width: 640px) and (min-width:460px) {
       
         .profile_details{
-          height:290px;
+          height:400px;
           }
       }
       

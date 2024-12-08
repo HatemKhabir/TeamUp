@@ -7,6 +7,7 @@
   list-style: none;
   width: 100%;
 }
-main{
-  overflow-x: hidden;
+
+body {
+  padding-right: 0 !important;
 }

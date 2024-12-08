@@ -81,3 +81,11 @@
       margin-left: 10px;
     }
   }
+
+  .noChatSelected {
+    text-align: center;
+    color: #888; /* Light gray */
+    font-size: 1rem;
+    padding: 20px;
+  }
+  

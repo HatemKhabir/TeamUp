@@ -18,13 +18,14 @@ function ChatBox({chatId,friendshipId}) {
       console.log(e)
     }
   }
+  if (chatId)
   fetchGroupMessages()
   },[chatId])
 
   return (
     <Box className={styles.common_chat_box}>
         <MessagesContainer messages={messages}/>
-        <MessageInput/>
+        <MessageInput chatId={chatId?chatId:friendshipId}/>
     </Box>
   )
 }

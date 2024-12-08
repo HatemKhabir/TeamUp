@@ -69,7 +69,17 @@ const matchSchema = new Schema({
   gamePicCover: {
     type: String,
     default: 'https://img.freepik.com/premium-photo/sports-background-advertising-sport-life-concept-generative-ai_1002555-984.jpg' // Default image URL
-  }
+  },
+  winners:[
+    {type:Schema.Types.ObjectId,
+      ref:'Player'
+    }
+  ],
+  losers:[
+    {type:Schema.Types.ObjectId,
+      ref:'Player'
+    }
+  ]
 }, 
 { timestamps: true });
 
