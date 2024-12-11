@@ -17,6 +17,7 @@ import { AuthProvider } from './contexts/AuthProvider.jsx';
 import PlayerProfile from './features/profile/pages/PlayerProfile.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import EditProfilePage from './features/edit_profile/page/EditProfile.jsx';
+import { SocketProvider } from './contexts/SocketContext.jsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -59,6 +60,14 @@ const router = createBrowserRouter([
         )
       },
       {
+        path: 'friends-chat/:friendshipId?', 
+        element: (
+          <ProtectedRoute>
+            <PrivateChats />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: 'friends-chat',
         element: (
           <ProtectedRoute>
@@ -89,7 +98,9 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <SocketProvider token={localStorage.getItem('token')||''}>
           <RouterProvider router={router} />
+        </SocketProvider>
       </AuthProvider>
     </QueryClientProvider>
   </StrictMode>

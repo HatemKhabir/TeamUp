@@ -33,12 +33,12 @@ function GameCards({ gameDetails }) {
   const nav=useNavigate()
   useEffect(() => {
     if (!gameDetails || !gameDetails.playersList || !auth.userAuth || !auth.userAuth.id) {
-      return null;
+      return
     }
       if (gameDetails.playersList && gameDetails.playersList.includes(auth.userAuth.id)) {
           setPlayerJoined(true);
       }
-  }, [auth.userAuth, auth.userAuth.id, gameDetails, gameDetails.playersList]);
+  }, [auth.userAuth, gameDetails, gameDetails.playersList]);
 
   async function handleGameJoin() {
       try {

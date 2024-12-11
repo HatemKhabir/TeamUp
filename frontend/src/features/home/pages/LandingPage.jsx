@@ -20,6 +20,7 @@ function LandingPage() {
   
   const [loadingPublicGames, setLoadingPublicGames] = useState(false);
   const [hasFetchedGames, setHasFetchedGames] = useState(false);
+  const [publicGames,setPublicGames]=useState([])
   const nav = useNavigate();
 
   useEffect(() => {
@@ -28,21 +29,18 @@ function LandingPage() {
         if (auth.userAuth?.id && !hasFetchedGames) { 
           const response = await getPlayerGamesById(auth.userAuth.id);
           auth.setUserGames(response.data);
-
-          setLoadingPublicGames(true);
+        }
+        setLoadingPublicGames(true);
           const publicGamesResponse = await getPublicGames();
-          if (publicGamesResponse.data) auth.setPublicGames(publicGamesResponse.data);
-          
-          
+          if (publicGamesResponse.data) setPublicGames(publicGamesResponse.data);
           setHasFetchedGames(true); 
           setLoadingPublicGames(false);
-        }
       } catch (error) {
         console.error("Error fetching games:", error);
       }
     };
 
-    if (auth.userAuth) {
+    if (auth) {
       fetchGames();
       console.log(auth.publicGames)
     }
@@ -118,7 +116,7 @@ function LandingPage() {
             </Typography>
           </Box>
         )}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "30px",marginTop:'50px' }}>
           <Box className={styles.landing_page_horizontal_stack}>
             <Typography variant="h6">Checkout these public games :</Typography>
           </Box>
@@ -127,8 +125,8 @@ function LandingPage() {
               <CircularProgress />
             ) : (
               <>
-                {auth.publicGames.length > 0 ? (
-                  <CardsCarousel gameDetailsList={auth.publicGames} />
+                {publicGames.length > 0 ? (
+                  <CardsCarousel gameDetailsList={publicGames} />
                 ) : (
                   <Box
                     sx={{

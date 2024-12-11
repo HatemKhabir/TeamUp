@@ -85,29 +85,29 @@ function ProfileDetails({profileId,playerData }) {
     <Box className={styles.profile_details}>
       <Box
         component="img"
-        src={playerData?.profileData?.coverPic}
+        src={playerData?.coverPic}
         className={styles.player_profile_cover}
       />
       <Box className={styles.player_profile_image}>
         <Box
           component="img"
-          src={playerData?.profileData?.profilePic}
+          src={playerData?.profilePic}
           className={styles.player_profile_pic}
         />
         <Box className={styles.player_profile_buttons}>
           <Box className={styles.player_profile_details}>
             <Typography variant="h6">
-            {playerData?.profileData?.username || 'Username not available'}
+            {playerData?.username || 'Username not available'}
             <span className={styles.player_profile_country}>
-            {playerData?.profileData?.country && countryCodeMap[playerData.profileData.country] && (
-              <ReactCountryFlag svg countryCode={countryCodeMap[playerData.profileData.country]} />
+            {playerData?.country && countryCodeMap[playerData.country] && (
+              <ReactCountryFlag svg countryCode={countryCodeMap[playerData.country]} />
             )}</span>
             </Typography>
             <Typography variant="caption" sx={{ textAlign: "left" }}>
-            {playerData?.profileData?.bio || 'No bio available'}
+            {playerData?.bio || 'No bio available'}
             </Typography>
             <br />
-            <Typography variant="caption">          {playerData?.profileData?.joinDate || 'Joining date not available'}
+            <Typography variant="caption">          {playerData?.joinDate || 'Joining date not available'}
             </Typography>
           </Box>
           <Box sx={{ width: "fit-content", display: "flex" }}>
@@ -146,7 +146,7 @@ function ProfileDetails({profileId,playerData }) {
             variant="outlined"
             startIcon={<PersonAddIcon />}
             color="success"
-            onClick={() => handleAddFriend(playerData?.profileData?.username)}
+            onClick={() => handleAddFriend(playerData?.username)}
             sx={{ width: "fit-content", textWrap: "nowrap" }}
           >
             Add Friend
@@ -158,7 +158,7 @@ function ProfileDetails({profileId,playerData }) {
                   startIcon={<PersonRemoveIcon />}
                   color="error"
                   onClick={() => {
-                    removeFriend(playerData?.profileData?.username);
+                    removeFriend(playerData?.username);
                   }}
                   sx={{ width: "fit-content", textWrap: "nowrap" }}
                 >
@@ -168,6 +168,7 @@ function ProfileDetails({profileId,playerData }) {
                   variant="outlined"
                   startIcon={<MessageIcon />}
                   color="primary"
+                  onClick={()=>window.location.href='/friends-chat'}
                   sx={{ width: "fit-content", textWrap: "nowrap" }}
                 >
                   Send Message

@@ -5,7 +5,7 @@ import { signInApi } from "../services/authApis";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../../../contexts/AuthProvider";
-import { redirect, useNavigate } from "react-router-dom";
+import { redirect, replace, useNavigate } from "react-router-dom";
 
 export default function Signin({ setIsLogin }) {
   const [email, setEmail] = useState("");
@@ -32,7 +32,8 @@ export default function Signin({ setIsLogin }) {
         theme: "light",
       });
         setTimeout(() => {
-        navigate('/'); 
+          navigate('/', { replace: true });
+          window.location.reload(); 
       }, 2000)};
     } catch (err) {
       setError("Invalid email or password");

@@ -28,7 +28,6 @@ function ProfileStats({profileId,playerData}) {
     if (auth.userAuth && auth.userAuth.username === profileId) {
       setIsPersonal(true);
     }
-    
   }, [auth.userAuth, playerData, profileId]);
 
   return (
@@ -51,23 +50,23 @@ function ProfileStats({profileId,playerData}) {
         <Box className={styles.profile_stats_numbers}>
           <Box>
             <Typography variant="body2">Matches</Typography>
-            <Typography variant="body2"> {playerData?.profileData?.record[selectedSport]
-          ? playerData.profileData.record[selectedSport].wins + playerData.profileData.record[selectedSport].losses
+            <Typography variant="body2"> {playerData?.record[selectedSport]
+          ? playerData.record[selectedSport].wins + playerData.record[selectedSport].losses
           : 0}</Typography>
           </Box>
           <Box>
             <Typography variant="body2">Wins</Typography>
             <Typography variant="body2"> {
-        playerData?.profileData?.record[selectedSport]
-          ? playerData.profileData.record[selectedSport].wins
+        playerData?.record[selectedSport]
+          ? playerData.record[selectedSport].wins
           : 0
       }</Typography>
           </Box>
           <Box>
             <Typography variant="body2">Losses</Typography>
             <Typography variant="body2"> {
-        playerData?.profileData?.record[selectedSport]
-          ? playerData.profileData.record[selectedSport].losses
+        playerData?.record[selectedSport]
+          ? playerData.record[selectedSport].losses
           : 0
       }</Typography>
           </Box>
@@ -75,7 +74,7 @@ function ProfileStats({profileId,playerData}) {
   <Typography variant="body2">Trust Factor</Typography>
   <LinearProgress
     variant="determinate"
-    value={playerData?.profileData ? playerData.profileData.trustFactor : 0}
+    value={playerData ? playerData.trustFactor : 0}
     color="success"
     sx={{
       "& .MuiLinearProgress-root": {
@@ -126,7 +125,7 @@ function ProfileStats({profileId,playerData}) {
       <Typography variant="h6" sx={{ alignSelf: "flex-start" }}>
          Friends List
         </Typography>
-        {playerData?.profileData?.friendsList && playerData?.profileData?.friendsList.map((player,index)=>(
+        {playerData?.friendsList && playerData?.friendsList.map((player,index)=>(
           <Box key={index} className={styles.player_modal_info}>
             <Box component='img' src={player.profilePicture} className={styles.player_modal_img}/>
             <Typography variant='subtitle1' sx={{padding:'5px'}} className={styles.player_modal_name}>{player.username}</Typography>

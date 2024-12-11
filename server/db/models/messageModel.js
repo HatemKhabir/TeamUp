@@ -16,13 +16,7 @@ const messagesSchema = mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "Chat",
       required: true, // Every message should belong to a chat
-    },
-    readBy: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Player",
-      }
-    ]    
+    }
   },
   { timestamps: true }
 );

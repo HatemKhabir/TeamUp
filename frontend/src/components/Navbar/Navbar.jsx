@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from "./Navbar.module.css";
 import { Badge, Button, Link, Menu, MenuItem, Typography } from "@mui/material";
 import Divider from '@mui/material/Divider';
@@ -13,6 +13,11 @@ function Navbar() {
   const nav=useNavigate()
   const [isAuth, setIsAuth] = useState(localStorage.getItem('userAuth')?true:false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const loggedinUserId = isAuth
+    ? JSON.parse(localStorage.getItem('userAuth')).id
+    : null;
+
+  const [unreadMsgs, setUnreadMsgs] = useState(0);
   const auth=useContext(AuthContext)
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -31,7 +36,16 @@ function Navbar() {
     console.log(e.message)
   }
   }
-
+  
+  useEffect(() => {
+    if (auth.userAuth?.userChats) {
+      const loggedInUserId = auth.userAuth.id;
+      const unread = auth.userAuth.userChats.filter(
+        (chat) => !chat.openedBy.includes(loggedInUserId)
+      );
+      setUnreadMsgs(unread.length);
+    }
+  }, [auth.userAuth?.id, auth.userAuth?.userChats]);
 
   return (
     <div className={styles.navbar}>
@@ -65,7 +79,7 @@ function Navbar() {
           <div className={styles.logged_in_buttons}>
             {/* Icon with Badge for Messages */}
             <Link to="/friends-chat">
-      <Badge badgeContent={0} color="error"  sx={{ width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in',marginRight:'10px' }} className={styles.navbar_logos}>
+      <Badge badgeContent={unreadMsgs} color="error"  sx={{ width: "fit-content",cursor:'pointer',transition:'all 0.3s ease-in',marginRight:'10px' }} className={styles.navbar_logos}>
         <TextsmsIcon onClick={()=>nav('/friends-chat')} sx={{ color: "white" }} />
       </Badge>
     </Link>

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken"
 import Player from "../db/models/playerModel.js"
+import Chat from "../db/models/chatModel.js";
 //Authentication : when you register and login , Authorization : make sure someone is logged in to perform certain action
 
 //Registering and logging in with jwt
@@ -32,7 +33,6 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email,username,password } = req.body
-    console.log(req)
     const player = await Player.findOne({$or:[
       {email:email},
       {username:username}
@@ -48,8 +48,16 @@ export const login = async (req, res) => {
     
     // If the password is correct, generate a token
     const token = jwt.sign({ id: player._id }, process.env.JWT_SECRET)
-    res.status(200).json({ token, player })
-    console.log(token)
+    try {
+      const userChats = await Chat.find({
+        users: { $elemMatch: { $eq: player._id } },
+      })
+      return res.status(200).json({ token, player,userChats })
+    }catch(e){
+          console.log(e)
+        }
+        return res.status(200).json({ token, player })
+
   } catch (err) {
     res.status(501).json({ error: err.message })
   }

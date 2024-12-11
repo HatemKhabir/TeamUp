@@ -1,7 +1,7 @@
 .sender_message_box {
     display: flex;
     gap: 10px;
-    margin: 20px;
+    margin: 5px 15px;
     align-items: flex-start; /* Align items at the top for dynamic height */
 }
 
@@ -10,7 +10,7 @@
     flex-direction: row-reverse;
     gap: 10px;
     margin-left: -5px !important;
-    margin: 20px 15px;
+    margin: 5px 15px;
     align-items: flex-start; /* Align items at the top for dynamic height */
 }
 

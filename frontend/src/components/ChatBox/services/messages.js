@@ -32,3 +32,21 @@ export const sendMessageApi=async(chatId,messageContent)=>{
     throw e;
   }
 }
+
+export const fetchPrivateMessagesApi=async(friendshipId)=>{
+  const token=localStorage.getItem('token')
+  try{
+    const response=await axiosInstance.get('api/message',{
+      params:{chatId:friendshipId},
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+    })
+    console.log(response)
+    return response.data
+  }catch(e){
+    console.error(e)
+    throw e
+  }
+
+}

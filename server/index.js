@@ -13,6 +13,7 @@ import messageRoutes from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
 import Chat from "./db/models/chatModel.js";
 import { errorHandler, notFound } from "./middleware/errorMiddelware.js";
+import { initSocket } from "./socket.js";
 dotenv.config();
 
 const port = process.env.PORT;
@@ -37,15 +38,10 @@ const startServer = async () => {
       console.log(`server has started on port ${port}`),
     );
     connectDB(process.env.ATLAS_URI);
-    const io = new Server(server, {
-      pingTimeout: 60000,
-      cors: {
-        origin: "http://localhost:5173",
-      },
-    });
-    
+    initSocket(server)
   } catch (e) {
     console.log(e);
   }
+  
 };
 startServer();

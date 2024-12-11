@@ -25,6 +25,7 @@
     .profile_side_informations{
         flex: 1 1 50%;
         display: flex;
+        gap:10px;
         max-height: 200px;
         overflow: auto;
         flex-direction: column;

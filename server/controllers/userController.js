@@ -122,7 +122,6 @@ export const sendInviteFriend = async (req, res) => {
     });
     try {
       await newFriendShip.save();
-      console.log(await friendShip.find());
     } catch (err) {
       console.log(err);
       return res.status(500).json({ message: "Internal Server Error" });
@@ -224,7 +223,6 @@ export const getFriendsList = async (req, res) => {
 
 export const getPlayerGamesById=async(req,res)=>{
   const playerId=req.query.id
-  console.log(req.query)
   try{
   const player=await Player.findOne({_id:playerId}).populate('matchJoined')
   if (player)

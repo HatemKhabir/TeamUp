@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import styles from './PlayerProfile.module.css'
 import { useNavigate, useParams } from "react-router-dom";
@@ -14,29 +14,34 @@ function PlayerProfile() {
 
   useEffect(() => {
     if (!playerId) {
-     
+
       navigate('/'); 
     }
 
     async function getPlayerData() {
       try {
         const playerDataResponse = await getPlayerStats(playerId);
-        console.log(playerDataResponse)
+        console.log(playerDataResponse )
 
         if (playerDataResponse) {
           setPlayerData(playerDataResponse.responseData.profileData);
-          console.log(playerDataResponse)
         }
       } catch (e) {
         console.error(e);
       }
     }
-
     if (playerId) {
+      console.log('here')
       getPlayerData();
     }
-    console.log(playerData)
   }, [playerId, navigate]);
+  if (!playerData) {
+    return (
+      <Box sx={{ textAlign: 'center', marginTop: '20px' }}>
+        <Typography variant="h6">Loading player data...</Typography>
+      </Box>
+    );
+  }
   return (
     <Box className={styles.player_profile}>
       <ProfileDetails playerData={playerData} profileId={playerId}/>

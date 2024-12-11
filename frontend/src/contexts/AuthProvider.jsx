@@ -1,6 +1,8 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { signInApi } from "../features/auth/services/authApis";
+import {io} from "socket.io-client"
+
 export const AuthContext = createContext();
 
 // Constants for local storage keys
@@ -31,12 +33,14 @@ export const AuthProvider = ({ children }) => {
         id: backendResponse.player._id,
         username: backendResponse.player.username,
         email: backendResponse.player.email,
+        userChats:backendResponse.userChats
       };
   
       setUserAuth(userData);
   
       // Store the user data in local storage
       localStorage.setItem("userAuth", JSON.stringify(userData));
+ 
   
       setIsAuth(true);
       return { success: true };
@@ -53,12 +57,13 @@ export const AuthProvider = ({ children }) => {
     // Remove tokens from local storage
     localStorage.removeItem(ACCESS_TOKEN_LOCAL_STORAGE);
     localStorage.removeItem("userAuth");
-  
+ 
     // Reset auth state
     setUserAuth({
       id: '',
       username: '',
       email: '',
+      userChats:[],
       games: [],
     });
     setIsAuth(false);
@@ -76,6 +81,7 @@ export const AuthProvider = ({ children }) => {
           id: parsedUser.id,
           username: parsedUser.username,
           email: parsedUser.email,
+          userChats:parsedUser.userChats,
           games: parsedUser.games,
         });
   
@@ -97,7 +103,29 @@ export const AuthProvider = ({ children }) => {
       prevPublicGames.map((game) => (game._id === updatedGame._id ? updatedGame : game))
     );
   };
-  
+  const updateUserChats = (updatedChats) => {
+    setUserAuth((prevAuth) => ({
+      ...prevAuth,
+      userChats: updatedChats,
+    }));
+
+    // Persist to local storage
+    const updatedUserAuth = {
+      ...userAuth,
+      userChats: updatedChats,
+    };
+    localStorage.setItem("userAuth", JSON.stringify(updatedUserAuth));
+  };
+
+const updateChat = useCallback((updatedChat) => {
+  setUserAuth((prevAuth) => {
+    const updatedChats = prevAuth.userChats.map((chat) =>
+      chat._id === updatedChat._id ? updatedChat : chat
+    );
+    return { ...prevAuth, userChats: updatedChats };
+  });
+}, []);
+
   // Define the context value to be provided
   const contextValue = {
     userAuth,
@@ -106,7 +134,9 @@ export const AuthProvider = ({ children }) => {
     signOut,
     userGames,
     setUserGames,
+    updateUserChats,
     publicGames,
+    updateChat,
     updateGameDetails,
     setPublicGames
   };

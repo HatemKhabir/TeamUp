@@ -2,9 +2,12 @@
     display: flex;
 
 }
+.game_chat{
+width: 50px;
+}
 
 .friends_list_aside{
-    width: 30%;
+    flex: 0 0 20%;
     max-height: 550px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -17,4 +20,8 @@
     .friends_list_aside{
         width: 100%;
     }
+    .game_chat{
+        width: 100%;
+        }
+        
 }

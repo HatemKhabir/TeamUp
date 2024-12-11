@@ -25,6 +25,12 @@ const chatSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    openedBy: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Player",
+      }
+    ]
   },
   { timestamps: true }
 );
