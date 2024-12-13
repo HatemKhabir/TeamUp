@@ -15,3 +15,19 @@ export const getLastMessageApi=async(friendshipsChats)=>{
        throw e
     }
 }
+
+export const getLobbiesMessages=async(userId)=>{
+  const token=localStorage.getItem('token')
+  try{
+    const response=await axiosInstance.get('api/message/lobby-chat',{
+      params:{userId},
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+    })
+  return response.data.map(game=>game.chat)
+  }catch(e){
+    console.error(e);
+    throw e
+  }
+}

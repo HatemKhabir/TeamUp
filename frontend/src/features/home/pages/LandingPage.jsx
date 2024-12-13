@@ -69,7 +69,7 @@ function LandingPage() {
               </Button>
             </Box>
             <Box className={styles.landing_page_cards}>
-              {auth.userGames.length > 0 ? (
+              {auth.userGames?.length > 0 ? (
                 <CardsCarousel gameDetailsList={auth.userGames.filter((game)=>game.status!='finished')} />
               ) : (
                 <>

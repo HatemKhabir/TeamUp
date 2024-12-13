@@ -6,6 +6,7 @@ import ProfileDetails from "../components/profile_details/page/ProfileDetails";
 import ProfileStats from "../components/profile_stats/page/ProfileStats";
 import { useEffect, useState } from "react";
 import { getPlayerStats } from "../services/profileStats";
+import MatchHistory from "../components/matches_history/MatchHistory";
 
 function PlayerProfile() {
   const { playerId } = useParams();
@@ -46,6 +47,10 @@ function PlayerProfile() {
     <Box className={styles.player_profile}>
       <ProfileDetails playerData={playerData} profileId={playerId}/>
       <ProfileStats playerData={playerData} profileId={playerId}/>
+      <Typography variant="h6" sx={{textAlign:'center' }}>
+          Match History
+        </Typography>    
+    <MatchHistory/>
     </Box>
   );
 }

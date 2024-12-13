@@ -1,15 +1,11 @@
-import GameCards from '../../../components/Cards/GameCards';
-import { Box, Button,Typography } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import CommonHeader from '../../../components/Header/CommonHeader';
-import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../../../contexts/AuthProvider';
-import styles from "./PersonalGames.module.css";
-import { getPlayerGamesById } from '../../home/services/landingPage';
+import { useContext, useEffect, useState } from "react";
+import { getPlayerGamesById } from "../../../home/services/landingPage";
+import { Box, Typography } from "@mui/material";
+import GameCards from "../../../../components/Cards/GameCards";
+import styles from './MatchHistor.module.css'
+import { AuthContext } from "../../../../contexts/AuthProvider";
 
-
-
-function PersonalGames() {
+function MatchHistory() {
   const auth=useContext(AuthContext) 
   const [gameDetailsList,setGameDetailsList]=useState([]);
 
@@ -39,15 +35,8 @@ function PersonalGames() {
   
   return (
       <div className={styles.sports_games}>
-          <header>
-              <CommonHeader pageName='personal-games'/>
-          </header>
           <Box sx={{display:'flex'}}>
           <main className={styles.games_list_main}>
-            <Box className={styles.games_page_infos}>
-              <Typography variant='body2' sx={{marginLeft:'20px'}}>{gameDetailsList.length} Games 
-              </Typography>
-            </Box>
             {gameDetailsList.length>0 ?
           
             <Box className={styles.game_cards_container}>
@@ -72,4 +61,4 @@ function PersonalGames() {
   );
 }
 
-export default PersonalGames;
+export default MatchHistory;

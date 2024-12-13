@@ -3,6 +3,9 @@ import Chat from "../db/models/chatModel.js";
 import Message from "../db/models/messageModel.js";
 import friendShip from "../db/models/friendRelationModel.js";
 import { getIO } from "../socket.js";
+import Player from "../db/models/playerModel.js";
+import Match from "../db/models/matchModel.js";
+import { populate } from "dotenv";
 
 export const sendMessage = async (req, res) => {
   const { chatId, messageContent, senderID } = req.body;
@@ -29,10 +32,10 @@ export const sendMessage = async (req, res) => {
     const updatedChat = await Chat.findOneAndUpdate(
       { _id: chatId },
       { $pull: { openedBy: { $ne: new mongoose.Types.ObjectId(senderID) } } },
-      { new: true } 
+      { new: true }
     );
     if (message && findChat) {
-      io.emit("updatedChat",updatedChat)
+      io.emit("updatedChat", updatedChat);
       io.to(chatId).emit("newMessage", message);
       return res.status(201).json(message);
     }
@@ -111,5 +114,40 @@ export const getLastMessage = async (req, res) => {
   } catch (e) {
     console.error("Error fetching last messages:", e);
     res.status(500).json({ e: "Internal server error" });
+  }
+};
+
+export const getLobbyChat = async (req, res) => {
+  const { userId } = req.query;
+  try {
+    const player = await Player.findById(userId);
+    if (!player) {
+      return res.status(404).json({ error: "Player not found!" });
+    }
+    const joinedMatches = await Match.find({
+      _id: { $in: player.matchJoined },
+    }).populate({
+      path: "chat",
+      populate: [
+        {
+          path: "latestMsg",
+          populate: {
+            path: "senderID",
+            select: "username"
+          }
+        },
+        {
+          path: "eventId",
+          select: "eventTitle gamePicCover"
+        }
+      ]
+    });
+    if (joinedMatches.length > 0) {
+      return res.status(200).json(joinedMatches);
+    }
+    return res.status(201).json("");
+  } catch (e) {
+    console.error("Error fetching events:", e);
+    res.status(500).json({ error: "Internal Server Error!" });
   }
 };

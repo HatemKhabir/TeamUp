@@ -3,12 +3,12 @@ import styles from "./ChatsList.module.css";
 import { Box, Button, Typography } from "@mui/material";
 import { IoMdAddCircle } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { getLastMessageApi } from "../../services/privateChats";
+import { getLastMessageApi, getLobbiesMessages } from "../../services/privateChats";
 import { AuthContext } from "../../../../contexts/AuthProvider";
 
 function ChatsList({ friendsList, friendships }) {
   const navigate = useNavigate();
-  const [chatsLastMsgs, setChatsLastMsgs] = useState([]);
+  const [userChats, setUserChats] = useState([]);
   const auth=useContext(AuthContext)
   const handleFriendClick = (friendshipId) => {
     window.location.href = `/friends-chat/${friendshipId}`;
@@ -21,37 +21,44 @@ function ChatsList({ friendsList, friendships }) {
         }
         const chatIds = friendships.map((friendship) => friendship.chat);
         const response = await getLastMessageApi(chatIds);
+        const gameLobbiesMessages=await getLobbiesMessages(auth.userAuth.id);
+        const allChats=[...response,...gameLobbiesMessages];
         auth.updateUserChats(response)
-        setChatsLastMsgs(response);
+        setUserChats(allChats);
       } catch (e) {
         console.log(e);
         throw e;
       }
     }
     getLastMessage();
-  }, [friendships, auth.userAuth.userChats]);
+  }, [friendships]);
 
   const sortedChats = useMemo(() => {
-    return friendsList.map((friend) => {
+    const friendsChats=friendsList.map((friend) => {
       const friendship = friendships.find(
         (friendship) =>
           friendship.recipient === friend._id ||
           friendship.sender === friend._id
       );
-      const lastMessage = chatsLastMsgs.find(
+      const lastMessage = userChats.find(
         (chat) => chat._id === friendship?.chat
       );
       return { friend, friendship, lastMessage };
     })
     .filter(chat => chat.friendship)
-    .sort((a, b) => {
+    const eventChats=userChats.filter((chat)=>chat.isGroupChat)
+    console.log([...friendsChats,...eventChats])
+    return [...friendsChats,...eventChats].sort((a, b) => {
       const dateA = a.lastMessage?.latestMsg?.createdAt || 0;
       const dateB = b.lastMessage?.latestMsg?.createdAt || 0;
       return new Date(dateB) - new Date(dateA); 
     });
-  }, [friendsList, friendships, chatsLastMsgs]);
+  }, [friendsList, friendships, userChats]);
 
-
+  useEffect(()=>{
+console.log(userChats)
+console.log(sortedChats)
+  },[userChats,sortedChats])
   return (
     <Box className={styles.chats_list}>
       <Box className={styles.chats_list_title}>
@@ -59,16 +66,16 @@ function ChatsList({ friendsList, friendships }) {
       </Box>
       {sortedChats.length > 0 && (
         <Box>
-          {sortedChats.map(({ friend, friendship, lastMessage }, index) => (
+          {sortedChats.map((chat, index) => (
             <div
               className={styles.friend_box}
               key={index}
-              onClick={() => handleFriendClick(friendship.chat)}
+              onClick={() => handleFriendClick(chat.friendship?chat.friendship.chat:chat._id)}
               style={{ cursor: "pointer" }}
             >
               <Box
                 component="img"
-                src={friend.profilePicture}
+                src={chat.friend?chat.friend.profilePicture:chat.eventId.gamePicCover}
                 className={styles.friend_image}
               />
               <Box
@@ -80,18 +87,19 @@ function ChatsList({ friendsList, friendships }) {
                 }}
               >
                 <Typography variant="subtitle1" fontWeight={"600"}>
-                  {friend.username}
+                  {chat.friend?chat.friend.username:chat.eventId.eventTitle}
                 </Typography>
                 <Typography
                   variant="subtitle2"
                   fontSize={"0.8em"}
                   fontWeight={"400"}
                 >
-                  {lastMessage && lastMessage.latestMsg
-                    ? `${lastMessage.latestMsg.senderID.username} : ${lastMessage.latestMsg.content}`
+                  {chat.lastMessage? chat.lastMessage.latestMsg
+                    ? `${chat.lastMessage.latestMsg.senderID.username} : ${chat.lastMessage.latestMsg.content}`
+                    : "No messages yet":chat.latestMsg?`${chat.latestMsg.senderID.username} : ${chat.latestMsg.content}`
                     : "No messages yet"}
                 </Typography>
-                {!lastMessage?.openedBy.includes(auth.userAuth.id) && (
+                {!chat.lastMessage?.openedBy.includes(auth.userAuth.id) && (
                   <Box
                     sx={{
                       position: "absolute",

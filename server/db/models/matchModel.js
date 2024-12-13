@@ -53,7 +53,7 @@ const matchSchema = new Schema({
   },
   skillLevel: {
     type: [String],
-    enum: ['Beginners', 'Average', 'Semi-Pro', 'Professional'], // Allowed values
+    enum: ['Beginners', 'Average', 'Semi-Pro', 'Professional'],
     required: true
   },
   gender:{

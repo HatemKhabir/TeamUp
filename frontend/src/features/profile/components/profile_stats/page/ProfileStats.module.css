@@ -3,6 +3,7 @@
     flex-direction: column;
     text-align: center;
     gap: 20px;
+    margin-bottom: 25px;
     }
     .profile_main_stats{
         display: flex;
