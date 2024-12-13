@@ -34,7 +34,6 @@ export const postWinnersAndLosersApi = async (gameId, selectedWinners, losers) =
           },
         }
       );
-  
       return response.data; 
     } catch (e) {
       return e.response.data;
