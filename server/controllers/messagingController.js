@@ -138,12 +138,12 @@ export const getLobbyChat = async (req, res) => {
         },
         {
           path: "eventId",
-          select: "eventTitle gamePicCover"
+          select: "eventTitle gamePicCover status"
         }
       ]
     });
     if (joinedMatches.length > 0) {
-      return res.status(200).json(joinedMatches);
+      return res.status(200).json(joinedMatches.filter((match)=>match.status=='upcoming'));
     }
     return res.status(201).json("");
   } catch (e) {

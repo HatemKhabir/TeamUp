@@ -264,3 +264,69 @@ export const checkFriendStatus = async (req, res) => {
   }
 };
 
+// Increment trust factor (commend)
+export const commendPlayer = async (req, res) => {
+  const { username, commenderId } = req.params;
+
+  try {
+    const player = await Player.findOne({ username });
+    if (!player) {
+      return res.status(404).json({ message: 'Player not found.' });
+    }
+
+    // Check if commenderId already exists in commendReportLog for "commend"
+    const existingLog = player.commendReportLog.find(
+      (log) => log.userId === commenderId && log.action === 'commend'
+    );
+
+    if (existingLog) {
+      return res.status(400).json({ message: 'You have already commended this player.' });
+    }
+
+    // Increment trust factor and add to commendReportLog
+    player.trustFactor += 10;
+    player.commendReportLog.push({ userId: commenderId, action: 'commend' });
+    await player.save();
+
+    return res.status(200).json({
+      message: 'Player commended successfully!',
+      trustFactor: player.trustFactor,
+    });
+  } catch (error) {
+    console.error('Error commending player:', error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// Decrement trust factor (report)
+export const reportPlayer = async (req, res) => {
+  const { username, commenderId } = req.params;
+
+  try {
+    const player = await Player.findOne({ username });
+    if (!player) {
+      return res.status(404).json({ message: 'Player not found.' });
+    }
+
+    const existingLog = player.commendReportLog.find(
+      (log) => log.userId === commenderId && log.action === 'report'
+    );
+
+    if (existingLog) {
+      return res.status(400).json({ message: 'You have already reported this player.' });
+    }
+
+    // Decrement trust factor and add to commendReportLog
+    player.trustFactor -= 5;
+    player.commendReportLog.push({ userId: commenderId, action: 'report' });
+    await player.save();
+
+    return res.status(200).json({
+      message: 'Player reported successfully!',
+      trustFactor: player.trustFactor,
+    });
+  } catch (error) {
+    console.error('Error reporting player:', error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};

@@ -90,12 +90,18 @@ const userSchema = new Schema({
   },
   trustFactor:{
     type:Number,
-    default:0
+    default:50
   },
   country: {
     type: String,
     enum: COUNTRIES,
   },
+  commendReportLog: [
+    {
+      userId: { type: Schema.Types.ObjectId, ref: "Player" },
+      action: { type: String, enum: ["commend", "report"] }, // Store the action type
+    },
+  ],
   profilePicture: {
     type: String,
     default: 'https://flowbite.com/docs/images/examples/image-3@2x.jpg' // Default image URL

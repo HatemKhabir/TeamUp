@@ -41,7 +41,12 @@ function GameCards({ gameDetails }) {
   }, [auth.userAuth, gameDetails, gameDetails.playersList]);
 
   async function handleGameJoin() {
-      try {
+    if (!auth.userAuth)
+      {
+        setError('Login to join a game')
+        return null;
+      }  
+    try {
           const joinGameRequest = await joinGameApi(auth.userAuth.id, gameDetails._id);
           if (joinGameRequest.status === 200) {
               auth.updateGameDetails(joinGameRequest.data.match);
@@ -71,7 +76,7 @@ function GameCards({ gameDetails }) {
 
   return (
     <Box className={styles.game_card}>
-      {error && <Typography>{error}</Typography>}
+      {error && <Typography color={'red'}>{error}</Typography>}
       <Box
         component="img"
         src={gameDetails.gamePicCover}

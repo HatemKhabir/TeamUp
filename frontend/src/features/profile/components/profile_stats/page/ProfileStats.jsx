@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { startTransition, useContext, useEffect, useState } from "react";
 import {
   Box,
   FormControl,
@@ -14,15 +14,19 @@ import { Button, Tooltip } from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import { AuthContext } from "../../../../../contexts/AuthProvider";
+import { commendPlayerApi, reportPlayerApi } from "../../../services/profileStats";
+import { useOptimistic } from "react";
+import SplitLinearProgress from "../../../../../assets/SplitLinearProgress";
 
 function ProfileStats({profileId,playerData}) {
   const [selectedSport, setSelectedSport] = useState('volleyball');
   const handleChange = (event) => {
     setSelectedSport(event.target.value);
   };
+  const [error,setError]=useState('')
   const [isPersonal, setIsPersonal] = useState(false);
   const auth = useContext(AuthContext);
-
+  const [trustFactor, setTrustFactor] = useState(playerData.trustFactor);
 
   useEffect(() => {
     if (auth.userAuth && auth.userAuth.username === profileId) {
@@ -71,17 +75,10 @@ function ProfileStats({profileId,playerData}) {
       }</Typography>
           </Box>
           <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+  {error&&<Typography color={'red'}>{error}</Typography>}
   <Typography variant="body2">Trust Factor</Typography>
-  <LinearProgress
-    variant="determinate"
-    value={playerData ? playerData.trustFactor : 0}
-    color="success"
-    sx={{
-      "& .MuiLinearProgress-root": {
-        backgroundColor: "rgb(255, 255, 177) !important",
-        height: "50px",
-      },
-    }}
+  <SplitLinearProgress
+    value={trustFactor ?? 0}     
   />
   {!isPersonal &&
   <Box sx={{ display: "flex", gap: "10px", marginTop: "10px" }}>
@@ -94,8 +91,16 @@ function ProfileStats({profileId,playerData}) {
           padding: "5px 10px",
         }}
         onClick={() => {
-          // Handle commend logic here
-          console.log("Commend button clicked");
+          setTrustFactor((prev) => prev + 10);
+          commendPlayerApi(profileId)
+            .then((response) => {
+              console.log(response.message);
+            })
+            .catch((error) => {
+              console.log(error.response);
+              setError(error.response.data.message)
+              setTrustFactor((prev) => prev - 10);
+            });
         }}
       >
  
@@ -110,8 +115,17 @@ function ProfileStats({profileId,playerData}) {
           padding: "5px 10px",
         }}
         onClick={() => {
-          // Handle report logic here
-          console.log("Report button clicked");
+          setTrustFactor((prev) => prev -1 );
+          reportPlayerApi(profileId)
+    .then((response) => {
+      console.log(response.message);
+    })
+    .catch((error) => {
+      console.error(error);
+      setError(error.response.data.message)
+
+      setTrustFactor((prev) => prev + 1);
+          });
         }}
       >
         Report

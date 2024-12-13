@@ -1,5 +1,5 @@
 import express from "express"
-import { getProfile, getUsers, removeFriend,getFriendsList,getPlayerGamesById, acceptInvite, declineInvite, sendInviteFriend, checkFriendStatus} from "../controllers/userController.js"
+import { getProfile, getUsers, removeFriend,getFriendsList,getPlayerGamesById, acceptInvite, declineInvite, sendInviteFriend, checkFriendStatus, commendPlayer, reportPlayer} from "../controllers/userController.js"
 import { protect } from "../middleware/authMiddelware.js";
 
 const router=express.Router();
@@ -13,4 +13,7 @@ router.delete("/removeFriend",protect,removeFriend)
 router.get("/friendsList",protect,getFriendsList);
 router.patch("/addFriend",protect,acceptInvite)
 router.delete("/addFriend",protect,declineInvite)
+router.patch('/commend/:username', commendPlayer);
+router.patch('/report/:username', reportPlayer);
+
 export default router

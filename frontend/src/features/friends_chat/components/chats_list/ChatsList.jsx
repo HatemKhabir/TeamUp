@@ -23,7 +23,7 @@ function ChatsList({ friendsList, friendships }) {
         const response = await getLastMessageApi(chatIds);
         const gameLobbiesMessages=await getLobbiesMessages(auth.userAuth.id);
         const allChats=[...response,...gameLobbiesMessages];
-        auth.updateUserChats(response)
+        auth.updateUserChats(allChats)
         setUserChats(allChats);
       } catch (e) {
         console.log(e);
@@ -66,55 +66,67 @@ console.log(sortedChats)
       </Box>
       {sortedChats.length > 0 && (
         <Box>
-          {sortedChats.map((chat, index) => (
-            <div
-              className={styles.friend_box}
-              key={index}
-              onClick={() => handleFriendClick(chat.friendship?chat.friendship.chat:chat._id)}
-              style={{ cursor: "pointer" }}
-            >
-              <Box
-                component="img"
-                src={chat.friend?chat.friend.profilePicture:chat.eventId.gamePicCover}
-                className={styles.friend_image}
-              />
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  position: "relative",
-                }}
+          {sortedChats.map((chat, index) => {
+            const lastMessage = chat.lastMessage?.latestMsg || chat.latestMsg;
+            const isUnread = chat.lastMessage
+            ? chat.lastMessage.openedBy && !chat.lastMessage.openedBy.includes(auth.userAuth.id)
+            : chat.openedBy && !chat.openedBy.includes(auth.userAuth.id);
+
+            return (
+              <div
+                className={styles.friend_box}
+                key={index}
+                onClick={() =>
+                  handleFriendClick(chat.friendship ? chat.friendship.chat : chat._id)
+                }
+                style={{ cursor: "pointer" }}
               >
-                <Typography variant="subtitle1" fontWeight={"600"}>
-                  {chat.friend?chat.friend.username:chat.eventId.eventTitle}
-                </Typography>
-                <Typography
-                  variant="subtitle2"
-                  fontSize={"0.8em"}
-                  fontWeight={"400"}
+                <Box
+                  component="img"
+                  src={
+                    chat.friend
+                      ? chat.friend.profilePicture
+                      : chat.eventId?.gamePicCover
+                  }
+                  className={styles.friend_image}
+                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    position: "relative",
+                  }}
                 >
-                  {chat.lastMessage? chat.lastMessage.latestMsg
-                    ? `${chat.lastMessage.latestMsg.senderID.username} : ${chat.lastMessage.latestMsg.content}`
-                    : "No messages yet":chat.latestMsg?`${chat.latestMsg.senderID.username} : ${chat.latestMsg.content}`
-                    : "No messages yet"}
-                </Typography>
-                {!chat.lastMessage?.openedBy.includes(auth.userAuth.id) && (
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: "50%",
-                      right: "10px",
-                      width: "10px",
-                      height: "10px",
-                      borderRadius: "50%",
-                      backgroundColor: "mediumvioletred",
-                    }}
-                  ></Box>
-                )}
-              </Box>
-            </div>
-          ))}
+                  <Typography variant="subtitle1" fontWeight={"600"}>
+                    {chat.friend ? chat.friend.username : chat.eventId?.eventTitle}
+                  </Typography>
+                  <Typography
+                    variant="subtitle2"
+                    fontSize={"0.8em"}
+                    fontWeight={"400"}
+                  >
+                    {lastMessage
+                      ? `${lastMessage.senderID.username} : ${lastMessage.content}`
+                      : "No messages yet"}
+                  </Typography>
+                  {isUnread && (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        right: "10px",
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "50%",
+                        backgroundColor: "mediumvioletred",
+                      }}
+                    ></Box>
+                  )}
+                </Box>
+              </div>
+            );
+          })}
         </Box>
       )}
     </Box>
