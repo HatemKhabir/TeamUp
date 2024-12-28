@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 *,
 *::before,
 *::after {
@@ -9,5 +13,77 @@
 }
 
 body {
+  background-color: #f0f2f5;
   padding-right: 0 !important;
+  overflow-x: hidden;
 }
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-bounce {
+  animation: bounce 3s infinite;
+}
+
+/* Add these custom colors */
+:root {
+  --color-primary: #4CC47C;
+  --color-accent: #2196F3;
+  --color-light-blue: #EBF8FF;
+  --color-light-green: #F0FDF4;
+}
+
+.bg-primary\/10 {
+  background-color: rgba(76, 196, 124, 0.1);
+}
+
+.bg-accent\/10 {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.from-primary {
+  --tw-gradient-from: var(--color-primary);
+}
+
+.via-accent {
+  --tw-gradient-via: var(--color-accent);
+}
+
+.to-primary {
+  --tw-gradient-to: var(--color-primary);
+}
+
+.from-light-blue {
+  --tw-gradient-from: var(--color-light-blue);
+}
+
+.to-light-green {
+  --tw-gradient-to: var(--color-light-green);
+}
+
+

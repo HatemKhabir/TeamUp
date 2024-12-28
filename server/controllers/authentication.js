@@ -63,9 +63,9 @@ export const login = async (req, res) => {
   }
 }
 
-export const updateProfile=async(req,res)=>{
+export const updateProfile = async (req, res) => {
   try {
-    const { username, password, profilePic, coverPic } = req.body;
+    const { username, password, profilePic, bio, country } = req.body;
     const { id } = req.user; 
 
     // Find the user by their ID
@@ -74,20 +74,29 @@ export const updateProfile=async(req,res)=>{
       return res.status(404).json({ msg: 'User not found!' });
     }
 
+    // Update username if provided and different
     if (username && player.username !== username) {
       player.username = username;
     }
 
-    if (password && player.password!==password) {
+    // Update password if provided and different
+    if (password && player.password !== password) {
       player.password = password;
     }
 
+    // Update profile picture if provided
     if (profilePic) {
       player.profilePicture = profilePic;
     }
 
-    if (coverPic) {
-      player.coverPicture = coverPic;
+    // Update bio if provided
+    if (bio !== undefined) {
+      player.bio = bio;
+    }
+
+    // Update country if provided
+    if (country !== undefined) {
+      player.country = country;
     }
 
     await player.save();
@@ -100,4 +109,4 @@ export const updateProfile=async(req,res)=>{
     console.error(err);
     res.status(500).json({ error: 'Internal server error.' });
   }
-}
+};

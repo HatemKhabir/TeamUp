@@ -5,14 +5,18 @@ import { IoMdAddCircle } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { getLastMessageApi, getLobbiesMessages } from "../../services/privateChats";
 import { AuthContext } from "../../../../contexts/AuthProvider";
+import { SocketContext } from "../../../../contexts/SocketContext";
 
 function ChatsList({ friendsList, friendships }) {
   const navigate = useNavigate();
   const [userChats, setUserChats] = useState([]);
-  const auth=useContext(AuthContext)
+  const auth = useContext(AuthContext);
+  const socket = useContext(SocketContext);
+
   const handleFriendClick = (friendshipId) => {
     window.location.href = `/friends-chat/${friendshipId}`;
   };
+
   useEffect(() => {
     async function getLastMessage() {
       try {
@@ -21,17 +25,58 @@ function ChatsList({ friendsList, friendships }) {
         }
         const chatIds = friendships.map((friendship) => friendship.chat);
         const response = await getLastMessageApi(chatIds);
-        const gameLobbiesMessages=await getLobbiesMessages(auth.userAuth.id);
-        const allChats=[...response,...gameLobbiesMessages];
-        auth.updateUserChats(allChats)
+        const gameLobbiesMessages = await getLobbiesMessages(auth.userAuth.id);
+        
+        // Make sure both are arrays before spreading
+        const allChats = [
+          ...(Array.isArray(response) ? response : []),
+          ...(Array.isArray(gameLobbiesMessages) ? gameLobbiesMessages : [])
+        ].filter(Boolean); // Remove any null/undefined values
+        
+        auth.updateUserChats(allChats);
         setUserChats(allChats);
+
+        // Join all chat rooms on initial load
+        if (socket && chatIds.length > 0) {
+          socket.emit('joinUserChats', chatIds);
+        }
       } catch (e) {
-        console.log(e);
-        throw e;
+        console.error('Error fetching messages:', e);
+        setUserChats([]); // Set empty array on error
       }
     }
     getLastMessage();
-  }, [friendships]);
+  }, [friendships, socket, auth.userAuth.id]);
+
+  // Listen for real-time updates
+  useEffect(() => {
+    if (socket) {
+      socket.on('chatListUpdate', (updatedChat) => {
+        setUserChats(prev => {
+          const newChats = prev.map(chat => 
+            chat._id === updatedChat._id ? updatedChat : chat
+          );
+          if (!prev.find(chat => chat._id === updatedChat._id)) {
+            newChats.push(updatedChat);
+          }
+          return newChats;
+        });
+      });
+
+      socket.on('messageReceived', (updatedChat) => {
+        setUserChats(prev => 
+          prev.map(chat => 
+            chat._id === updatedChat._id ? updatedChat : chat
+          )
+        );
+      });
+
+      return () => {
+        socket.off('chatListUpdate');
+        socket.off('messageReceived');
+      };
+    }
+  }, [socket]);
 
   const sortedChats = useMemo(() => {
     const friendsChats=friendsList.map((friend) => {
@@ -69,8 +114,12 @@ console.log(sortedChats)
           {sortedChats.map((chat, index) => {
             const lastMessage = chat.lastMessage?.latestMsg || chat.latestMsg;
             const isUnread = chat.lastMessage
-            ? chat.lastMessage.openedBy && !chat.lastMessage.openedBy.includes(auth.userAuth.id)
-            : chat.openedBy && !chat.openedBy.includes(auth.userAuth.id);
+              ? chat.lastMessage.openedBy && !chat.lastMessage.openedBy.includes(auth.userAuth.id)
+              : chat.openedBy && !chat.openedBy.includes(auth.userAuth.id);
+
+            const messagePreview = lastMessage && lastMessage.senderID
+              ? `${lastMessage.senderID.username}: ${lastMessage.content}`
+              : "No messages yet";
 
             return (
               <div
@@ -106,9 +155,7 @@ console.log(sortedChats)
                     fontSize={"0.8em"}
                     fontWeight={"400"}
                   >
-                    {lastMessage
-                      ? `${lastMessage.senderID.username} : ${lastMessage.content}`
-                      : "No messages yet"}
+                    {messagePreview}
                   </Typography>
                   {isUnread && (
                     <Box
@@ -121,7 +168,7 @@ console.log(sortedChats)
                         borderRadius: "50%",
                         backgroundColor: "mediumvioletred",
                       }}
-                    ></Box>
+                    />
                   )}
                 </Box>
               </div>

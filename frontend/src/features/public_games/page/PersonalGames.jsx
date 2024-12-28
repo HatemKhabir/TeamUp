@@ -5,7 +5,7 @@ import CommonHeader from '../../../components/Header/CommonHeader';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../../contexts/AuthProvider';
 import styles from "./PersonalGames.module.css";
-import { getPlayerGamesById } from '../../home/services/landingPage';
+import { getPlayerGamesById } from '../../home/services/Dashboard';
 
 
 

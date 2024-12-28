@@ -25,7 +25,7 @@ export const getLobbiesMessages=async(userId)=>{
         Authorization:`Bearer ${token}`
       }
     })
-  return response.data.map(game=>game.chat)
+    return response.data.map(match => match.chat).filter(Boolean);
   }catch(e){
     console.error(e);
     throw e

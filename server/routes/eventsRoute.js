@@ -1,5 +1,5 @@
 import express from "express";
-import {createEvent,joinEvent,deleteEvent,getEvents, getAllEvents, leaveEvent, getEventDetailById, updateGameDetails} from "../controllers/eventsController.js"
+import {createEvent,joinEvent,deleteEvent,getEvents, getAllEvents, leaveEvent, getEventDetailById, updateGameDetails, joinPrivateGame} from "../controllers/eventsController.js"
 import { protect } from "../middleware/authMiddelware.js";
 const router=express.Router();
 
@@ -12,7 +12,8 @@ const router=express.Router();
   router.get("/personal-event",protect,getEvents);
   router.get("/",getAllEvents);
   router.get("/game-lobby",protect,getEventDetailById);
-  router.patch('/post-winners',protect,updateGameDetails)
+  router.patch('/post-winners',protect,updateGameDetails);
+  router.post('/join-private',protect,joinPrivateGame);
   
   export default router;
   

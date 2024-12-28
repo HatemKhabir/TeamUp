@@ -1,66 +1,90 @@
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
-import { Box, Typography } from "@mui/material";
-import styles from './CardsCarousel.module.css'
-import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
-import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';import GameCards from "../Cards/GameCards";
-import { breakpoints } from "@mui/system";
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../../contexts/AuthProvider";
-const CardsCarousel = ({ gameDetailsList=[] }) => {
-  
-  const settings = {
-    dots: true, 
-    infinite: false,
-    speed: 500, 
-    slidesToShow: 4, 
-    slidesToScroll: 1, 
-    responsive: [
-      {
-        breakpoint: 920, // For mobile
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-        }
-      },
-      {
-        breakpoint:1240,
-        settings:{
-          slidesToShow:3,
-          slidesToScroll:3
-        }
-      }, {
-        breakpoint:624,
-        settings:{
-          slidesToShow:1,
-          slidesToScroll:1
-        }
-      },
-     
-    ]
-  }; 
+import React, { useEffect, useState } from 'react';
+import styles from './CardsCarousel.module.css';
+import { Box, IconButton } from '@mui/material';
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import GameCards from '../Cards/GameCards';
 
+function CardsCarousel({ gameDetailsList }) {
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [itemsPerView, setItemsPerView] = useState(3);
+  const carouselRef = React.useRef(null);
 
- 
-   return (
-    <Box className={styles.landing_page_cards}>
-      <Slider {...settings} className={styles.carousel_styles}>
-        {gameDetailsList.length > 0 ? (
-          gameDetailsList.map((game, index) => (
-            <Box key={index} sx={{ margin: '0px 35px', overflow: 'visible', height: '340px' }}>
-              <GameCards gameDetails={game} />
+  // Update items per view based on screen size
+  useEffect(() => {
+    const updateItemsPerView = () => {
+      if (window.innerWidth <= 600) {
+        setItemsPerView(1);
+      } else if (window.innerWidth <= 900) {
+        setItemsPerView(2);
+      } else {
+        setItemsPerView(3);
+      }
+    };
+
+    updateItemsPerView();
+    window.addEventListener('resize', updateItemsPerView);
+    return () => window.removeEventListener('resize', updateItemsPerView);
+  }, []);
+
+  // Fix maxIndex calculation to prevent swiping when no more cards
+  const maxIndex = Math.max(0, Math.ceil(gameDetailsList.length - itemsPerView));
+
+  // Reset currentIndex if it's beyond maxIndex (e.g., after screen resize)
+  useEffect(() => {
+    if (currentIndex > maxIndex) {
+      setCurrentIndex(maxIndex);
+    }
+    console.log(currentIndex) 
+  }, [maxIndex, currentIndex]);
+
+  const handlePrevious = () => {
+    setCurrentIndex(prev => Math.max(0, prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex(prev => Math.min(maxIndex, prev + 1));
+  };
+
+  // Check if we can move forward
+  const canMoveNext = currentIndex < maxIndex && gameDetailsList.length > itemsPerView;
+
+  const translateValue = -currentIndex * (100 / itemsPerView);
+
+  return (
+    <Box className={styles.carousel_container}>
+      <IconButton 
+        className={styles.arrow_button}
+        onClick={handlePrevious}
+        disabled={currentIndex === 0}
+      >
+        <ArrowBack />
+      </IconButton>
+
+      <Box className={styles.carousel_viewport} ref={carouselRef}>
+        <Box 
+          className={styles.carousel_track}
+          sx={{ transform: `translateX(${translateValue}%)` }}
+        >
+          {gameDetailsList.map((gameDetails, index) => (
+            <Box 
+              key={index}
+              className={styles.carousel_item}
+            >
+              <GameCards gameDetails={gameDetails} />
             </Box>
-          ))
-        ) : (
-          <Typography variant="body2" align="center">
-            No games available at the moment.
-          </Typography>
-        )}
-      </Slider>
+          ))}
+        </Box>
+      </Box>
+
+      <IconButton 
+        className={styles.arrow_button}
+        onClick={handleNext}
+        disabled={!canMoveNext}
+      >
+        <ArrowForward />
+      </IconButton>
     </Box>
   );
-};
-
+}
 
 export default CardsCarousel;

@@ -124,7 +124,7 @@ function GameCards({ gameDetails }) {
             Join
           </Button>
         ) : (
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center',gap:'10px' }}>
             <Button
               className={styles.card_button}
               variant="contained"

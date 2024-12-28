@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 
-function SideBar({landingPage=false}) {
+function SideBar({Dashboard=false}) {
   const navigate=useNavigate()
   const sportsLogos = [
     { sport: "volleyball", logo: volleyLogo },
@@ -29,7 +29,7 @@ function SideBar({landingPage=false}) {
   };
 
   return (
-    <Box className={landingPage?styles.landingPage:styles.sidebar}>
+    <Box className={Dashboard?styles.Dashboard:styles.sidebar}>
       {sportsLogos.map((sports, index) => (
         <Box
           key={index}

@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import Player from "../db/models/playerModel.js";
 import friendShip from "../db/models/friendRelationModel.js";
 import Chat from "../db/models/chatModel.js";
+import { getIO } from "../socket.js";
+
 
 export const getUsers = async (req, res) => {
   try {
@@ -39,7 +41,9 @@ export const getProfile = async (req, res) => {
         username:user.username,
         availability: user.availability,
         friendsList:user.friendList,
-        record: user.record,        
+        record: user.record,
+        bio:user.bio,
+        createdAt:user.createdAt,
       },
     };
     const friendships = await friendShip.find({
@@ -104,34 +108,46 @@ export const sendInviteFriend = async (req, res) => {
     const [user, friend] = await Promise.all([
       Player.findOne({ username: loggedinUsername }),
       Player.findOne({ username: friendToAdd })
-    ]
-    );
+    ]);
+
+    if (!user || !friend) {
+      return res.status(404).json("User not found");
+    }
+
     const friendRelation = await friendShip.find({
-      $or: [{ sender: user._id,recipient: user._id },
-       { sender: friend._id,recipient: friend._id }],
+      $or: [
+        { sender: user._id, recipient: friend._id },
+        { sender: friend._id, recipient: user._id }
+      ],
     });
-    const friends = await friendShip.find();
-  
+
     if (friendRelation.length !== 0) {
       return res.status(201).json("Already Friends");
     }
+
     const newFriendShip = new friendShip({
       sender: user._id,
       recipient: friend._id,
-      pendingStatus: true,
+      status: "pending",
     });
-    try {
-      await newFriendShip.save();
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json({ message: "Internal Server Error" });
-    }
-    return res.status(201).json("Friend Added");
+
+    await newFriendShip.save();
+    
+    // Populate the sender information before emitting
+    const populatedFriendship = await friendShip.findById(newFriendShip._id)
+      .populate('sender', 'username profilePicture');
+    
+    // Get socket instance and emit to specific room
+    const io = getIO();
+    console.log('Emitting to room:', friend._id.toString());
+    io.to(friend._id.toString()).emit('newFriendRequest', populatedFriendship);
+
+    return res.status(201).json("Friend request sent");
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
-  }  
-};  
+  }
+};
 
 export const acceptInvite = async (req, res) => {
   try {
@@ -330,3 +346,35 @@ export const reportPlayer = async (req, res) => {
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
+export const getPendingInvites = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    if (!userId) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "User not authenticated" 
+      });
+    }
+
+    const pendingInvites = await friendShip.find({
+      recipient: userId,
+      status: "pending"
+    }).populate('sender', 'username profilePicture');
+
+    return res.status(200).json({
+      success: true,
+      data: pendingInvites
+    });
+
+  } catch (error) {
+    console.error('Error fetching pending invites:', error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching pending invites",
+      error: error.message
+    });
+  }
+};
+  

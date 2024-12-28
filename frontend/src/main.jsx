@@ -11,13 +11,14 @@ import PublicGames from './features/public_games/page/PersonalGames.jsx';
 import GameLobby from './features/game_lobby/page/GameLobby.jsx';
 import PrivateChats from './features/friends_chat/pages/PrivateChats.jsx';
 import HostGame from './features/host_game/pages/HostGame.jsx';
-import LandingPage from './features/home/pages/LandingPage.jsx';
 import ProtectedRoute from './layout/protected-route/ProtectedRoute.jsx';
 import { AuthProvider } from './contexts/AuthProvider.jsx';
 import PlayerProfile from './features/profile/pages/PlayerProfile.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import EditProfilePage from './features/edit_profile/page/EditProfile.jsx';
 import { SocketProvider } from './contexts/SocketContext.jsx';
+import LandingPage from './features/landing_page/LandingPage.jsx';
+import Dashboard from './features/home/pages/Dashboard.jsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,16 +33,40 @@ const queryClient = new QueryClient({
 const router = createBrowserRouter([
   {
     path: '/',
+    element: <LandingPage />,
+    errorElement: <ErrorBoundary />
+  },
+  {
+    path: '/auth',
+    element: <Login />
+  },
+  {
+    path: '/',
     element: <Layout />,
     children: [
-      { index: true, element: <LandingPage />,
-        errorElement:<ErrorBoundary/> },
-      { path: ':sportName', element: <SportGames />,
-        errorElement:<ErrorBoundary/> },
-      { path: 'personal-games', element: (<ProtectedRoute>
-      <PublicGames />
-      </ProtectedRoute>),
-        errorElement:<ErrorBoundary/>},
+      { 
+        path: 'dashboard', 
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorBoundary />
+      },
+      { 
+        path: ':sportName', 
+        element: <SportGames />,
+        errorElement: <ErrorBoundary /> 
+      },
+      { 
+        path: 'personal-games', 
+        element: (
+          <ProtectedRoute>
+            <PublicGames />
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorBoundary />
+      },
       {
         path: 'game-chat/:gameId',
         element: (
@@ -90,7 +115,6 @@ const router = createBrowserRouter([
       }
     ],
   },
-  { path: '/auth', element: <Login /> },
 ]);
 
 // Render root

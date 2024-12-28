@@ -27,3 +27,21 @@ export const getPublicGames=async()=>{
     throw e;
   }
 }
+
+export const joinPrivateGame = async (gameId, playerId) => {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axiosInstance.post('/api/events/join-private', 
+      { gameId, playerId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+    return response;
+  } catch (e) {
+    console.error('Error Joining Private Game:', e);
+    throw e;
+  }
+}

@@ -112,3 +112,16 @@ width: 150px;
 margin-top: 10px;
 }
 
+.notification_popover {
+  margin-top: 10px;
+}
+
+.notification_item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.notification_item:last-child {
+  border-bottom: none;
+}
+

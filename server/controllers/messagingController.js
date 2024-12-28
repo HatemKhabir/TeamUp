@@ -37,6 +37,13 @@ export const sendMessage = async (req, res) => {
     if (message && findChat) {
       io.emit("updatedChat", updatedChat);
       io.to(chatId).emit("newMessage", message);
+      io.to(chatId).emit('messageReceived', updatedChat);
+      
+      // Notify all participants for chat list update
+      updatedChat.users.forEach(userId => {
+        io.to(userId.toString()).emit('chatListUpdate', updatedChat);
+      });
+
       return res.status(201).json(message);
     }
     return res.status(403).json({ message: "something wwong happend" });
@@ -124,8 +131,10 @@ export const getLobbyChat = async (req, res) => {
     if (!player) {
       return res.status(404).json({ error: "Player not found!" });
     }
+
     const joinedMatches = await Match.find({
       _id: { $in: player.matchJoined },
+      status: 'upcoming'
     }).populate({
       path: "chat",
       populate: [
@@ -142,12 +151,10 @@ export const getLobbyChat = async (req, res) => {
         }
       ]
     });
-    if (joinedMatches.length > 0) {
-      return res.status(200).json(joinedMatches.filter((match)=>match.status=='upcoming'));
-    }
-    return res.status(201).json("");
+
+    return res.status(200).json(joinedMatches || []);
   } catch (e) {
     console.error("Error fetching events:", e);
-    res.status(500).json({ error: "Internal Server Error!" });
+    return res.status(500).json({ error: "Internal Server Error!" });
   }
 };

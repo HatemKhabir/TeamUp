@@ -256,4 +256,49 @@ return res.status(201).json(match)
       return res.status(500).json("An error occurred while updating game details.");
     }
   };
+
+  
+  export const joinPrivateGame = async (req, res) => {
+    const { gameId, playerId } = req.body;
+    
+    if (!gameId || !playerId) {
+      return res.status(400).json({ error: "Request Data Invalid" });
+    }
+    
+    try {
+      const match = await Match.findOne({ gameCode: gameId });
+      if (!match) {
+        return res.status(404).json({ error: 'Match with that code not found' });
+      }  
+      
+      const player = await Player.findById(playerId);
+      if (!player) {
+        return res.status(404).json({ error: 'Player not found' });
+      }
+      
+      if (player.matchJoined.includes(match._id)) {
+        return res.status(400).json({ error: "You already joined this game!" });
+      }
+      
+      if (match.playersList.length >= match.playersNumber) {
+        return res.status(400).json({ error: "Match is already full!" });
+      }
+      
+      match.playersList.push(playerId);
+      player.matchJoined.push(match._id);
+      
+      await Promise.all([player.save(), match.save()]);
+      
+      res.status(200).json({
+        message: "Match joined successfully!",
+        match,
+        player
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+  
+
   

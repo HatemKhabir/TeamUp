@@ -11,7 +11,16 @@ const ACCESS_TOKEN_LOCAL_STORAGE = "token";
 
 export const AuthProvider = ({ children }) => {
   const queryClient = useQueryClient();
-  const [userAuth, setUserAuth] = useState(null);
+  const [userAuth, setUserAuth] = useState({
+    id: '',
+    username: '',
+    email: '',
+    userChats: [],
+    games: [],
+    profilePic: '',
+    bio: '',
+    country: ''
+  });
   const [isAuth, setIsAuth] = useState(false);
   const [userGames,setUserGames]=useState([])
   const [publicGames,setPublicGames]=useState([])
@@ -33,7 +42,10 @@ export const AuthProvider = ({ children }) => {
         id: backendResponse.player._id,
         username: backendResponse.player.username,
         email: backendResponse.player.email,
-        userChats:backendResponse.userChats
+        userChats:backendResponse.userChats,
+        profilePic: backendResponse.player.profilePicture,
+        bio: backendResponse.player.bio,
+        country: backendResponse.player.country
       };
   
       setUserAuth(userData);
@@ -65,6 +77,9 @@ export const AuthProvider = ({ children }) => {
       email: '',
       userChats:[],
       games: [],
+      profilePic: '',
+      bio: '',
+      country: ''
     });
     setIsAuth(false);
   };
@@ -83,6 +98,9 @@ export const AuthProvider = ({ children }) => {
           email: parsedUser.email,
           userChats:parsedUser.userChats,
           games: parsedUser.games,
+          profilePic: parsedUser.profilePic,
+          bio: parsedUser.bio,
+          country: parsedUser.country
         });
   
         setIsAuth(true);
@@ -126,9 +144,28 @@ const updateChat = useCallback((updatedChat) => {
   });
 }, []);
 
+  // Add updateUserProfile function
+  const updateUserProfile = (updatedProfile) => {
+    setUserAuth(prevAuth => {
+      const newUserAuth = {
+        ...prevAuth,
+        username: updatedProfile.username,
+        profilePic: updatedProfile.profilePicture,
+        bio: updatedProfile.bio,
+        country: updatedProfile.country,
+      };
+      
+      // Update localStorage
+      localStorage.setItem("userAuth", JSON.stringify(newUserAuth));
+      
+      return newUserAuth;
+    });
+  };
+
   // Define the context value to be provided
   const contextValue = {
     userAuth,
+    setUserAuth,
     isAuth,
     signIn,
     signOut,
@@ -138,7 +175,8 @@ const updateChat = useCallback((updatedChat) => {
     publicGames,
     updateChat,
     updateGameDetails,
-    setPublicGames
+    setPublicGames,
+    updateUserProfile
   };
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

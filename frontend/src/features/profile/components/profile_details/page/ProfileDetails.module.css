@@ -1,5 +1,7 @@
 .profile_details{
     height:390px;
+    padding: 40px;
+    background-color: #f0f0f0;
     }
     .player_profile_cover {
         position: absolute;
@@ -9,7 +11,7 @@
       
       .player_profile_image {
         position: relative;
-        top: 250px;
+        top: 20px;
         display: flex;
         align-items: center;
         gap: 12px;

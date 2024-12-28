@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../../contexts/AuthProvider";
 import { countryCodeMap } from "../../../../../../constants/countryCode";
-import { acceptInvite, checkFriendStatus, declineInvite, removeFriendApi, sendFriendInviteApi } from "../services/profileDetails";
+import { acceptInvite, checkFriendStatus, declineInvite, removeFriendApi, sendFriendInviteApi } from "../../profile_header/services/profileDetails";
 
 function ProfileDetails({profileId,playerData }) {
 
@@ -83,11 +83,6 @@ function ProfileDetails({profileId,playerData }) {
   }, [auth.userAuth, playerData, profileId]);
   return (
     <Box className={styles.profile_details}>
-      <Box
-        component="img"
-        src={playerData?.coverPic}
-        className={styles.player_profile_cover}
-      />
       <Box className={styles.player_profile_image}>
         <Box
           component="img"
