@@ -131,10 +131,8 @@ export const getLobbyChat = async (req, res) => {
     if (!player) {
       return res.status(404).json({ error: "Player not found!" });
     }
-
     const joinedMatches = await Match.find({
       _id: { $in: player.matchJoined },
-      status: 'upcoming'
     }).populate({
       path: "chat",
       populate: [
@@ -151,10 +149,12 @@ export const getLobbyChat = async (req, res) => {
         }
       ]
     });
-
-    return res.status(200).json(joinedMatches || []);
+    if (joinedMatches.length > 0) {
+      return res.status(200).json(joinedMatches.filter((match)=>match.status=='upcoming'));
+    }
+    return res.status(201).json("");
   } catch (e) {
     console.error("Error fetching events:", e);
-    return res.status(500).json({ error: "Internal Server Error!" });
+    res.status(500).json({ error: "Internal Server Error!" });
   }
 };

@@ -19,6 +19,7 @@ import EditProfilePage from './features/edit_profile/page/EditProfile.jsx';
 import { SocketProvider } from './contexts/SocketContext.jsx';
 import LandingPage from './features/landing_page/LandingPage.jsx';
 import Dashboard from './features/home/pages/Dashboard.jsx';
+import {APIProvider, Map} from '@vis.gl/react-google-maps';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -103,9 +104,14 @@ const router = createBrowserRouter([
       {
         path: 'host-game',
         element: (
-          <ProtectedRoute>
-            <HostGame />
-          </ProtectedRoute>
+          <APIProvider 
+            apiKey="AIzaSyDerTqNp_r_xIyaY1eQfxRB1FFC8vv7b1k"
+            libraries={['places']}
+          >
+            <ProtectedRoute>
+              <HostGame />
+            </ProtectedRoute>
+          </APIProvider>
         ),
       },
       {

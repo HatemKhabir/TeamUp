@@ -108,7 +108,7 @@ function Dashboard() {
                 onClick={handleOpenJoinDialog}
                 sx={{ width: "fit-content", textWrap: "nowrap" }}
               >
-                Private Game
+                Join Private Game
               </Button>
             </Box>
             <Box className={styles.landing_page_cards}>

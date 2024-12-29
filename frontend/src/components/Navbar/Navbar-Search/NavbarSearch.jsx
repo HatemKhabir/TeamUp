@@ -2,11 +2,21 @@ import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import { CircularProgress, List, ListItem, ListItemText } from "@mui/material";
+import { 
+  Avatar,
+  CircularProgress, 
+  List, 
+  ListItem, 
+  ListItemAvatar,
+  ListItemText,
+  Typography
+} from "@mui/material";
+import ReactCountryFlag from "react-country-flag";
 import { useEffect, useState } from "react";
 import { Box } from "@mui/system";
 import { searchUsersApi } from "../services/navbar";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { countryCodeMap } from "../../../../constants/countryCode";
 
 export default function NavbarSearch() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -93,13 +103,43 @@ export default function NavbarSearch() {
           <List>
             {searchResults.map((result, index) => (
               <ListItem
-                sx={{ cursor: "pointer" }}
+                sx={{ 
+                  cursor: "pointer",
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.04)'
+                  },
+                  padding: '8px 16px'
+                }}
                 key={index}
                 onClick={() => {
                   window.location.href = `/profile/${result.username}`;
                 }}
               >
-                <ListItemText primary={result.username} />
+                <ListItemAvatar sx={{width:'fit-content'}}>
+                  <Avatar 
+                    src={result.profilePicture || '/default-avatar.png'} 
+                    alt={result.username}
+                    sx={{ width: 40, height: 40, marginRight: 1 }}
+                  />
+                </ListItemAvatar>
+                <ListItemText 
+                  primary={result.username}
+                  secondary={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <ReactCountryFlag
+                        countryCode={countryCodeMap[result.country]}
+                        svg
+                        style={{
+                          width: '20px',
+                          height: '20px',
+                        }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {result.country}
+                      </Typography>
+                    </Box>
+                  }
+                />
               </ListItem>
             ))}
           </List>

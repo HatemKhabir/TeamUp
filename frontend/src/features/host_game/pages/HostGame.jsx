@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import CommonHeader from "../../../components/Header/CommonHeader";
 import styles from "./HostGame.module.css";
 import footballHost from "../../../assets/footballHost.png";
@@ -7,6 +7,12 @@ import tennistHost from "../../../assets/tennistHost.png";
 import BasketballHost from "../../../assets/BasketballHost.png";
 import tableTennishost from "../../../assets/tableTennishost.png";
 import padelHost from "../../../assets/padelHost.png";
+import volleyball from "../../../assets/volleyball.jpg";
+import tennis from "../../../assets/tennis.jpg";
+import football from "../../../assets/football.png";
+import tabletennis from "../../../assets/tabletennis.jpg";
+import padel from "../../../assets/padel.jpg";
+import basketball from "../../../assets/basketball.webp";
 
 import {
   Box,
@@ -21,6 +27,7 @@ import {
   FormLabel,
   FormGroup,
   Checkbox,
+  Autocomplete,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { AuthContext } from "../../../contexts/AuthProvider";
@@ -45,11 +52,12 @@ function HostGame() {
   const [skillLevels, setSkillLevels] = useState([]);
   const [errors, setErrors] = useState({}); // Object to track errors for each field
   const [submission, setSumbission] = useState("");
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [uploading, setUploading] = useState(false);
   const auth = useContext(AuthContext);
-  const cld = new Cloudinary({ cloud: { cloudName: 'de26qjxpf' } });
+  const cld = new Cloudinary({ cloud: { cloudName: "de26qjxpf" } });
+  const [locationInput, setLocationInput] = useState("");
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const autocompleteService = useRef(null);
+  const placesService = useRef(null);
 
   const sports = [
     {
@@ -57,34 +65,40 @@ function HostGame() {
       sportName: "Football",
       sportPicture: footballHost,
       databaseName: "football",
+      coverPic: football,
     },
     {
       id: 2,
       sportName: "Volleyball",
       sportPicture: volleyballHost,
       databaseName: "volleyball",
+      coverPic: volleyball,
     },
     {
       id: 3,
       sportName: "Table Tennis",
       sportPicture: tableTennishost,
       databaseName: "tabletennis",
+      coverPic: tabletennis,
     },
     {
       id: 4,
       sportName: "Tennis",
       sportPicture: tennistHost,
       databaseName: "tennis",
+      coverPic: tennis,
     },
     {
       id: 5,
       sportName: "Basketball",
       sportPicture: BasketballHost,
       databaseName: "basketball",
+      coverPic: basketball,
     },
     {
       id: 6,
       sportName: "Padel",
+      coverPic: padel,
       sportPicture: padelHost,
       databaseName: "padel",
     },
@@ -101,14 +115,6 @@ function HostGame() {
         ? [...prev, skill]
         : prev.filter((level) => level != skill)
     );
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(file);
-      setPreview(URL.createObjectURL(file));
-    }
   };
 
   const validateForm = () => {
@@ -132,47 +138,63 @@ function HostGame() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
-    let uploadedImageUrl = null;
-      if (image) {
-        const formData = new FormData();
-      formData.append('file', image);
-      formData.append('upload_preset', 'TeamUp');
-  try{
-    const response = await axiosInstance.post(
-      'https://api.cloudinary.com/v1_1/de26qjxpf/image/upload',
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
+  const uploadSportImage = async (selectedSport) => {
+    try {
+      // Find the selected sport object
+      const sport = sports.find(
+        (sport) => sport.databaseName === selectedSport
+      );
+      if (!sport) return null;
 
-    const data = response.data;
-        uploadedImageUrl = data.secure_url; // Retrieve the uploaded image URL
-      }catch(e){
-        console.log(e)
-      }
+      const formData = new FormData();
+      // Use the coverPic from the selected sport
+      const response = await fetch(sport.coverPic);
+      const blob = await response.blob();
+      formData.append("file", blob, `${sport.databaseName}.jpg`);
+      formData.append("upload_preset", "TeamUp");
+
+      const uploadResponse = await axiosInstance.post(
+        "https://api.cloudinary.com/v1_1/de26qjxpf/image/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return uploadResponse.data.secure_url;
+    } catch (error) {
+      console.error("Error uploading sport image:", error);
+      return null;
+    }
+  };
+
+  const handleSubmit = async () => {
     if (validateForm()) {
-      const gameDetails = {
-        eventTitle: eventTitle,
-        sportType: selectedSportId,
-        hostUsername: auth.userAuth.username,
-        eventDescription: description,
-        price: gameFee,
-        location: location,
-        playersNumber: playerCount,
-        date: gameDate,
-        skillLevel: skillLevels,
-        gender: gender,
-        privacy: privacy,
-        gamePicCover:uploadedImageUrl || null 
-      };
       try {
+        // Upload the selected sport's cover image
+        const uploadedImageUrl = await uploadSportImage(selectedSportId);
+
+        const gameDetails = {
+          eventTitle: eventTitle,
+          sportType: selectedSportId,
+          hostUsername: auth.userAuth.username,
+          eventDescription: description,
+          price: gameFee,
+          location: location,
+          playersNumber: playerCount,
+          date: gameDate,
+          skillLevel: skillLevels,
+          gender: gender,
+          privacy: privacy,
+          gamePicCover: uploadedImageUrl,
+        };
+
+        console.log("Submitting game details:", gameDetails); // For debugging
         const response = await hostGame(gameDetails);
         console.log(response);
-        toast.success(`Match Created ! `, {
+        toast.success(`Match Created!`, {
           position: "bottom-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -199,7 +221,84 @@ function HostGame() {
     } else {
       console.log("Form is invalid, not submitting.");
     }
-  }
+  };
+
+  // Initialize Google services
+  useEffect(() => {
+    const initializeGoogleServices = () => {
+      if (window.google && window.google.maps && window.google.maps.places) {
+        try {
+          autocompleteService.current =
+            new window.google.maps.places.AutocompleteService();
+          placesService.current = new window.google.maps.places.PlacesService(
+            document.createElement("div")
+          );
+        } catch (error) {
+          console.error("Error initializing Google services:", error);
+        }
+      } else {
+        // If not loaded yet, try again after a short delay
+        setTimeout(initializeGoogleServices, 100);
+      }
+    };
+
+    initializeGoogleServices();
+  }, []);
+
+  // Handle location input change
+  const handleLocationInputChange = async (event, newValue) => {
+    setLocationInput(newValue || "");
+    setLocation(newValue || ""); // Update both states
+
+    if (newValue && autocompleteService.current) {
+      try {
+        const response = await autocompleteService.current.getPlacePredictions({
+          input: newValue,
+          componentRestrictions: { country: "HU" },
+          types: ['geocode'], // Use geocode to get addresses
+          fields: ['formatted_address', 'geometry', 'name']
+        });
+
+        setLocationSuggestions(response?.predictions || []);
+      } catch (error) {
+        console.error("Error fetching location suggestions:", error);
+        setLocationSuggestions([]); // Clear suggestions on error
+      }
+    } else {
+      setLocationSuggestions([]); // Clear suggestions if input is empty
+    }
+  };
+
+  // Handle location selection
+  const handleLocationSelect = (event, prediction) => {
+    if (prediction) {
+      if (typeof prediction === 'string') {
+        setLocation(prediction);
+        setLocationInput(prediction);
+      } else if (prediction.description) {
+        // Get more details about the place when selected
+        if (placesService.current) {
+          placesService.current.getDetails(
+            {
+              placeId: prediction.place_id,
+              fields: ['formatted_address']
+            },
+            (place, status) => {
+              if (status === 'OK' && place) {
+                setLocation(place.formatted_address);
+                setLocationInput(place.formatted_address);
+              } else {
+                setLocation(prediction.description);
+                setLocationInput(prediction.description);
+              }
+            }
+          );
+        } else {
+          setLocation(prediction.description);
+          setLocationInput(prediction.description);
+        }
+      }
+    }
   };
 
   return (
@@ -269,37 +368,82 @@ function HostGame() {
                   },
                 }}
               />
-              <TextField
-                label="Location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                variant="outlined"
-                error={!!errors.location}
-                helperText={errors.location}
-                sx={{
-                  textAlign: "left",
-                  "& .MuiOutlinedInput-root": {
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#4CAF50", // Change border color on focus
-                    },
-                  },
-                }}
-                placeholder="Game Location"
-                required
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment
-                      sx={{ width: "fit-content", margin: "5px" }}
-                      position="end"
-                    >
-                      <LocationOnIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                InputLabelProps={{
-                  color: "success",
-                }}
-              />
+              <Box className={styles.input_box}>
+                <Autocomplete
+                  freeSolo
+                  options={locationSuggestions}
+                  getOptionLabel={(option) => 
+                    typeof option === "string" ? option : option.description || ""
+                  }
+                  value={location}
+                  inputValue={locationInput}
+                  onInputChange={handleLocationInputChange}
+                  onChange={handleLocationSelect}
+                  disableClearable
+                  renderOption={(props, option) => (
+                    <Box component="li" {...props} sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center',
+                      padding: '8px 10px',
+                      '&:hover': {
+                        backgroundColor: 'rgba(76, 175, 80, 0.08)'
+                      }
+                    }}>
+                      <LocationOnIcon sx={{ color: "text.secondary", mr: 2 }} />
+                      {option.description}
+                    </Box>
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Location"
+                      required
+                      error={!!errors.location}
+                      helperText={errors.location}
+                      placeholder="Game Location"
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment sx={{
+                            width: "fit-content",
+                            marginRight: "10px",
+                            marginLeft: "-5px",
+                            marginTop: "2px",
+                          }}
+                          position="end">
+                            <LocationOnIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        textAlign: "left",
+                        "& .MuiOutlinedInput-root": {
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#4CAF50",
+                          },
+                        },
+                        "& .MuiAutocomplete-clearIndicator": {
+                          color: "#666",
+                          "&:hover": {
+                            color: "#333"
+                          }
+                        }
+                      }}
+                    />
+                  )}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: '200px',
+                      '& li': {
+                        borderBottom: '1px solid #eee',
+                        '&:last-child': {
+                          borderBottom: 'none'
+                        }
+                      }
+                    }
+                  }}
+                />
+              </Box>
             </Box>
             <Box sx={{ marginBottom: 2 }}>
               <TextField
@@ -313,6 +457,7 @@ function HostGame() {
                 helperText={errors.description}
                 placeholder="You can specify any personal game rules , arrival time , what to wear etc..."
                 rows={4}
+                
                 InputLabelProps={{
                   shrink: true,
                   color: "success",
@@ -367,7 +512,9 @@ function HostGame() {
                   type="datetime-local"
                   id="date_picker"
                   value={gameDate}
+                  className={styles.date_picker}
                   onChange={(newValue) => setGameDate(newValue.target.value)}
+                  min={new Date().toISOString().slice(0, 16)}
                 />
                 {errors.gameDate && (
                   <Typography color="error">{errors.gameDate}</Typography>
@@ -524,52 +671,6 @@ function HostGame() {
                 )}
               </Box>
             </Box>
-            <Box className={styles.cover_box} sx={{ display: "flex", gap: "20px", alignItems: "center",flexWrap:'nowrap'}}>
-      <Box sx={{display:'flex',flexDirection:'column',alignItems:'center',gap:'10px'}}>
-      <FormLabel sx={{textAlign:'left'}}>Upload a Cover</FormLabel>
-        <Box sx={{display:'flex',alignItems:'center',width:'fit-content'}}>
-        <input
-          accept="image/*"
-          type="file"
-          onChange={handleImageChange}
-          style={{ display: "none" }}
-          id="upload-image"
-        />
-        <label htmlFor="upload-image" style={{width:'fit-content'}}>
-          <Button variant="contained" sx={{width:'80%'}} component="span" disabled={uploading}>
-            {uploading ? "Uploading..." : "Choose Image"}
-          </Button>
-        </label>
-      {preview && (
-        <Box
-          sx={{
-            mt: 2,
-            width: "100px",
-            height: "100px",
-            borderRadius: "8px",
-            overflow: "hidden",
-          }}
-        >
-          <img
-            src={preview}
-            alt="Preview"
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-          
-        </Box>
-      )}
-      </Box>
-      </Box>
-      <Button
-        className={styles.host_game_button}
-        onClick={handleSubmit}
-        variant="contained"
-        color="primary"
-        disabled={uploading}
-      >
-        Host Game
-      </Button>
-    </Box>
           </Box>
         </Box>
         <ToastContainer
@@ -584,6 +685,14 @@ function HostGame() {
           pauseOnHover
           theme="light"
         />
+        <Button
+          className={styles.host_game_button}
+          onClick={handleSubmit}
+          variant="contained"
+          color="primary"
+        >
+          Host Game
+        </Button>
       </main>
     </Box>
   );

@@ -1,8 +1,8 @@
-import Match from "../db/models/matchModel.js"
+import Match from "./matchModel.js"
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" // Define characters
 import mongoose from "mongoose"
-import Player from "../db/models/playerModel.js"
-import Chat from "../db/models/chatModel.js";
+import Player from "./playerModel.js"
+import Chat from "./chatModel.js";
 
 //generate matchID
 function generateGameCode() {
@@ -21,7 +21,7 @@ export const createEvent = async (req, res) => {
     location: req.body.location,
     playersNumber: req.body.playersNumber,
     date: req.body.date,
-    skillLevel: req.body.skillLevel,
+    skillLevel: req.body.level,
     gender: req.body.gender,
     privacy: req.body.privacy,
     gamePicCover:req.body.gamePicCover!=null?req.body.gamePicCover:'https://img.freepik.com/premium-photo/sports-background-advertising-sport-life-concept-generative-ai_1002555-984.jpg'

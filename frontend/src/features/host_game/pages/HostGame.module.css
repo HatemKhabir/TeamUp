@@ -37,6 +37,7 @@
   flex-direction: column;
   overflow-x: hidden;
   gap: 10px;
+  padding: 1em;
 }
 
 .host_game_info {
@@ -50,10 +51,13 @@
 .host_game_info1 {
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
   flex-wrap: wrap;
-  padding: 1em;
+  padding: 2em;
   gap: 1em;
+  border: 1px solid black;
+  border-radius: 4px;
+  box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.12), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px 1px rgba(0, 0, 0, 0.20);
+
 }
 
 .host_game_info_privacy {
@@ -69,7 +73,7 @@
 
 .host_game_button {
   border-radius: 4px !important;
-  flex-basis: 50%;
+  width: fit-content;
   color: var(--success-main, #2e7d32) !important;
   align-self:center;
   font-size: 14px !important;
@@ -169,3 +173,74 @@ text-transform: uppercase;
       flex-wrap: wrap;
     }
   }
+
+.input_box {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* Style the autocomplete dropdown */
+.MuiAutocomplete-popper {
+  margin-top: 4px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+}
+
+.MuiAutocomplete-paper {
+  border-radius: 8px !important;
+  margin-top: 8px !important;
+}
+
+.MuiAutocomplete-option {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 16px !important;
+  cursor: pointer !important;
+}
+
+.MuiAutocomplete-option:hover {
+  background-color: rgba(76, 175, 80, 0.08) !important;
+}
+
+.MuiAutocomplete-option[aria-selected="true"] {
+  background-color: rgba(76, 175, 80, 0.16) !important;
+}
+
+.date_picker {
+  width: fit-content;
+  height: 56px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
+  color: #333;
+  outline: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.date_picker:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 1px #4CAF50;
+}
+
+.date_picker:hover {
+  border-color: #999;
+}
+
+/* Style the calendar popup */
+.date_picker::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 5px;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.date_picker::-webkit-calendar-picker-indicator:hover {
+  opacity: 0.7;
+  scale: 1.1;
+}
+
+/* Disable past dates */
+.date_picker[type="datetime-local"]:invalid {
+  border-color: #ff4444;
+}

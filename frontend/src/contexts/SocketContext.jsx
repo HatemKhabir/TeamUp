@@ -18,7 +18,7 @@ export const SocketProvider = ({ token, children }) => {
 
       newSocket.on("connect", () => {
         console.log("Socket connected:", newSocket.id);
-        console.log("User ID:", auth.userAuth.id);
+        newSocket.emit('joinRoom', auth.userAuth.id);
       });
 
       newSocket.on("disconnect", () => {
@@ -35,6 +35,7 @@ export const SocketProvider = ({ token, children }) => {
 
       return () => {
         newSocket.disconnect();
+        console.log("Socket disconnected on cleanup");
       };
     }
   }, [token, auth.userAuth?.id]);

@@ -25,6 +25,11 @@ export const getLobbiesMessages=async(userId)=>{
         Authorization:`Bearer ${token}`
       }
     })
+    if (!response.data) return [];
+    if (!Array.isArray(response.data)) {
+      console.log('Response data:', response.data);
+      return [];
+    }
     return response.data.map(match => match.chat).filter(Boolean);
   }catch(e){
     console.error(e);

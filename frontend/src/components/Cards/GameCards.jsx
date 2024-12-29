@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Typography, Card, CardMedia, CardContent, Chip } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import styles from "./GameCards.module.css";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -23,7 +23,7 @@ function formatDateTime(dateString) {
 }
   
 
-function GameCards({ gameDetails }) {
+function GameCards({ gameDetails, joined }) {
  
   const formattedDateTime = gameDetails.date ? formatDateTime(gameDetails.date) : '';
   const [openModal, setOpenModal] = useState(false);
@@ -75,44 +75,55 @@ function GameCards({ gameDetails }) {
   }
 
   return (
-    <Box className={styles.game_card}>
-      {error && <Typography color={'red'}>{error}</Typography>}
-      <Box
+    <Card className={styles.game_card}>
+      <CardMedia
         component="img"
-        src={gameDetails.gamePicCover}
+        height="140"
         className={styles.game_image}
-        sx={{ boxShadow: 3, borderRadius: '5px' }}
+        image={gameDetails.gamePicCover}
+        alt={gameDetails.sportType}
       />
-      <Box className={styles.game_details}>
-        <Typography variant="body2" sx={{ marginBottom: '5px' }}>
-          {formattedDateTime}
+      <CardContent>
+        <Typography gutterBottom variant="h6" component="div">
+          {gameDetails.eventTitle.charAt(0).toUpperCase() + gameDetails.eventTitle.slice(1)}
         </Typography>
-        <Typography variant="body2" sx={{ color: 'grey' }}>
-          <LocationOnIcon
-            style={{ fontSize: '13px', marginRight: '5px', marginBottom: '-1px' }}
-          />
-          {gameDetails.location}
-        </Typography>
-        <Typography variant="h6">{gameDetails.gameTitle}</Typography>
-        <Typography variant="body1">
-          {gameDetails.playersList.length}/{gameDetails.playersNumber} Players
-          Joined
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'grey' }}>
-          <AttachMoneyIcon
-            style={{ fontSize: '18px', marginRight: '5px', marginBottom: '-3px' }}
-          />
-          {`${gameDetails.price} HUF`}
-        </Typography>
-        <Typography variant="subtitle2" sx={{ fontWeight: '300' }}>
-          {gameDetails.privacy.charAt(0).toUpperCase() +
-            gameDetails.privacy.slice(1)}
-        </Typography>
-        <Typography variant="subtitle2" sx={{ fontWeight: '300' }}>
-          {gameDetails.sportType.charAt(0).toUpperCase() +
-            gameDetails.sportType.slice(1)}
-        </Typography>
-      </Box>
+        <Box className={styles.card_details}>
+          <Typography variant="body2" sx={{ marginBottom: '5px' }}>
+            {formattedDateTime}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'grey' }}>
+            <LocationOnIcon
+              style={{ fontSize: '13px', marginRight: '5px', marginBottom: '-1px' }}
+            />
+            {gameDetails.location}
+          </Typography>
+          <Typography variant="body1">
+            {gameDetails.playersList.length}/{gameDetails.playersNumber} Players
+            Joined
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'grey' }}>
+           
+            {`${gameDetails.price} HUF`}
+          </Typography>
+          <Box className={styles.skill_levels}>
+            {gameDetails.skillLevel.map((skill, index) => (
+              <Chip
+                key={index}
+                label={skill}
+                size="small"
+                className={styles.skill_chip}
+                sx={{
+                  backgroundColor: '#4CC47C20',
+                  color: '#4CC47C',
+                  border: '1px solid #4CC47C',
+                  margin: '2px',
+                  fontSize: '0.7rem'
+                }}
+              />
+            ))}
+          </Box>
+        </Box>
+      </CardContent>
       {gameDetails.status !== "finished" ? (
         !playerJoined ? (
           <Button
@@ -124,7 +135,7 @@ function GameCards({ gameDetails }) {
             Join
           </Button>
         ) : (
-          <Box sx={{ display: 'flex', justifyContent: 'center',gap:'10px' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center',gap:'5px' }}>
             <Button
               className={styles.card_button}
               variant="contained"
@@ -152,13 +163,13 @@ function GameCards({ gameDetails }) {
             color: gameDetails.winners.includes(auth.userAuth.id)?'green':'red',
             fontWeight: "bold",
             textAlign: "center",
-            marginTop: "10px",
+            marginTop: "5px",
           }}
         >
           {gameDetails.winners.includes(auth.userAuth.id)?'WIN':'LOSS'}
         </Typography>
       )}
-    </Box>
+    </Card>
   );
 }  
 
