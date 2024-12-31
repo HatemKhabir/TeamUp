@@ -1,41 +1,97 @@
 import { useState } from "react";
 import { TextField, Button, Typography } from "@mui/material";
-import styles from "./Signup.module.css"; // Ensure your styles are correct
+import styles from "./Signup.module.css";
 import { signUp } from "../services/authApis";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Signup({ setIsLogin }) {
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    // Username validation
+    if (!formData.username) {
+      newErrors.username = "Username is required";
+    } else if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters long";
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters long";
+    }
+
+    // Confirm password validation
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
+    }
+  };
 
   const handleSignUp = async () => {
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
-    setError("");
     try {
-      const response = await signUp(email, username, password);
-      toast.success("Signup Successful ! Please Login", {
-        position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        onClose: () => setIsLogin(true),
-      });
+      const response = await signUp(formData.email, formData.username, formData.password);
+      toast.success(
+        "Registration successful! Please check your email to verify your account.", 
+        {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        }
+      );
     } catch (err) {
-      setError(err.response.data.msg);
+      toast.error(err.response?.data?.msg || "Registration failed", {
+        position: "bottom-right",
+        autoClose: 5000,
+      });
     }
     setLoading(false);
   };
@@ -49,38 +105,49 @@ export default function Signup({ setIsLogin }) {
         className={styles.auth_inputs}
         label="Username"
         variant="outlined"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        name="username"
+        value={formData.username}
+        onChange={handleChange}
+        error={!!errors.username}
+        helperText={errors.username}
+        inputProps={{ minLength: 3 }}
       />
       <TextField
         className={styles.auth_inputs}
         label="Email"
         variant="outlined"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        name="email"
+        type="email"
+        value={formData.email}
+        onChange={handleChange}
+        error={!!errors.email}
+        helperText={errors.email}
       />
       <TextField
         className={styles.auth_inputs}
         label="Password"
         variant="outlined"
         type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+        error={!!errors.password}
+        helperText={errors.password}
+        inputProps={{ minLength: 6 }}
       />
       <TextField
         className={styles.auth_inputs}
         label="Confirm Password"
         variant="outlined"
         type="password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
+        name="confirmPassword"
+        value={formData.confirmPassword}
+        onChange={handleChange}
+        error={!!errors.confirmPassword}
+        helperText={errors.confirmPassword}
       />
-      {error && (
-        <Typography color="error" sx={{ textAlign: "center" }}>
-          {error}
-        </Typography>
-      )}
-      <Typography variant="body1" sx={{ width: "fit-content",textAlign:'center' }}>
+      
+      <Typography variant="body1" sx={{ width: "fit-content", textAlign: 'center' }}>
         Already have an account?{" "}
         <span className={styles.auth_signin} onClick={() => setIsLogin(true)}>
           Sign-in

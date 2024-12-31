@@ -1,12 +1,9 @@
 import express from "express"
-import { login, register as signup, updateProfile } from "../controllers/authentication.js"
-import { protect } from "../middleware/authMiddelware.js";
+import { register, login, verifyEmail } from "../controllers/authentication.js"
 
 const router = express.Router()
-router.post("/signup", signup)
+router.post("/signup", register)
 router.post("/signin", login)
-router.put('/update',protect,updateProfile)
-
-//! router.get
+router.get("/verify-email/:token", verifyEmail)
 
 export default router

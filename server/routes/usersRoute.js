@@ -1,6 +1,7 @@
 import express from "express"
 import { getProfile, getUsers, removeFriend,getFriendsList,getPlayerGamesById, acceptInvite, declineInvite, sendInviteFriend, checkFriendStatus, commendPlayer, reportPlayer, getPendingInvites} from "../controllers/userController.js"
 import { protect } from "../middleware/authMiddelware.js";
+import { verifyEmail } from "../controllers/authentication.js";
 
 const router=express.Router();
 

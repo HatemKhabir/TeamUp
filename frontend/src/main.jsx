@@ -20,6 +20,7 @@ import { SocketProvider } from './contexts/SocketContext.jsx';
 import LandingPage from './features/landing_page/LandingPage.jsx';
 import Dashboard from './features/home/pages/Dashboard.jsx';
 import {APIProvider, Map} from '@vis.gl/react-google-maps';
+import EmailVerification from './features/auth/components/EmailVerification';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -120,6 +121,11 @@ const router = createBrowserRouter([
         errorElement:<ErrorBoundary/>
       }
     ],
+  },
+  {
+    path: '/verify-email/:token',
+    element: <EmailVerification />,
+    errorElement: <ErrorBoundary />
   },
 ]);
 

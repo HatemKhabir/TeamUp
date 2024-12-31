@@ -105,7 +105,13 @@ const userSchema = new Schema({
   profilePicture: {
     type: String,
     default: 'https://flowbite.com/docs/images/examples/image-3@2x.jpg' // Default image URL
-  }
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  verificationToken: String,
+  verificationExpires: Date
 },{ timestamps: true });
 
 // Pre-save hook to hash the password before saving
