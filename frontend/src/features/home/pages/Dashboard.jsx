@@ -98,7 +98,7 @@ function Dashboard() {
       </header>
       <main className='p-2'>
         {auth.isAuth ? (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: "20px",backgroundColor:'white',padding:'10px',borderRadius:'10px' }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "20px",backgroundColor:'white',padding:'10px',borderRadius:'10px',boxShadow:'10px 0px 10px rgba(0, 0, 0, 0.1)' }}>
             <Box className={styles.landing_page_horizontal_stack}>
               <Typography variant="h6">Your Upcoming Games</Typography>
               <Button
@@ -159,7 +159,7 @@ function Dashboard() {
             </Typography>
           </Box>
         )}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "30px",marginTop:'50px',backgroundColor:'white',borderRadius:'10px',paddingTop:'10px' }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "30px",marginTop:'50px',backgroundColor:'white',borderRadius:'10px',paddingTop:'10px',boxShadow:'10px 0px 10px rgba(0, 0, 0, 0.1)' }}>
           <Box className={styles.landing_page_horizontal_stack}>
             <Typography variant="h6">Checkout these public games :</Typography>
           </Box>

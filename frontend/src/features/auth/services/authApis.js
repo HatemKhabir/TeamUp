@@ -23,17 +23,17 @@ export const verifyEmailApi = async (token) => {
   try {
     const response = await axiosInstance.get(`/auth/verify-email/${token}`);
     if (response?.data?.msg) {
-      // If verification successful, show success toast and redirect
       toast.success(response.data.msg, {
         position: "bottom-right",
+        width: "fit-content",
         autoClose: 3000
       });
     }
     return response;
   } catch (error) {
-    // If verification fails, show error toast
     toast.error(error.response?.data?.msg || 'Verification failed', {
       position: "bottom-right",
+      width: "fit-content",
       autoClose: 3000
     });
     throw error;

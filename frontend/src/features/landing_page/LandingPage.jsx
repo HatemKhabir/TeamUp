@@ -58,15 +58,19 @@ const LandingPage = () => {
                   fontSize: '1.1rem',
                   textTransform: 'none',
                   textWrap:'nowrap',
-                  backgroundColor: 'var(--color-primary)',
+                  backgroundColor: 'white',
+                  color: 'var(--color-primary)',
+                  border: '1px solid var(--color-primary)',
                   '&:hover': {
                     backgroundColor: 'var(--color-primary)',
+                    color: 'white',
                     opacity: 0.9
                   },
                 }}
               >
-                Get Started Free <ArrowRight className="ml-2" />
+                Get Started Free <br/> Sign in/Sign up  <ArrowRight className="ml-2" />
               </Button>
+           
             </Box>
           </Box>
         </Container>

@@ -13,10 +13,16 @@ function Login({ isSignup = false }) {
   const location = useLocation();
 
   useEffect(() => {
-    // Show error message if redirected from verification with error
-    if (location.state?.verificationError) {
+    if (location.state?.verificationSuccess) {
+      toast.success(location.state.verificationSuccess, {
+        position: "bottom-right",
+        width: "fit-content",
+        autoClose: 3000
+      });
+    } else if (location.state?.verificationError) {
       toast.error(location.state.verificationError, {
         position: "bottom-right",
+        width: "fit-content",
         autoClose: 3000
       });
     }

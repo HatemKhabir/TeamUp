@@ -204,7 +204,6 @@ export const verifyEmail = async (req, res) => {
     
     const player = await Player.findOne({ 
       verificationToken: token,
-      verificationExpires: { $gt: Date.now() }
     });
 
     if (!player) {

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { verifyEmailApi } from '../services/authApis';
 import { Box, CircularProgress, Typography } from '@mui/material';
@@ -6,17 +6,24 @@ import { Box, CircularProgress, Typography } from '@mui/material';
 const EmailVerification = () => {
   const { token } = useParams();
   const navigate = useNavigate();
+  const verificationAttempted = useRef(false);
 
   useEffect(() => {
     const verifyEmail = async () => {
+      if (verificationAttempted.current) return;
+      verificationAttempted.current = true;
+
       try {
-        await verifyEmailApi(token);
-        // Redirect to login on success
-        navigate('/auth', { replace: true });
+        const response = await verifyEmailApi(token);
+        if (response?.data?.msg) {
+          navigate('/auth', { 
+            replace: true,
+            state: { verificationSuccess: response.data.msg }
+          });
+        }
       } catch (error) {
-        // Redirect to login with error state
         navigate('/auth', { 
-          replace: true,
+          replace: false,
           state: { verificationError: error.response?.data?.msg || 'Verification failed' }
         });
       }
