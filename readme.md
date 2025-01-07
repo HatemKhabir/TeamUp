@@ -47,7 +47,7 @@ TeamUp is a web application designed to connect sports enthusiasts, helping them
 1. **Clone the repository**
 
 bash\
-git clone https://github.com/HatemKhabir/TeamUp\
+git clone https://github.com/HatemKhabir/TeamUp \
 cd TeamUp
 
 2. **Frontend Setup**
