@@ -107,7 +107,7 @@ const EditProfilePage = () => {
 
     setIsSubmitting(true);
     try {
-      const response = await axiosInstance.put('/auth/update', formData, {
+      const response = await axiosInstance.patch('/auth/update-profile', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

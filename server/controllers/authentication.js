@@ -152,10 +152,9 @@ export const login = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { username, password, profilePic, bio, country } = req.body;
-    const { id } = req.user; 
-
+    console.log(req.body)
     // Find the user by their ID
-    const player = await Player.findById(id);
+    const player = await Player.findOne({username:username});
     if (!player) {
       return res.status(404).json({ msg: 'User not found!' });
     }

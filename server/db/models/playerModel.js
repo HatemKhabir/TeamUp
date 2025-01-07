@@ -99,7 +99,7 @@ const userSchema = new Schema({
   commendReportLog: [
     {
       userId: { type: Schema.Types.ObjectId, ref: "Player" },
-      action: { type: String, enum: ["commend", "report"] }, // Store the action type
+      action: { type: String, enum: ["commend", "report"] }, 
     },
   ],
   profilePicture: {

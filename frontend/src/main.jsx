@@ -21,6 +21,8 @@ import LandingPage from './features/landing_page/LandingPage.jsx';
 import Dashboard from './features/home/pages/Dashboard.jsx';
 import {APIProvider, Map} from '@vis.gl/react-google-maps';
 import EmailVerification from './features/auth/components/EmailVerification';
+import PrivacyPolicy from './features/privacy_policy/PrivacyPolicy.jsx';
+import AboutUs from './features/about_us/AboutUs.jsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -127,6 +129,16 @@ const router = createBrowserRouter([
     element: <EmailVerification />,
     errorElement: <ErrorBoundary />
   },
+  {
+    path: '/privacy-policy',
+    element: <PrivacyPolicy />,
+    errorElement: <ErrorBoundary />
+  },
+  {
+    path: '/about-us',
+    element: <AboutUs />,
+    errorElement: <ErrorBoundary />
+  }
 ]);
 
 // Render root

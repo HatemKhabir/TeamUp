@@ -3,8 +3,6 @@ import {createEvent,joinEvent,deleteEvent,getEvents, getAllEvents, leaveEvent, g
 import { protect } from "../middleware/authMiddelware.js";
 const router=express.Router();
 
-
-
   router.post("/create-event",protect, createEvent);
   router.post("/join-event",protect,joinEvent);
   router.post("/leave-event",protect,leaveEvent);
@@ -16,4 +14,6 @@ const router=express.Router();
   router.post('/join-private',protect,joinPrivateGame);
   
   export default router;
+  
+
   

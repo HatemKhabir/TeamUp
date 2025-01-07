@@ -110,6 +110,7 @@ export const sendInviteFriend = async (req, res) => {
       Player.findOne({ username: friendToAdd })
     ]);
 
+
     if (!user || !friend) {
       return res.status(404).json("User not found");
     }
