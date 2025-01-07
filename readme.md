@@ -46,30 +46,32 @@ TeamUp is a web application designed to connect sports enthusiasts, helping them
 
 1. **Clone the repository**
 
-bash
-git clone https://github.com/HatemKhabir/TeamUp
+bash\
+git clone https://github.com/HatemKhabir/TeamUp\
 cd TeamUp
 
 2. **Frontend Setup**
 
-cd frontend
-npm install -g pnpm
+cd frontend\
+npm install -g pnpm\
 pnpm install
 
 3. **Backend Setup**
 
-cd backend
-npm install
+cd backend\
+npm install 
 
 4. **Environment Variables**
 
 Create a .env file in the backend directory with the following variables:
 
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-PORT=8080
-EMAIL_USERNAME=khabirhatem38@gmail.com
-EMAIL_APP_PASSWORD=kgecxpqeiiduehkz
+These are the variables that I used in my project, you can change them to your own values or for privacy reasons i will be changing them after the defense.
+
+PORT=8080\
+ATLAS_URI= "mongodb+srv://hatemkhabircse:Hatem123@cluster0.gftax5v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"\
+JWT_SECRET="teamup"\
+EMAIL_USERNAME=khabirhatem38@gmail.com\
+EMAIL_APP_PASSWORD=kgecxpqeiiduehkz\
 FRONTEND_URL=http://localhost:5173
 
 5. **Run the application**
